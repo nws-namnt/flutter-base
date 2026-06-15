@@ -1,0 +1,104 @@
+name: flutter_base
+description: "Flutter production boilerplate — BLoC/Cubit, GoRouter, Hive, Dio/Retrofit, Firebase (FlutterFire)."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # Localization
+  intl: ^0.20.2
+  intl_utils: ^2.8.7
+
+  # State management
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+
+  # Navigation
+  go_router: ^14.2.1
+
+  # Storage & database
+  hive: ^2.2.3
+  shared_preferences: ^2.2.3
+  get_storage: ^2.1.1
+
+  # Network
+  connectivity_plus: ^6.0.3
+  dio: ^5.5.0+1
+  retrofit: ^4.1.0
+  pretty_dio_logger: ^1.4.0
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Path & permissions
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
+
+  # Browser
+  url_launcher: ^6.3.0
+
+  # UI components
+  another_flushbar: ^1.12.30
+  gap: ^3.0.1
+
+  # Animations
+  animations: ^2.0.11
+  lottie: ^3.3.1
+
+  # Device & app info
+  device_info_plus: ^10.1.0
+  package_info_plus: ^8.0.0
+
+  # Utilities
+  json_annotation: ^4.9.0
+  timezone: ^0.10.1
+
+  # Logging
+  logger: ^2.4.0
+
+  # Firebase (FlutterFire — configure later via `flutterfire configure`)
+  # firebase_core:
+  # firebase_messaging:
+  # firebase_analytics:
+  # flutter_local_notifications:
+
+  # Tools (uncomment to use, re-comment after)
+  # change_app_package_name: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code generation
+  build_runner: ^2.4.15
+  retrofit_generator: ^8.1.2
+  json_serializable: ^6.8.0
+  hive_generator: ^2.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  licenses:
+    - LICENSE
+
+  assets:
+    - assets/images/
+    - assets/lottie/
+    - assets/icons/
+
+flutter_intl:
+  enabled: true
