@@ -42,6 +42,7 @@ flutter run --flavor dev
 | [lottie](https://pub.dev/packages/lottie) | Lottie animation player |
 | [device_info_plus](https://pub.dev/packages/device_info_plus) | Device information |
 | [package_info_plus](https://pub.dev/packages/package_info_plus) | App version and build info |
+| [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) | Load `.env` config per flavor at runtime |
 | [json_annotation](https://pub.dev/packages/json_annotation) | JSON serialization annotations |
 | [json_serializable](https://pub.dev/packages/json_serializable) | JSON serialization code generation |
 | [timezone](https://pub.dev/packages/timezone) | Timezone support |
