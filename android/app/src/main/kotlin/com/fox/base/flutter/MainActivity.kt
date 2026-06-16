@@ -1,4 +1,4 @@
-package com.fox.base.flutter_base
+package com.fox.base.flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
