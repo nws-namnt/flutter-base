@@ -1,0 +1,5 @@
+#include "Debug.xcconfig"
+FLUTTER_TARGET=lib/main.dart
+PRODUCT_BUNDLE_IDENTIFIER=com.fox.base.flutterBase
+PRODUCT_NAME=Flutter Base
+DART_DEFINES=FLAVOR=prod
