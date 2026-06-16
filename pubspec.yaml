@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -14,79 +14,76 @@ dependencies:
     sdk: flutter
 
   # Icons
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
 
   # Localization
   intl: ^0.20.2
-  intl_utils: ^2.8.7
+  intl_utils: ^2.8.14
 
   # State management
-  bloc: ^8.1.4
-  flutter_bloc: ^8.1.6
-  equatable: ^2.0.5
+  bloc: ^9.2.0
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
 
   # Navigation
-  go_router: ^14.2.1
+  go_router: ^17.2.3
 
   # Storage & database
-  hive: ^2.2.3
-  shared_preferences: ^2.2.3
+  shared_preferences: ^2.5.5
   get_storage: ^2.1.1
 
   # Network
-  connectivity_plus: ^6.0.3
-  dio: ^5.5.0+1
-  retrofit: ^4.1.0
+  connectivity_plus: ^7.1.1
+  dio: ^5.9.2
+  retrofit: ^4.9.2
   pretty_dio_logger: ^1.4.0
 
   # Fonts
-  google_fonts: ^6.2.1
+  google_fonts: ^8.1.0
 
   # Path & permissions
-  path_provider: ^2.1.3
-  permission_handler: ^11.3.1
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.1
 
   # Browser
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.2
 
   # UI components
-  another_flushbar: ^1.12.30
+  another_flushbar: ^2.2.4
   gap: ^3.0.1
 
   # Animations
-  animations: ^2.0.11
-  lottie: ^3.3.1
+  animations: ^2.2.0
+  lottie: ^3.3.3
 
   # Device & app info
-  device_info_plus: ^10.1.0
-  package_info_plus: ^8.0.0
+  device_info_plus: ^12.4.0
+  package_info_plus: ^9.0.0
 
   # Utilities
-  json_annotation: ^4.9.0
-  timezone: ^0.10.1
+  json_annotation: ^4.12.0
+  timezone: ^0.11.0
 
   # Logging
-  logger: ^2.4.0
+  logger: ^2.7.0
 
-  # Firebase (FlutterFire — configure later via `flutterfire configure`)
-  # firebase_core:
-  # firebase_messaging:
-  # firebase_analytics:
-  # flutter_local_notifications:
+  # Firebase (FlutterFire)
+  firebase_core: ^4.10.0
+  firebase_messaging: ^16.3.0
+  firebase_remote_config: ^6.5.2
 
-  # Tools (uncomment to use, re-comment after)
-  # change_app_package_name: ^1.1.0
+#  flutter_local_notifications: ^19.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  change_app_package_name: ^1.5.0
 
   # Code generation
-  build_runner: ^2.4.15
-  retrofit_generator: ^8.1.2
+  build_runner: ^2.15.0
+  retrofit_generator: ^10.2.5
   json_serializable: ^6.8.0
-  hive_generator: ^2.0.0
 
 flutter:
   generate: true
@@ -97,7 +94,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/lottie/
+    - assets/lotties/
     - assets/icons/
 
 flutter_intl:
