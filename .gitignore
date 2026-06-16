@@ -58,3 +58,9 @@ GoogleService-Info.plist
 
 # intl_utils generated files
 lib/generated/
+
+# Environment files — real values must NOT be committed
+# Commit only the .example templates, not the real .env files
+assets/env/.env.dev
+assets/env/.env.uat
+assets/env/.env.prod
