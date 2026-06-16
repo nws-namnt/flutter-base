@@ -51,14 +51,14 @@ flutter run --flavor dev
 
 > \* Recommended to keep regardless of project
 
-### Firebase (pending — configure via FlutterFire)
+### Firebase (FlutterFire)
 
 | Package | Usage |
 |---|---|
-| [firebase_core](https://pub.dev/packages/firebase_core) | Firebase core |
+| [firebase_core](https://pub.dev/packages/firebase_core) | Firebase core — required by all Firebase packages |
 | [firebase_messaging](https://pub.dev/packages/firebase_messaging) | Push notifications (FCM) |
-| [firebase_analytics](https://pub.dev/packages/firebase_analytics) | Analytics |
-| [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) | Local notification display |
+| [firebase_remote_config](https://pub.dev/packages/firebase_remote_config) | Remote feature flags and config |
+| [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) | Display FCM messages as local notifications |
 
 ## Flavors
 
@@ -71,9 +71,149 @@ flutter build apk --flavor prod --release
 
 ## Firebase setup
 
+Project này dùng 3 flavor (`dev` / `uat` / `prod`), mỗi flavor tương ứng một Firebase project riêng.
+
+### Bước 1 — Tạo Firebase projects
+
+Vào [Firebase Console](https://console.firebase.google.com) và tạo 3 projects:
+
+| Flavor | Suggested project name |
+|---|---|
+| dev | `flutter-base-dev` |
+| uat | `flutter-base-uat` |
+| prod | `flutter-base-prod` |
+
+Với **mỗi project**, thêm hai app:
+- **Android** — package name: `com.fox.base.flutter_base` (hoặc tên package bạn đã đổi)
+- **iOS** — bundle ID: `com.fox.base.flutterBase`
+
+> Bật **Cloud Messaging** và **Remote Config** trong từng project.
+
+### Bước 2 — Cài Firebase CLI & đăng nhập
+
 ```sh
+# Cài Firebase CLI (nếu chưa có)
+npm install -g firebase-tools
+
+# Đăng nhập
+firebase login
+```
+
+### Bước 3 — Cài FlutterFire CLI
+
+```sh
+# Nếu dùng FVM
+fvm dart pub global activate flutterfire_cli
+
+# Nếu không dùng FVM
 dart pub global activate flutterfire_cli
-flutterfire configure
+```
+
+### Bước 4 — Configure từng flavor
+
+Chạy lệnh sau 3 lần, thay `<project-id>` bằng ID thực tế trên Firebase Console:
+
+```sh
+# dev
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-dev \
+  --out=lib/firebase/dev/firebase_options.dart \
+  --platforms=android,ios
+
+# uat
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-uat \
+  --out=lib/firebase/uat/firebase_options.dart \
+  --platforms=android,ios
+
+# prod
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-prod \
+  --out=lib/firebase/prod/firebase_options.dart \
+  --platforms=android,ios
+```
+
+> Nếu không dùng FVM, thay `fvm dart pub global run flutterfire_cli:flutterfire` bằng `flutterfire`.
+
+Mỗi lần chạy sẽ sinh ra:
+- `lib/firebase/{flavor}/firebase_options.dart`
+- `android/app/google-services.json` ← **cần copy thủ công** (xem bước 5)
+- `ios/Runner/GoogleService-Info.plist` ← **cần copy thủ công** (xem bước 5)
+
+> `firebase_options.dart` được commit vào git. `google-services.json` và `GoogleService-Info.plist` đã được gitignore — **không commit**.
+
+### Bước 5 — Đặt native config theo flavor
+
+**Android** — copy file vào đúng thư mục src của từng flavor:
+
+```
+android/app/src/dev/google-services.json
+android/app/src/uat/google-services.json
+android/app/src/prod/google-services.json
+```
+
+**iOS** — copy vào thư mục con theo flavor (cần tạo thư mục nếu chưa có):
+
+```
+ios/config/dev/GoogleService-Info.plist
+ios/config/uat/GoogleService-Info.plist
+ios/config/prod/GoogleService-Info.plist
+```
+
+Sau đó thêm Run Script phase trong Xcode để copy đúng file theo build configuration:
+
+```sh
+# Xcode Build Phase → Run Script
+cp "${PROJECT_DIR}/config/${FLUTTER_BUILD_MODE}/GoogleService-Info.plist" \
+   "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+```
+
+### Bước 6 — Cấu hình Android flavor trong build.gradle
+
+Thêm vào `android/app/build.gradle.kts`:
+
+```kotlin
+android {
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+        create("uat") {
+            dimension = "env"
+            applicationIdSuffix = ".uat"
+            versionNameSuffix = "-uat"
+        }
+        create("prod") {
+            dimension = "env"
+        }
+    }
+}
+```
+
+### Bước 7 — Thêm Google Services plugin (Android)
+
+`android/build.gradle.kts`:
+```kotlin
+plugins {
+    id("com.google.gms.google-services") version "4.4.2" apply false
+}
+```
+
+`android/app/build.gradle.kts`:
+```kotlin
+plugins {
+    id("com.google.gms.google-services")
+}
+```
+
+### Kiểm tra
+
+```sh
+flutter pub get
+flutter run --flavor dev
 ```
 
 ## Changing package name

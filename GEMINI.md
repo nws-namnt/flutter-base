@@ -38,6 +38,17 @@ flutter build apk --flavor dev --release
 # Generate localization files
 flutter pub run intl_utils:generate
 
+# Firebase CLI — login (required before flutterfire configure)
+npm install -g firebase-tools   # install once
+firebase login
+
+# FlutterFire CLI (dùng fvm dart khi dùng FVM)
+fvm dart pub global activate flutterfire_cli
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=<firebase-project-id> \
+  --out=lib/firebase/<flavor>/firebase_options.dart \
+  --platforms=android,ios
+
 # Change package name (uncomment change_app_package_name in pubspec first)
 flutter pub run change_app_package_name:main com.new.package.name
 ```
@@ -114,7 +125,7 @@ lib/
 | Permissions | `permission_handler` |
 | Logging | `logger` |
 | Code generation | `build_runner`, `retrofit_generator`, `json_serializable`, `hive_generator` |
-| Firebase | Pending — add via `flutterfire configure` |
+| Firebase | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `flutter_local_notifications` |
 
 ---
 
