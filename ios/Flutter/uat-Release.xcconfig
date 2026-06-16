@@ -1,5 +1,2 @@
 #include "Release.xcconfig"
-FLUTTER_TARGET=lib/main.dart
-PRODUCT_BUNDLE_IDENTIFIER=com.fox.base.flutterBase.uat
-PRODUCT_NAME=Flutter Base (UAT)
-DART_DEFINES=FLAVOR=uat
+PRODUCT_BUNDLE_IDENTIFIER=com.fox.base.flutter.uat
