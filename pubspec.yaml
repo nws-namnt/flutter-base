@@ -57,8 +57,8 @@ dependencies:
   lottie: ^3.3.3
 
   # Device & app info
-  device_info_plus: ^12.4.0
-  package_info_plus: ^9.0.0
+  device_info_plus: ^13.1.0
+  package_info_plus: ^10.1.0
 
   # Environment
   flutter_dotenv: ^5.2.1
