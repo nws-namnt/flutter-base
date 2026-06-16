@@ -124,7 +124,8 @@ lib/
 | Device/app info | `device_info_plus`, `package_info_plus` |
 | Permissions | `permission_handler` |
 | Logging | `logger` |
-| Code generation | `build_runner`, `retrofit_generator`, `json_serializable`, `hive_generator` |
+| Code generation | `build_runner`, `retrofit_generator`, `json_serializable` (hive_generator removed — abandoned; use `hive_ce_generator` if needed) |
+| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup |
 | Firebase | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `flutter_local_notifications` |
 
 ---

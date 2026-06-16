@@ -122,6 +122,7 @@ lib/
 | Animations | `animations` (page transitions), `lottie` |
 | UI helpers | `another_flushbar`, `gap` |
 | Device/app info | `device_info_plus`, `package_info_plus` |
+| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup |
 | Permissions | `permission_handler` |
 | Logging | `logger` |
 | Code generation | `build_runner`, `retrofit_generator`, `json_serializable` (hive_generator removed — abandoned; use `hive_ce_generator` if needed) |
