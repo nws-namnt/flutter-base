@@ -42,7 +42,7 @@ flutter pub run intl_utils:generate
 npm install -g firebase-tools   # install once
 firebase login
 
-# FlutterFire CLI (dùng fvm dart khi dùng FVM)
+# FlutterFire CLI (use fvm dart when using FVM)
 fvm dart pub global activate flutterfire_cli
 fvm dart pub global run flutterfire_cli:flutterfire configure \
   --project=<firebase-project-id> \

@@ -1,56 +1,53 @@
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_base/utils/extensions/string_extension.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'app/app_page.dart';
 import 'common/app_env.dart';
+
+/// Background FCM handler — must be a top-level function.
+@pragma('vm:entry-point')
+Future<void> _onBackgroundMessage(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // TODO: handle background push notification
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Detect flavor from bundle ID / package name suffix.
-  // Convention:
-  //   com.example.app.dev  → 'dev'
-  //   com.example.app.uat  → 'uat'
-  //   com.example.app      → 'prod'  (no suffix)
+  // Lock orientation to portrait.
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // Detect flavor from bundle ID / package name suffix:
+  //   com.example.app.dev → 'dev'
+  //   com.example.app.uat → 'uat'
+  //   com.example.app     → 'prod'
   final packageInfo = await PackageInfo.fromPlatform();
-  final flavor = _detectFlavor(packageInfo.packageName);
+  final flavor = packageInfo.packageName.flavor;
 
-  // Load and validate the matching .env file.
   await AppEnv.load(flavor: flavor);
-  debugPrint('AppEnv loaded with flavor: ${AppEnv.apiBaseUrl}');
-  runApp(const MyApp());
-}
 
-/// Infers the build flavor from the app's package name (Android) /
-/// bundle identifier (iOS).
-String _detectFlavor(String packageName) {
-  if (packageName.endsWith('.dev')) return 'dev';
-  if (packageName.endsWith('.uat')) return 'uat';
-  return 'prod';
-}
+  // Firebase — pick options matching the active flavor.
+  await Firebase.initializeApp(options: flavor.firebaseOptions);
+  FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // Local storage.
+  await GetStorage.init();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Base',
-      debugShowCheckedModeBanner: AppEnv.showDebugBanner,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-      ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Flutter Base')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Flavor: ${AppEnv.flavor}'),
-              Text('API: ${AppEnv.apiBaseUrl}'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  runZonedGuarded(
+    () => runApp(const AppPage()),
+    (error, stack) {
+      // TODO: forward to crash reporter (e.g. Firebase Crashlytics).
+      debugPrint('[ERROR] $error\n$stack');
+    },
+  );
 }

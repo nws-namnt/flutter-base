@@ -15,51 +15,50 @@ flutter run --flavor dev
 
 ## Pub packages
 
-| Package | Usage |
-|---|---|
-| [intl](https://pub.dev/packages/intl) | Multi language* |
-| [intl_utils](https://pub.dev/packages/intl_utils) | Multi language utils* |
-| [bloc](https://pub.dev/packages/bloc) | State management* |
-| [flutter_bloc](https://pub.dev/packages/flutter_bloc) | State management* |
-| [equatable](https://pub.dev/packages/equatable) | Value equality for Cubit states* |
-| [go_router](https://pub.dev/packages/go_router) | Declarative navigation |
-| [hive](https://pub.dev/packages/hive) | Platform-independent local storage |
-| [hive_generator](https://pub.dev/packages/hive_generator) | Hive adapter code generation |
-| [shared_preferences](https://pub.dev/packages/shared_preferences) | Key-value persistent storage |
-| [get_storage](https://pub.dev/packages/get_storage) | Fast key-value storage |
-| [connectivity_plus](https://pub.dev/packages/connectivity_plus) | Network connectivity status |
-| [dio](https://pub.dev/packages/dio) | HTTP client |
-| [retrofit](https://pub.dev/packages/retrofit) | Type-safe REST API client |
-| [retrofit_generator](https://pub.dev/packages/retrofit_generator) | Retrofit code generation |
-| [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger) | Dio request/response logging |
-| [google_fonts](https://pub.dev/packages/google_fonts) | Google Fonts (Lato) |
-| [path_provider](https://pub.dev/packages/path_provider) | File system paths |
-| [permission_handler](https://pub.dev/packages/permission_handler) | Runtime permission management |
-| [url_launcher](https://pub.dev/packages/url_launcher) | Open URLs in browser |
-| [another_flushbar](https://pub.dev/packages/another_flushbar) | In-app notification bar |
-| [gap](https://pub.dev/packages/gap) | Spacing widget |
-| [animations](https://pub.dev/packages/animations) | Pre-built page transitions |
-| [lottie](https://pub.dev/packages/lottie) | Lottie animation player |
-| [device_info_plus](https://pub.dev/packages/device_info_plus) | Device information |
-| [package_info_plus](https://pub.dev/packages/package_info_plus) | App version and build info |
-| [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) | Load `.env` config per flavor at runtime |
-| [json_annotation](https://pub.dev/packages/json_annotation) | JSON serialization annotations |
-| [json_serializable](https://pub.dev/packages/json_serializable) | JSON serialization code generation |
-| [timezone](https://pub.dev/packages/timezone) | Timezone support |
-| [logger](https://pub.dev/packages/logger) | Structured console logging |
-| [build_runner](https://pub.dev/packages/build_runner) | Code generation runner |
-| [flutter_lints](https://pub.dev/packages/flutter_lints) | Lint rules |
+| Package                                                           | Usage                                    |
+|-------------------------------------------------------------------|------------------------------------------|
+| [intl](https://pub.dev/packages/intl)                             | Multi language*                          |
+| [intl_utils](https://pub.dev/packages/intl_utils)                 | Multi language utils*                    |
+| [bloc](https://pub.dev/packages/bloc)                             | State management*                        |
+| [flutter_bloc](https://pub.dev/packages/flutter_bloc)             | State management*                        |
+| [equatable](https://pub.dev/packages/equatable)                   | Value equality for Cubit states*         |
+| [go_router](https://pub.dev/packages/go_router)                   | Declarative navigation                   |
+| [hive](https://pub.dev/packages/hive)                             | Platform-independent local storage       |
+| [shared_preferences](https://pub.dev/packages/shared_preferences) | Key-value persistent storage             |
+| [get_storage](https://pub.dev/packages/get_storage)               | Fast key-value storage                   |
+| [connectivity_plus](https://pub.dev/packages/connectivity_plus)   | Network connectivity status              |
+| [dio](https://pub.dev/packages/dio)                               | HTTP client                              |
+| [retrofit](https://pub.dev/packages/retrofit)                     | Type-safe REST API client                |
+| [retrofit_generator](https://pub.dev/packages/retrofit_generator) | Retrofit code generation                 |
+| [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger)   | Dio request/response logging             |
+| [google_fonts](https://pub.dev/packages/google_fonts)             | Google Fonts (Lato)                      |
+| [path_provider](https://pub.dev/packages/path_provider)           | File system paths                        |
+| [permission_handler](https://pub.dev/packages/permission_handler) | Runtime permission management            |
+| [url_launcher](https://pub.dev/packages/url_launcher)             | Open URLs in browser                     |
+| [another_flushbar](https://pub.dev/packages/another_flushbar)     | In-app notification bar                  |
+| [gap](https://pub.dev/packages/gap)                               | Spacing widget                           |
+| [animations](https://pub.dev/packages/animations)                 | Pre-built page transitions               |
+| [lottie](https://pub.dev/packages/lottie)                         | Lottie animation player                  |
+| [device_info_plus](https://pub.dev/packages/device_info_plus)     | Device information                       |
+| [package_info_plus](https://pub.dev/packages/package_info_plus)   | App version and build info               |
+| [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)         | Load `.env` config per flavor at runtime |
+| [json_annotation](https://pub.dev/packages/json_annotation)       | JSON serialization annotations           |
+| [json_serializable](https://pub.dev/packages/json_serializable)   | JSON serialization code generation       |
+| [timezone](https://pub.dev/packages/timezone)                     | Timezone support                         |
+| [logger](https://pub.dev/packages/logger)                         | Structured console logging               |
+| [build_runner](https://pub.dev/packages/build_runner)             | Code generation runner                   |
+| [flutter_lints](https://pub.dev/packages/flutter_lints)           | Lint rules                               |
 
 > \* Recommended to keep regardless of project
 
 ### Firebase (FlutterFire)
 
-| Package | Usage |
-|---|---|
-| [firebase_core](https://pub.dev/packages/firebase_core) | Firebase core — required by all Firebase packages |
-| [firebase_messaging](https://pub.dev/packages/firebase_messaging) | Push notifications (FCM) |
-| [firebase_remote_config](https://pub.dev/packages/firebase_remote_config) | Remote feature flags and config |
-| [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) | Display FCM messages as local notifications |
+| Package                                                                             | Usage                                             |
+|-------------------------------------------------------------------------------------|---------------------------------------------------|
+| [firebase_core](https://pub.dev/packages/firebase_core)                             | Firebase core — required by all Firebase packages |
+| [firebase_messaging](https://pub.dev/packages/firebase_messaging)                   | Push notifications (FCM)                          |
+| [firebase_remote_config](https://pub.dev/packages/firebase_remote_config)           | Remote feature flags and config                   |
+| [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) | Display FCM messages as local notifications       |
 
 ## Flavors
 
@@ -72,47 +71,47 @@ flutter build apk --flavor prod --release
 
 ## Firebase setup
 
-Project này dùng 3 flavor (`dev` / `uat` / `prod`), mỗi flavor tương ứng một Firebase project riêng.
+This project uses three separate Firebase projects, one per flavor (`dev` / `uat` / `prod`).
 
-### Bước 1 — Tạo Firebase projects
+### Step 1 — Create Firebase projects
 
-Vào [Firebase Console](https://console.firebase.google.com) và tạo 3 projects:
+Go to [Firebase Console](https://console.firebase.google.com) and create three projects:
 
 | Flavor | Suggested project name |
-|---|---|
-| dev | `flutter-base-dev` |
-| uat | `flutter-base-uat` |
-| prod | `flutter-base-prod` |
+|--------|------------------------|
+| dev    | `flutter-base-dev`     |
+| uat    | `flutter-base-uat`     |
+| prod   | `flutter-base-prod`    |
 
-Với **mỗi project**, thêm hai app:
-- **Android** — package name: `com.fox.base.flutter_base` (hoặc tên package bạn đã đổi)
-- **iOS** — bundle ID: `com.fox.base.flutterBase`
+For **each project**, register two apps:
+- **Android** — package name: `com.fox.base.flutter` (or your renamed package)
+- **iOS** — bundle ID: `com.fox.base.flutter`
 
-> Bật **Cloud Messaging** và **Remote Config** trong từng project.
+> Enable **Cloud Messaging** and **Remote Config** in each project.
 
-### Bước 2 — Cài Firebase CLI & đăng nhập
+### Step 2 — Install Firebase CLI and log in
 
 ```sh
-# Cài Firebase CLI (nếu chưa có)
+# Install Firebase CLI (once)
 npm install -g firebase-tools
 
-# Đăng nhập
+# Log in
 firebase login
 ```
 
-### Bước 3 — Cài FlutterFire CLI
+### Step 3 — Install FlutterFire CLI
 
 ```sh
-# Nếu dùng FVM
+# With FVM
 fvm dart pub global activate flutterfire_cli
 
-# Nếu không dùng FVM
+# Without FVM
 dart pub global activate flutterfire_cli
 ```
 
-### Bước 4 — Configure từng flavor
+### Step 4 — Configure each flavor
 
-Chạy lệnh sau 3 lần, thay `<project-id>` bằng ID thực tế trên Firebase Console:
+Run the following command three times, replacing `<project-id>` with the actual Firebase project ID:
 
 ```sh
 # dev
@@ -134,18 +133,18 @@ fvm dart pub global run flutterfire_cli:flutterfire configure \
   --platforms=android,ios
 ```
 
-> Nếu không dùng FVM, thay `fvm dart pub global run flutterfire_cli:flutterfire` bằng `flutterfire`.
+> Without FVM, replace `fvm dart pub global run flutterfire_cli:flutterfire` with `flutterfire`.
 
-Mỗi lần chạy sẽ sinh ra:
+Each run generates:
 - `lib/firebase/{flavor}/firebase_options.dart`
-- `android/app/google-services.json` ← **cần copy thủ công** (xem bước 5)
-- `ios/Runner/GoogleService-Info.plist` ← **cần copy thủ công** (xem bước 5)
+- `android/app/google-services.json` ← **copy manually** (see step 5)
+- `ios/Runner/GoogleService-Info.plist` ← **copy manually** (see step 5)
 
-> `firebase_options.dart` được commit vào git. `google-services.json` và `GoogleService-Info.plist` đã được gitignore — **không commit**.
+> `firebase_options.dart` is committed to git. `google-services.json` and `GoogleService-Info.plist` are gitignored — **do not commit**.
 
-### Bước 5 — Đặt native config theo flavor
+### Step 5 — Place native config files per flavor
 
-**Android** — copy file vào đúng thư mục src của từng flavor:
+**Android** — copy each file into the corresponding flavor src directory:
 
 ```
 android/app/src/dev/google-services.json
@@ -153,7 +152,7 @@ android/app/src/uat/google-services.json
 android/app/src/prod/google-services.json
 ```
 
-**iOS** — copy vào thư mục con theo flavor (cần tạo thư mục nếu chưa có):
+**iOS** — copy into a flavor subdirectory (create the directory if it does not exist):
 
 ```
 ios/config/dev/GoogleService-Info.plist
@@ -161,17 +160,17 @@ ios/config/uat/GoogleService-Info.plist
 ios/config/prod/GoogleService-Info.plist
 ```
 
-Sau đó thêm Run Script phase trong Xcode để copy đúng file theo build configuration:
+Then add a Run Script build phase in Xcode to copy the correct file for the active build configuration:
 
 ```sh
-# Xcode Build Phase → Run Script
+# Xcode → Build Phases → Run Script
 cp "${PROJECT_DIR}/config/${FLUTTER_BUILD_MODE}/GoogleService-Info.plist" \
    "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
 ```
 
-### Bước 6 — Cấu hình Android flavor trong build.gradle
+### Step 6 — Android flavor config in build.gradle
 
-Thêm vào `android/app/build.gradle.kts`:
+Add to `android/app/build.gradle.kts`:
 
 ```kotlin
 android {
@@ -194,7 +193,7 @@ android {
 }
 ```
 
-### Bước 7 — Thêm Google Services plugin (Android)
+### Step 7 — Add Google Services plugin (Android)
 
 `android/build.gradle.kts`:
 ```kotlin
@@ -210,7 +209,7 @@ plugins {
 }
 ```
 
-### Kiểm tra
+### Verify
 
 ```sh
 flutter pub get
@@ -226,9 +225,11 @@ flutter pub run change_app_package_name:main com.new.package.name
 # 3. Re-comment the package
 ```
 
-## iOS setup (Mac ARM)
+## iOS setup
+
+This project uses Swift Package Manager — no CocoaPods required.
 
 ```sh
-sudo arch -x86_64 gem install ffi
-sudo arch -x86_64 pod install
+# Regenerate Flutter SPM config after adding/removing packages
+fvm flutter build ios --config-only
 ```

@@ -102,6 +102,41 @@ flutter:
     - assets/env/.env.dev
     - assets/env/.env.uat
     - assets/env/.env.prod
+    - pubspec.yaml
 
 flutter_intl:
   enabled: true
+
+# When leaf_type: string, asset references return raw String paths (e.g., Assets.icons.user returns a string). In this mode the plugin will not auto-add flutter_svg, lottie, or rive.
+# When you style: legacy and leaf_type: class, the generator keeps flat access paths but wraps known asset types with typed helpers:
+# legacy + leaf_type: class
+# static const AssetGenImage imagesLogo = AssetGenImage('assets/images/logo.png');
+# static const SvgGenImage iconsHome = SvgGenImage('assets/icons/home.svg');
+# Unknown types (e.g. mp4, JSON) still fall back to String
+# static const String videosIntro = 'assets/videos/intro.mp4';
+flutter_assets_generator:
+  # Enable/Disable this plugin for the current module. Default: true when the block exists
+  enabled: true
+  # When set to false, generation stops and the previous generated Dart file is removed
+  # Sets the directory of generated files. Default: generated/
+  output_dir: generated/
+  # Sets the name for the generated file. Default: as
+  output_filename: app_assets
+  # Sets the name for the root class. Default: Assets
+  class_name: R
+  # Enable/Disable auto monitoring and dependency management. Default: true
+  auto_detection: false
+  # Automatically add missing dependencies (rive, flutter_svg, lottie) default: true
+  auto_add_dependencies: false
+  # Generation style: robust (Hierarchical) or legacy (Flat legacy). Default: robust
+  style: legacy
+  # Leaf type: class (typed wrappers) or string (raw asset path). Default: class for robust, string for legacy
+  leaf_type: string
+  # Name style for generated identifiers. Default: camel
+  name_style: camel
+  # Enable package parameter generation (package: 'your_package_name'). Default: false
+  package_parameter_enabled: false
+  # For legacy style: Prefix variable names with parent directory names. Default: true
+  named_with_parent: true
+  # Ignore specific paths. Default: []
+  path_ignore: ["assets/fonts"]
