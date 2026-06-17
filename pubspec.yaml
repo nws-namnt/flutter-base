@@ -48,6 +48,10 @@ dependencies:
   # Browser
   url_launcher: ^6.3.2
 
+  # Local packages
+  setting_ui_builder:
+    path: pkgs/setting_ui_builder
+
   # UI components
   another_flushbar: ^2.2.4
   gap: ^3.0.1
@@ -55,6 +59,9 @@ dependencies:
   # Animations
   animations: ^2.2.0
   lottie: ^3.3.3
+
+  # Markdown
+  flutter_markdown_plus: ^1.0.7
 
   # Device & app info
   device_info_plus: ^13.1.0
@@ -74,8 +81,6 @@ dependencies:
   firebase_core: ^4.10.0
   firebase_messaging: ^16.3.0
   firebase_remote_config: ^6.5.2
-
-#  flutter_local_notifications: ^19.2.1
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +104,7 @@ flutter:
     - assets/images/
     - assets/lotties/
     - assets/icons/
+    - assets/docs/
     - assets/env/.env.dev
     - assets/env/.env.uat
     - assets/env/.env.prod
@@ -106,6 +112,8 @@ flutter:
 
 flutter_intl:
   enabled: true
+  localizely:
+    project_id: 4e355a95-c675-4976-910f-82a868fbdb3b
 
 # When leaf_type: string, asset references return raw String paths (e.g., Assets.icons.user returns a string). In this mode the plugin will not auto-add flutter_svg, lottie, or rive.
 # When you style: legacy and leaf_type: class, the generator keeps flat access paths but wraps known asset types with typed helpers:

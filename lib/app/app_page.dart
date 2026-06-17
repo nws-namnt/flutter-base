@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../common/app_env.dart';
+import '../common/app_themes.dart';
+import '../generated/l10n.dart' show S;
 import '../routing/app_router.dart';
 import '../routing/router_notifier.dart';
 import 'app_cubit.dart';
@@ -18,6 +20,12 @@ class AppPage extends StatefulWidget {
 class _AppPageState extends State<AppPage> {
   late final RouterNotifier _routerNotifier;
   late final AppRouter _appRouter;
+
+  static final _m3 = const M3Theme();
+  static final _lightTheme = _m3.light;
+  static final _darkTheme = _m3.dark;
+  static final _lightHighContrastTheme = _m3.lightHighContrast;
+  static final _darkHighContrastTheme = _m3.darkHighContrast;
 
   @override
   void initState() {
@@ -42,20 +50,14 @@ class _AppPageState extends State<AppPage> {
             title: 'Flutter Base',
             debugShowCheckedModeBanner: AppEnv.showDebugBanner,
             themeMode: state.themeMode,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.indigo,
-                brightness: Brightness.dark,
-              ),
-              useMaterial3: true,
-            ),
+            theme: _lightTheme,
+            darkTheme: _darkTheme,
+            highContrastTheme: _lightHighContrastTheme,
+            highContrastDarkTheme: _darkHighContrastTheme,
             locale: state.locale,
             supportedLocales: const [Locale('en'), Locale('vi')],
             localizationsDelegates: const [
+              S.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,

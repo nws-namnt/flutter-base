@@ -12,20 +12,20 @@ class AppRouter {
   AppRouter(this.routerNotifier);
 
   GoRouter get goRouter => GoRouter(
-        initialLocation: Routers.root.routerPath,
-        navigatorKey: rootNavigatorKey,
-        debugLogDiagnostics: true,
-        refreshListenable: routerNotifier,
-        errorBuilder: (context, state) => const NotFoundPage(),
-        redirect: (context, state) {
-          // Always use routerPath (not routerName) for redirect return values.
-          if (state.matchedLocation == Routers.pageNotFound.routerPath) {
-            return Routers.home.routerPath;
-          }
-          return null;
-        },
-        redirectLimit: 10,
-        observers: [RouterObserver()],
-        routes: routes,
-      );
+    initialLocation: Routers.root.routerPath,
+    navigatorKey: rootNavigatorKey,
+    debugLogDiagnostics: true,
+    refreshListenable: routerNotifier,
+    errorBuilder: (context, state) => const NotFoundPage(),
+    redirect: (context, state) {
+      // Always use routerPath (not routerName) for redirect return values.
+      if (state.matchedLocation == Routers.pageNotFound.routerPath) {
+        return Routers.home.routerPath;
+      }
+      return null;
+    },
+    redirectLimit: 10,
+    observers: [RouterObserver()],
+    routes: routes,
+  );
 }

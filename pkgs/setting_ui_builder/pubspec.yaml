@@ -1,0 +1,12 @@
+name: setting_ui_builder
+description: Material 3 settings UI — Section/Tile pattern with enum-driven tile types.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter

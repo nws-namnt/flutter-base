@@ -2,11 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/home/home_page.dart';
+import '../pages/privacy/privacy_page.dart';
 import '../pages/service/service_page.dart';
 import '../pages/setting/setting_page.dart';
 import '../pages/shell/shell_page.dart';
 import '../pages/splash/splash_page.dart';
-import '../pages/widgets/animated_bottom_navigation_widget.dart';
+import '../pages/terms/terms_page.dart';
 import '../pages/widgets/not_found_page.dart';
 import '../pages/widgets/transition_widget.dart';
 import 'routers.dart';
@@ -17,7 +18,7 @@ final _homeBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kHome');
 final _serviceBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kService');
 final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 
-List<RouteBase> routes = [_splashRoute, _shellRoute, _notFoundRoute];
+List<RouteBase> routes = [_splashRoute, _shellRoute, _termRoute, _privacyRoute, _notFoundRoute];
 
 // Splash — entry point
 GoRoute get _splashRoute => GoRoute(
@@ -30,10 +31,9 @@ GoRoute get _splashRoute => GoRoute(
 StatefulShellRoute get _shellRoute => StatefulShellRoute(
   parentNavigatorKey: rootNavigatorKey,
   key: shellKey,
-  // Wraps branch navigators with a fade-in animation on tab switch.
+  builder: (context, state, navigationShell) => navigationShell,
   navigatorContainerBuilder: (context, navigationShell, children) =>
-      AnimatedBranchContainer(currentIndex: navigationShell.currentIndex, children: children),
-  builder: (context, state, navigationShell) => ShellPage(shell: navigationShell),
+      ShellPage(shell: navigationShell, children: children),
   branches: [
     // Branch 0 — Home
     StatefulShellBranch(
@@ -76,9 +76,22 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
   ],
 );
 
+// Pages
+GoRoute get _termRoute => GoRoute(
+  name: Routers.terms.routerName,
+  path: Routers.terms.routerPath,
+  pageBuilder: (context, state) => TransitionPage(child: const TermsPage(), transitionType: PageTransitionType.slideFromRight),
+);
+
+GoRoute get _privacyRoute => GoRoute(
+  name: Routers.privacy.routerName,
+  path: Routers.privacy.routerPath,
+  pageBuilder: (context, state) => TransitionPage(child: const PrivacyPage(), transitionType: PageTransitionType.slideFromRight),
+);
+
 // 404 fallback
 GoRoute get _notFoundRoute => GoRoute(
   name: Routers.pageNotFound.routerName,
   path: Routers.pageNotFound.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const NotFoundPage(), transitionType: PageTransitionType.fade),
+  pageBuilder: (context, state) => TransitionPage(child: const NotFoundPage(), transitionType: PageTransitionType.slideFromRight),
 );

@@ -1,0 +1,17 @@
+{
+  "@@locale": "ja",
+  "lb_about": "情報",
+  "@lb_about": {},
+  "lb_dark_mode": "ダークモード",
+  "@lb_dark_mode": {},
+  "lb_general": "全般",
+  "@lb_general": {},
+  "lb_language": "言語",
+  "@lb_language": {},
+  "lb_policy": "プライバシーポリシー",
+  "@lb_policy": {},
+  "lb_terms": "利用規約",
+  "@lb_terms": {},
+  "lb_version": "バージョン",
+  "@lb_version": {}
+}

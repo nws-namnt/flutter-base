@@ -7,6 +7,10 @@ enum Routers {
   service('/service', 'service'),
   setting('/setting', 'setting'),
 
+  /// Pages
+  terms('/terms', 'terms'),
+  privacy('/privacy', 'privacy'),
+
   /// Fallback
   pageNotFound('/pageNotFound', 'pageNotFound');
 
