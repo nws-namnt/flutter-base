@@ -67,3 +67,6 @@ lib/generated/
 assets/env/.env.dev
 assets/env/.env.uat
 assets/env/.env.prod
+
+# CLI personal config override (team default fx_config.yaml is committed)
+cli_config.yaml
