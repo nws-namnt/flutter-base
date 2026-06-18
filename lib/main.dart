@@ -19,35 +19,30 @@ Future<void> _onBackgroundMessage(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Lock orientation to portrait.
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+    // Lock orientation to portrait.
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  // Detect flavor from bundle ID / package name suffix:
-  //   com.example.app.dev → 'dev'
-  //   com.example.app.uat → 'uat'
-  //   com.example.app     → 'prod'
-  final packageInfo = await PackageInfo.fromPlatform();
-  final flavor = packageInfo.packageName.flavor;
+    // Detect flavor from bundle ID / package name suffix:
+    //   com.example.app.dev → 'dev'
+    //   com.example.app.uat → 'uat'
+    //   com.example.app     → 'prod'
+    final packageInfo = await PackageInfo.fromPlatform();
+    final flavor = packageInfo.packageName.flavor;
 
-  await AppEnv.load(flavor: flavor);
+    await AppEnv.load(flavor: flavor);
 
-  // Firebase — pick options matching the active flavor.
-  await Firebase.initializeApp(options: flavor.firebaseOptions);
-  FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+    // Firebase — pick options matching the active flavor.
+    await Firebase.initializeApp(options: flavor.firebaseOptions);
+    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
 
-  // Local storage.
-  await GetStorage.init();
+    // Local storage.
+    await GetStorage.init();
 
-  runZonedGuarded(
-    () => runApp(const AppPage()),
-    (error, stack) {
-      // TODO: forward to crash reporter (e.g. Firebase Crashlytics).
-      debugPrint('[ERROR] $error\n$stack');
-    },
-  );
+    runApp(const AppPage());
+  }, (error, stack) {
+    debugPrint('[ERROR] $error\n$stack');
+  });
 }

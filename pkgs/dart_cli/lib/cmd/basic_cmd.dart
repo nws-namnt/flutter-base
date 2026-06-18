@@ -16,25 +16,9 @@ class RunCommand extends Command {
   String get name => MenuOption.run.cliTitle;
 
   RunCommand() {
-    argParser.addOption(
-      'flavor',
-      abbr: 'f',
-      allowed: ['dev', 'uat', 'prod'],
-      defaultsTo: 'dev',
-      help: 'Run flavor / scheme.',
-    );
-    argParser.addOption(
-      'mode',
-      abbr: 'm',
-      allowed: ['debug', 'profile', 'release'],
-      defaultsTo: 'debug',
-      help: 'Run mode.',
-    );
-    argParser.addOption(
-      'device',
-      abbr: 'd',
-      help: 'Device ID to run on.',
-    );
+    argParser.addOption('flavor', abbr: 'f', allowed: ['dev', 'uat', 'prod'], defaultsTo: 'dev');
+    argParser.addOption('mode',   abbr: 'm', allowed: ['debug', 'profile', 'release'], defaultsTo: 'debug');
+    argParser.addOption('device', abbr: 'd');
   }
 
   @override
@@ -44,13 +28,11 @@ class RunCommand extends Command {
 
     final flavor = hasArgs
         ? argResults!['flavor'] as String
-        : _promptSelect('Select flavor:', ['dev', 'uat', 'prod'],
-            defaultValue: cliConfig.defaultFlavor);
+        : promptSelect('Select flavor:', ['dev', 'uat', 'prod'], defaultValue: cliConfig.defaultFlavor);
 
     final mode = hasArgs
         ? argResults!['mode'] as String
-        : _promptSelect('Select run mode:', ['debug', 'profile', 'release'],
-            defaultValue: cliConfig.defaultMode);
+        : promptSelect('Select run mode:', ['debug', 'profile', 'release'], defaultValue: cliConfig.defaultMode);
 
     final deviceId = hasArgs && argResults!['device'] != null
         ? argResults!['device'] as String
@@ -62,22 +44,8 @@ class RunCommand extends Command {
     }
 
     final args = ['run', '--flavor', flavor, '--$mode', '-d', deviceId];
-
     await printExec(args);
     await runFlutterInteractive(args);
-  }
-
-  String _promptSelect(String prompt, List<String> options, {String? defaultValue}) {
-    final initialIndex = defaultValue != null
-        ? options.indexOf(defaultValue).clamp(0, options.length - 1)
-        : 0;
-    final index = Select.withTheme(
-      theme: cliTheme,
-      prompt: prompt,
-      options: options,
-      initialIndex: initialIndex,
-    ).interact();
-    return options[index];
   }
 
   Future<String?> _promptDevice() async {
@@ -95,7 +63,7 @@ class RunCommand extends Command {
       return null;
     }
 
-    final List<dynamic> raw = jsonDecode(result.stdout as String);
+    final List<dynamic> raw = jsonDecode(result.stdout.toString());
     final devices = raw
         .map((d) => (id: d['id'] as String, name: '${d['name']} (${d['targetPlatform']})'))
         .toList();
@@ -123,27 +91,9 @@ class BuildCommand extends Command {
   String get name => MenuOption.build.cliTitle;
 
   BuildCommand() {
-    argParser.addOption(
-      'flavor',
-      abbr: 'f',
-      allowed: ['dev', 'uat', 'prod'],
-      defaultsTo: 'dev',
-      help: 'Build flavor / scheme.',
-    );
-    argParser.addOption(
-      'type',
-      abbr: 't',
-      allowed: ['apk', 'appbundle', 'ipa'],
-      defaultsTo: 'apk',
-      help: 'Build output type.',
-    );
-    argParser.addOption(
-      'mode',
-      abbr: 'm',
-      allowed: ['debug', 'profile', 'release'],
-      defaultsTo: 'release',
-      help: 'Build mode.',
-    );
+    argParser.addOption('flavor', abbr: 'f', allowed: ['dev', 'uat', 'prod'], defaultsTo: 'dev');
+    argParser.addOption('type',   abbr: 't', allowed: ['apk', 'appbundle', 'ipa'], defaultsTo: 'apk');
+    argParser.addOption('mode',   abbr: 'm', allowed: ['debug', 'profile', 'release'], defaultsTo: 'release');
   }
 
   @override
@@ -153,30 +103,31 @@ class BuildCommand extends Command {
 
     final flavor = hasArgs
         ? argResults!['flavor'] as String
-        : _promptSelect('Select flavor:', ['dev', 'uat', 'prod'],
-            defaultValue: cliConfig.defaultFlavor);
+        : promptSelect('Select flavor:', ['dev', 'uat', 'prod'], defaultValue: cliConfig.defaultFlavor);
 
     final type = hasArgs
         ? argResults!['type'] as String
-        : _promptSelect('Select build type:', ['apk', 'appbundle', 'ipa'],
-            defaultValue: cliConfig.defaultBuildType);
+        : promptSelect('Select build type:', ['apk', 'appbundle', 'ipa'], defaultValue: cliConfig.defaultBuildType);
 
     final mode = hasArgs
         ? argResults!['mode'] as String
-        : _promptSelect('Select build mode:', ['debug', 'profile', 'release'],
-            defaultValue: cliConfig.defaultMode);
+        : promptSelect('Select build mode:', ['debug', 'profile', 'release'], defaultValue: cliConfig.defaultMode);
 
     final args = ['build', type, '--flavor', flavor, '--$mode'];
-
     await printExec(args);
-    await runFlutter(args, spinnerMsg: 'Building $type ($flavor / $mode)...');
+
+    try {
+      await runFlutter(args, spinnerMsg: 'Building $type ($flavor / $mode)...');
+    } catch (_) {
+      e('❌ Build failed.');
+      return;
+    }
 
     final outputPath = _outputPath(type, flavor, mode);
     s('✅ Build completed — $type / $flavor / $mode');
     i('📂 Output: ${_hyperlink(outputPath, outputPath)}');
 
     final spinners = MultiSpinner();
-
     final s1 = spinners.add(Spinner(
       icon: '📋',
       rightPrompt: (state) => switch (state) {
@@ -185,7 +136,6 @@ class BuildCommand extends Command {
         SpinnerStateType.failed     => 'Copy failed',
       },
     ));
-
     final s2 = spinners.add(Spinner(
       icon: '📂',
       rightPrompt: (state) => switch (state) {
@@ -199,19 +149,6 @@ class BuildCommand extends Command {
       _copyToClipboard(outputPath).then((_) => s1.done()).catchError((_) => s1.failed()),
       Process.run('open', [outputPath], runInShell: true).then((_) => s2.done()).catchError((_) => s2.failed()),
     ]);
-  }
-
-  String _promptSelect(String prompt, List<String> options, {String? defaultValue}) {
-    final initialIndex = defaultValue != null
-        ? options.indexOf(defaultValue).clamp(0, options.length - 1)
-        : 0;
-    final index = Select.withTheme(
-      theme: cliTheme,
-      prompt: prompt,
-      options: options,
-      initialIndex: initialIndex,
-    ).interact();
-    return options[index];
   }
 
   String _outputPath(String type, String flavor, String mode) {
@@ -252,7 +189,7 @@ class GenCommand extends Command {
 
     final mode = hasArgs
         ? argResults!.rest.firstOrNull ?? 'build'
-        : _promptSelect('Select gen mode:', ['build', 'watch']);
+        : promptSelect('Select gen mode:', ['build', 'watch']);
 
     final brArgs = ['pub', 'run', 'build_runner', mode, '--delete-conflicting-outputs'];
     await printExec(brArgs);
@@ -261,14 +198,13 @@ class GenCommand extends Command {
       i('Starting build_runner watch... (Ctrl+C to stop)');
       await runFlutterInteractive(brArgs);
     } else {
-      await runFlutter(brArgs, spinnerMsg: 'Running build_runner build...');
-      s('✅ Code generation completed.');
+      try {
+        await runFlutter(brArgs, spinnerMsg: 'Running build_runner build...');
+        s('✅ Code generation completed.');
+      } catch (_) {
+        e('❌ Code generation failed.');
+      }
     }
-  }
-
-  String _promptSelect(String prompt, List<String> options) {
-    final index = Select.withTheme(theme: cliTheme, prompt: prompt, options: options).interact();
-    return options[index];
   }
 }
 
@@ -281,7 +217,7 @@ class DoctorCommand extends Command {
 
   @override
   Future<void> run() async {
-    printExec(['doctor', '-v']);
+    await printExec(['doctor', '-v']);
     await runFlutterInteractive(['doctor', '-v']);
   }
 }
@@ -295,9 +231,13 @@ class CleanCommand extends Command {
 
   @override
   Future<void> run() async {
-    printExec(['clean']);
-    await runFlutter(['clean'], spinnerMsg: 'Cleaning Flutter build...');
-    s('✅ Flutter clean completed.');
+    await printExec(['clean']);
+    try {
+      await runFlutter(['clean'], spinnerMsg: 'Cleaning Flutter build...');
+      s('✅ Flutter clean completed.');
+    } catch (_) {
+      e('❌ Flutter clean failed.');
+    }
   }
 }
 
@@ -310,7 +250,7 @@ class DeviceCommand extends Command {
 
   @override
   Future<void> run() async {
-    printExec(['devices']);
+    await printExec(['devices']);
     await runFlutterInteractive(['devices']);
   }
 }
@@ -353,7 +293,7 @@ class EmulatorCommand extends Command {
     ).interact();
 
     final selectedId = emulators[index].id;
-    printExec(['emulators', '--launch', selectedId]);
+    await printExec(['emulators', '--launch', selectedId]);
     await runFlutterInteractive(['emulators', '--launch', selectedId]);
   }
 }

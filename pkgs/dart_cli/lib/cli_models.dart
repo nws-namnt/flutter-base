@@ -53,12 +53,12 @@ enum MenuOption {
   cacheClean(
     title: 'Pub Cache Clean',
     description: 'Clean pub cache.',
-    cliTitle: 'clean',
+    cliTitle: 'cache-clean',
   ),
   cacheRepair(
     title: 'Pub Cache Repair',
     description: 'Repair pub cache.',
-    cliTitle: 'repair',
+    cliTitle: 'cache-repair',
   ),
   back(
     title: 'Back',
@@ -112,13 +112,14 @@ final List<MenuItem> firstLevelMenu = [
     ],
   ),
   MenuItem(
-      option: MenuOption.pub,
-      items: [
-        MenuOption.get,
-        MenuOption.cacheClean,
-        MenuOption.cacheRepair,
-        MenuOption.back,
-        MenuOption.exit,
-      ]),
+    option: MenuOption.pub,
+    items: [
+      MenuOption.get,
+      MenuOption.cacheClean,
+      MenuOption.cacheRepair,
+      MenuOption.back,
+      MenuOption.exit,
+    ],
+  ),
   MenuItem(option: MenuOption.exit),
 ];
