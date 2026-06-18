@@ -46,8 +46,21 @@ Future<void> get menu async {
       continue;
     }
 
-    if(option == MenuOption.pub) {
+    if (option == MenuOption.pub) {
+      final pubCmd = _showBasicMenu(option);
+      if (pubCmd == MenuOption.back) {
+        continue;
+      }
 
+      if (pubCmd == MenuOption.exit) {
+        t('👋 Goodbye!');
+        break;
+      }
+
+      await runner.run([MenuOption.pub.cliTitle, pubCmd.cliTitle]);
+      print("\n----------------------------------------\n");
+      print("🔄 Returning to menu...\n");
+      continue;
     }
   }
 }
