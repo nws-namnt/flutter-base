@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_base/utils/extensions/string_extension.dart';
@@ -41,8 +43,21 @@ Future<void> main() async {
     // Local storage.
     await GetStorage.init();
 
+    // Disable Crashlytics in debug mode to avoid noise on the dashboard.
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+
+    // Catch errors thrown by the Flutter framework (widget build, layout, render, etc.)
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+    // Catch async errors outside the Flutter framework (platform-level errors).
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
     runApp(const AppPage());
   }, (error, stack) {
-    debugPrint('[ERROR] $error\n$stack');
+    // Catch uncaught async errors in this Dart zone (Future, Stream, Timer).
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
   });
 }

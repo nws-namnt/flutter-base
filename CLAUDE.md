@@ -110,23 +110,23 @@ lib/
 
 ## Package map
 
-| Concern | Package(s) |
-|---|---|
-| State management | `bloc`, `flutter_bloc`, `equatable` |
-| Navigation | `go_router` |
-| Localization | `intl`, `intl_utils` |
-| HTTP client | `dio`, `retrofit`, `pretty_dio_logger` |
-| Local storage | `hive`, `shared_preferences`, `get_storage` |
-| Network status | `connectivity_plus` |
-| Fonts | `google_fonts` (Lato) |
-| Animations | `animations` (page transitions), `lottie` |
-| UI helpers | `another_flushbar`, `gap` |
-| Device/app info | `device_info_plus`, `package_info_plus` |
-| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup |
-| Permissions | `permission_handler` |
-| Logging | `logger` |
-| Code generation | `build_runner`, `retrofit_generator`, `json_serializable` (hive_generator removed — abandoned; use `hive_ce_generator` if needed) |
-| Firebase | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `flutter_local_notifications` |
+| Concern            | Package(s)                                                                                                                        |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| State management   | `bloc`, `flutter_bloc`, `equatable`                                                                                               |
+| Navigation         | `go_router`                                                                                                                       |
+| Localization       | `intl`, `intl_utils`                                                                                                              |
+| HTTP client        | `dio`, `retrofit`, `pretty_dio_logger`                                                                                            |
+| Local storage      | `hive`, `shared_preferences`, `get_storage`                                                                                       |
+| Network status     | `connectivity_plus`                                                                                                               |
+| Fonts              | `google_fonts` (Lato)                                                                                                             |
+| Animations         | `animations` (page transitions), `lottie`                                                                                         |
+| UI helpers         | `another_flushbar`, `gap`                                                                                                         |
+| Device/app info    | `device_info_plus`, `package_info_plus`                                                                                           |
+| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup                                                                    |
+| Permissions        | `permission_handler`                                                                                                              |
+| Logging            | `logger`                                                                                                                          |
+| Code generation    | `build_runner`, `retrofit_generator`, `json_serializable` (hive_generator removed — abandoned; use `hive_ce_generator` if needed) |
+| Firebase           | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `flutter_local_notifications`                                    |
 
 ---
 
