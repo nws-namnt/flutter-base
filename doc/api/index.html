@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="flutter_base API docs, for the Dart programming language.">
+  <title>flutter_base - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">flutter_base package</li>
+  </ol>
+  <div class="self-name">flutter_base</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="flutter_base">flutter_base</h1>
+<p>Flutter production boilerplate — BLoC/Cubit, GoRouter, Hive, Dio/Retrofit, Firebase (FlutterFire).</p>
+<p>Based on <a href="https://github.com/itachi1611/flutter_temp_bloc">itachi1611/flutter_temp_bloc</a>.</p>
+<h2 id="installation">Installation</h2>
+<pre class="language-sh"><code class="language-sh">git clone &lt;repo-url&gt;
+cd flutter_base
+flutter pub get
+flutter run --flavor dev
+</code></pre>
+<h2 id="pub-packages">Pub packages</h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/intl">intl</a></td>
+<td>Multi language*</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/intl_utils">intl_utils</a></td>
+<td>Multi language utils*</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/bloc">bloc</a></td>
+<td>State management*</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_bloc">flutter_bloc</a></td>
+<td>State management*</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/equatable">equatable</a></td>
+<td>Value equality for Cubit states*</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/go_router">go_router</a></td>
+<td>Declarative navigation</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/hive">hive</a></td>
+<td>Platform-independent local storage</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/shared_preferences">shared_preferences</a></td>
+<td>Key-value persistent storage</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/get_storage">get_storage</a></td>
+<td>Fast key-value storage</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/connectivity_plus">connectivity_plus</a></td>
+<td>Network connectivity status</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/dio">dio</a></td>
+<td>HTTP client</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/retrofit">retrofit</a></td>
+<td>Type-safe REST API client</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/retrofit_generator">retrofit_generator</a></td>
+<td>Retrofit code generation</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/pretty_dio_logger">pretty_dio_logger</a></td>
+<td>Dio request/response logging</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/google_fonts">google_fonts</a></td>
+<td>Google Fonts (Lato)</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/path_provider">path_provider</a></td>
+<td>File system paths</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/permission_handler">permission_handler</a></td>
+<td>Runtime permission management</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/url_launcher">url_launcher</a></td>
+<td>Open URLs in browser</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/another_flushbar">another_flushbar</a></td>
+<td>In-app notification bar</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/gap">gap</a></td>
+<td>Spacing widget</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/animations">animations</a></td>
+<td>Pre-built page transitions</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/lottie">lottie</a></td>
+<td>Lottie animation player</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/device_info_plus">device_info_plus</a></td>
+<td>Device information</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/package_info_plus">package_info_plus</a></td>
+<td>App version and build info</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_dotenv">flutter_dotenv</a></td>
+<td>Load <code>.env</code> config per flavor at runtime</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/json_annotation">json_annotation</a></td>
+<td>JSON serialization annotations</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/json_serializable">json_serializable</a></td>
+<td>JSON serialization code generation</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/timezone">timezone</a></td>
+<td>Timezone support</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/logger">logger</a></td>
+<td>Structured console logging</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/build_runner">build_runner</a></td>
+<td>Code generation runner</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_lints">flutter_lints</a></td>
+<td>Lint rules</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>* Recommended to keep regardless of project</p>
+</blockquote>
+<h3 id="firebase-flutterfire">Firebase (FlutterFire)</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pub.dev/packages/firebase_core">firebase_core</a></td>
+<td>Firebase core — required by all Firebase packages</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/firebase_messaging">firebase_messaging</a></td>
+<td>Push notifications (FCM)</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/firebase_remote_config">firebase_remote_config</a></td>
+<td>Remote feature flags and config</td>
+</tr>
+<tr>
+<td><a href="https://pub.dev/packages/flutter_local_notifications">flutter_local_notifications</a></td>
+<td>Display FCM messages as local notifications</td>
+</tr>
+</tbody>
+</table>
+<h2 id="flavors">Flavors</h2>
+<p>The app supports three build flavors: <code>dev</code>, <code>uat</code>, <code>prod</code>. Always pass <code>--flavor</code> when running or building:</p>
+<pre class="language-sh"><code class="language-sh">flutter run --flavor dev
+flutter build apk --flavor prod --release
+</code></pre>
+<h2 id="firebase-setup">Firebase setup</h2>
+<p>This project uses three separate Firebase projects, one per flavor (<code>dev</code> / <code>uat</code> / <code>prod</code>).</p>
+<h3 id="step-1--create-firebase-projects">Step 1 — Create Firebase projects</h3>
+<p>Go to <a href="https://console.firebase.google.com">Firebase Console</a> and create three projects:</p>
+<table>
+<thead>
+<tr>
+<th>Flavor</th>
+<th>Suggested project name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev</td>
+<td><code>flutter-base-dev</code></td>
+</tr>
+<tr>
+<td>uat</td>
+<td><code>flutter-base-uat</code></td>
+</tr>
+<tr>
+<td>prod</td>
+<td><code>flutter-base-prod</code></td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>each project</strong>, register two apps:</p>
+<ul>
+<li><strong>Android</strong> — package name: <code>com.fox.base.flutter</code> (or your renamed package)</li>
+<li><strong>iOS</strong> — bundle ID: <code>com.fox.base.flutter</code></li>
+</ul>
+<blockquote>
+<p>Enable <strong>Cloud Messaging</strong> and <strong>Remote Config</strong> in each project.</p>
+</blockquote>
+<h3 id="step-2--install-firebase-cli-and-log-in">Step 2 — Install Firebase CLI and log in</h3>
+<pre class="language-sh"><code class="language-sh"># Install Firebase CLI (once)
+npm install -g firebase-tools
+
+# Log in
+firebase login
+</code></pre>
+<h3 id="step-3--install-flutterfire-cli">Step 3 — Install FlutterFire CLI</h3>
+<pre class="language-sh"><code class="language-sh"># With FVM
+fvm dart pub global activate flutterfire_cli
+
+# Without FVM
+dart pub global activate flutterfire_cli
+</code></pre>
+<h3 id="step-4--configure-each-flavor">Step 4 — Configure each flavor</h3>
+<p>Run the following command three times, replacing <code>&lt;project-id&gt;</code> with the actual Firebase project ID:</p>
+<pre class="language-sh"><code class="language-sh"># dev
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-dev \
+  --out=lib/firebase/dev/firebase_options.dart \
+  --platforms=android,ios
+
+# uat
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-uat \
+  --out=lib/firebase/uat/firebase_options.dart \
+  --platforms=android,ios
+
+# prod
+fvm dart pub global run flutterfire_cli:flutterfire configure \
+  --project=flutter-base-prod \
+  --out=lib/firebase/prod/firebase_options.dart \
+  --platforms=android,ios
+</code></pre>
+<blockquote>
+<p>Without FVM, replace <code>fvm dart pub global run flutterfire_cli:flutterfire</code> with <code>flutterfire</code>.</p>
+</blockquote>
+<p>Each run generates:</p>
+<ul>
+<li><code>lib/firebase/{flavor}/firebase_options.dart</code></li>
+<li><code>android/app/google-services.json</code> ← <strong>copy manually</strong> (see step 5)</li>
+<li><code>ios/Runner/GoogleService-Info.plist</code> ← <strong>copy manually</strong> (see step 5)</li>
+</ul>
+<blockquote>
+<p><code>firebase_options.dart</code> is committed to git. <code>google-services.json</code> and <code>GoogleService-Info.plist</code> are gitignored — <strong>do not commit</strong>.</p>
+</blockquote>
+<h3 id="step-5--place-native-config-files-per-flavor">Step 5 — Place native config files per flavor</h3>
+<p><strong>Android</strong> — copy each file into the corresponding flavor src directory:</p>
+<pre class="language-dart"><code>android/app/src/dev/google-services.json
+android/app/src/uat/google-services.json
+android/app/src/prod/google-services.json
+</code></pre>
+<p><strong>iOS</strong> — copy into a flavor subdirectory (create the directory if it does not exist):</p>
+<pre class="language-dart"><code>ios/config/dev/GoogleService-Info.plist
+ios/config/uat/GoogleService-Info.plist
+ios/config/prod/GoogleService-Info.plist
+</code></pre>
+<p>Then add a Run Script build phase in Xcode to copy the correct file for the active build configuration:</p>
+<pre class="language-sh"><code class="language-sh"># Xcode → Build Phases → Run Script
+cp "${PROJECT_DIR}/config/${FLUTTER_BUILD_MODE}/GoogleService-Info.plist" \
+   "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+</code></pre>
+<h3 id="step-6--android-flavor-config-in-buildgradle">Step 6 — Android flavor config in build.gradle</h3>
+<p>Add to <code>android/app/build.gradle.kts</code>:</p>
+<pre class="language-kotlin"><code class="language-kotlin">android {
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+        create("uat") {
+            dimension = "env"
+            applicationIdSuffix = ".uat"
+            versionNameSuffix = "-uat"
+        }
+        create("prod") {
+            dimension = "env"
+        }
+    }
+}
+</code></pre>
+<h3 id="step-7--add-google-services-plugin-android">Step 7 — Add Google Services plugin (Android)</h3>
+<p><code>android/build.gradle.kts</code>:</p>
+<pre class="language-kotlin"><code class="language-kotlin">plugins {
+    id("com.google.gms.google-services") version "4.4.2" apply false
+}
+</code></pre>
+<p><code>android/app/build.gradle.kts</code>:</p>
+<pre class="language-kotlin"><code class="language-kotlin">plugins {
+    id("com.google.gms.google-services")
+}
+</code></pre>
+<h3 id="verify">Verify</h3>
+<pre class="language-sh"><code class="language-sh">flutter pub get
+flutter run --flavor dev
+</code></pre>
+<h2 id="changing-package-name">Changing package name</h2>
+<pre class="language-sh"><code class="language-sh"># 1. Uncomment change_app_package_name in pubspec.yaml
+# 2. Run:
+flutter pub run change_app_package_name:main com.new.package.name
+# 3. Re-comment the package
+</code></pre>
+<h2 id="ios-setup">iOS setup</h2>
+<p>This project uses Swift Package Manager — no CocoaPods required.</p>
+<pre class="language-sh"><code class="language-sh"># Regenerate Flutter SPM config after adding/removing packages
+fvm flutter build ios --config-only
+</code></pre>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="base">
+  <span class="name"><a href="base/">base</a></span> 
+
+</dt>
+<dd>Flutter base project — production boilerplate built on BLoC/Cubit,
+GoRouter, Material 3 theming, and multi-flavor Firebase support.
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">flutter_base package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">flutter_base</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="base/">base</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    flutter_base
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

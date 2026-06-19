@@ -39,17 +39,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Setup Flutter ────────────────────────────────────────────────
-      # Uses the Flutter version declared in .fvmrc / pubspec if available,
-      # otherwise falls back to the latest stable release.
-      # Remove flutter-version and add fvm: true if the project uses FVM.
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true             # cache the Flutter SDK between runs
-
-      # ── 3. Merge outputs into a single deploy folder ─────────────────────
+      # ── 2. Merge outputs into a single deploy folder ─────────────────────
       # deploy/
       # ├── index.html              ← landing page (created in step 8)
       # ├── api/                    ← flutter_base doc
@@ -61,7 +51,7 @@ jobs:
           cp -r doc/api/. deploy/api/
           cp -r pkgs/dart_cli/doc/api/. deploy/pkgs/dart_cli/api/
 
-      # ── 4. Create landing page ───────────────────────────────────────────
+      # ── 3. Create landing page ───────────────────────────────────────────
       # Simple HTML index so visitors see both doc links at the root URL.
       # Replace the content with your own branding if needed.
       - name: Create landing page
@@ -80,7 +70,7 @@ jobs:
           </html>
           EOF
 
-      # ── 5. Upload artifact to Pages ──────────────────────────────────────
+      # ── 4. Upload artifact to Pages ──────────────────────────────────────
       # Packages the deployment/ folder as a Pages artifact.
       # actions/upload-pages-artifact expects a flat folder, not a zip.
       - name: Upload Pages artifact
@@ -88,7 +78,7 @@ jobs:
         with:
           path: deploy
 
-      # ── 6. Deploy to GitHub Pages ───────────────────────────────────────
+      # ── 5. Deploy to GitHub Pages ───────────────────────────────────────
       # Publishes the uploaded artifact to the Pages environment.
       # The live URL is captured in steps.deployment.outputs.page_url
       # and shown in the Actions summary.

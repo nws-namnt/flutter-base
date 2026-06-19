@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the m3MarkdownStyle property from the ContextExtension extension, for the Dart programming language.">
+  <title>m3MarkdownStyle property - ContextExtension extension - context_extension library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">flutter_base</a></li>
+    <li><a href="../../utils_extensions_context_extension/">utils&#47;extensions&#47;context_extension.dart</a></li>
+    <li><a href="../../utils_extensions_context_extension/ContextExtension.html">ContextExtension</a></li>
+    <li class="self-crumb">m3MarkdownStyle property</li>
+  </ol>
+  <div class="self-name">m3MarkdownStyle</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="utils_extensions_context_extension&#47;ContextExtension-extension-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-property">m3MarkdownStyle</span> property 
+</h1></div>
+
+    
+
+    
+        
+  <section id="getter">
+    <section class="multi-line-signature">
+      
+      <span class="returntype"><a href="https://pub.dev/documentation/flutter_markdown_plus/1.0.7/flutter_markdown_plus/MarkdownStyleSheet-class.html">MarkdownStyleSheet</a></span>
+      get
+      <span class="name ">m3MarkdownStyle</span>
+      
+
+    </section>
+    
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">MarkdownStyleSheet get m3MarkdownStyle {
+  final scheme = Theme.of(this).colorScheme;
+  final text = Theme.of(this).textTheme;
+
+  final body = text.bodyMedium?.copyWith(color: scheme.onSurface);
+  final muted = text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant);
+
+  return MarkdownStyleSheet(
+    &#47;&#47; ── Body ────────────────────────────────────────────────────────────────
+    p: body,
+    pPadding: const EdgeInsets.only(bottom: 8),
+
+    &#47;&#47; ── Headings ─────────────────────────────────────────────────────────────
+    h1: text.headlineMedium?.copyWith(color: scheme.onSurface),
+    h1Padding: const EdgeInsets.only(top: 8, bottom: 12),
+    h2: text.titleLarge?.copyWith(color: scheme.onSurface),
+    h2Padding: const EdgeInsets.only(top: 8, bottom: 8),
+    h3: text.titleMedium?.copyWith(color: scheme.onSurface, fontWeight: FontWeight.w600),
+    h3Padding: const EdgeInsets.only(top: 4, bottom: 4),
+
+    &#47;&#47; ── Inline code ──────────────────────────────────────────────────────────
+    code: text.bodySmall?.copyWith(
+      color: scheme.primary,
+      backgroundColor: scheme.surfaceContainerHighest,
+      fontFamily: &#39;monospace&#39;,
+    ),
+
+    &#47;&#47; ── Code block ───────────────────────────────────────────────────────────
+    codeblockPadding: const EdgeInsets.all(12),
+    codeblockDecoration: BoxDecoration(
+      color: scheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: scheme.outlineVariant),
+    ),
+
+    &#47;&#47; ── Blockquote ───────────────────────────────────────────────────────────
+    blockquote: muted,
+    blockquotePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    blockquoteDecoration: BoxDecoration(
+      color: scheme.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(4),
+      border: Border(
+        left: BorderSide(color: scheme.primary, width: 4),
+      ),
+    ),
+
+    &#47;&#47; ── Horizontal rule ──────────────────────────────────────────────────────
+    horizontalRuleDecoration: BoxDecoration(
+      border: Border(
+        top: BorderSide(color: scheme.outlineVariant, width: 1),
+      ),
+    ),
+
+    &#47;&#47; ── Links ────────────────────────────────────────────────────────────────
+    a: text.bodyMedium?.copyWith(
+      color: scheme.primary,
+      decoration: TextDecoration.underline,
+      decorationColor: scheme.primary,
+    ),
+
+    &#47;&#47; ── Lists ────────────────────────────────────────────────────────────────
+    listBullet: body,
+    listIndent: 20,
+
+    &#47;&#47; ── Table ────────────────────────────────────────────────────────────────
+    tableHead: text.bodyMedium?.copyWith(
+      color: scheme.onSurface,
+      fontWeight: FontWeight.w600,
+    ),
+    tableBody: body,
+    tableBorder: TableBorder.all(color: scheme.outlineVariant),
+    tableHeadAlign: TextAlign.left,
+    tableCellsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    tableColumnWidth: const FlexColumnWidth(),
+
+    &#47;&#47; ── Emphasis &#47; Strong ────────────────────────────────────────────────────
+    em: body?.copyWith(fontStyle: FontStyle.italic),
+    strong: body?.copyWith(fontWeight: FontWeight.w700),
+
+    &#47;&#47; ── Scaffold background ──────────────────────────────────────────────────
+    &#47;&#47; Makes the Markdown widget&#39;s own background transparent so Scaffold&#39;s
+    &#47;&#47; surface color shows through correctly.
+    blockSpacing: 8,
+  );
+}</code></pre>
+</section>
+
+  </section>
+
+
+</div> <!-- /.main-content -->
+<div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+  <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">flutter_base</a></li>
+    <li><a href="../../utils_extensions_context_extension/">context_extension</a></li>
+    <li><a href="../../utils_extensions_context_extension/ContextExtension.html">ContextExtension</a></li>
+    <li class="self-crumb">m3MarkdownStyle property</li>
+</ol>
+
+  <h5>ContextExtension extension on <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></h5>
+  <div id="dartdoc-sidebar-left-content"></div>
+</div><!--/.sidebar-offcanvas-->
+<div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    flutter_base
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

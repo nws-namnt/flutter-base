@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="utils library API docs, for the Dart programming language.">
+  <title>utils library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">flutter_base</a></li>
+    <li class="self-crumb">utils/utils.dart</li>
+  </ol>
+  <div class="self-name">utils</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar=""
+    data-below-sidebar="utils&#47;utils-library-sidebar.html">
+  
+    <div>
+      
+
+      <h1>
+        <span class="kind-library">utils/utils</span>
+        library 
+ 
+
+      </h1>
+    </div>
+
+    
+<section class="desc markdown">
+  <p>Logging utilities and Dart / Flutter extension methods.</p>
+<p><strong>Logging</strong> (<code>app_logger.dart</code>)</p>
+<ul>
+<li><a href="../utils_app_logger/trace.html">trace</a>, <a href="../utils_app_logger/debug.html">debug</a>, <a href="../utils_app_logger/info.html">info</a>, <a href="../utils_app_logger/warn.html">warn</a>, <a href="../utils_app_logger/err.html">err</a>, <a href="../utils_app_logger/fatal.html">fatal</a> — structured log helpers</li>
+<li><a href="../utils_app_logger/simpleLog.html">simpleLog</a> — lightweight debug print (no-op in release)</li>
+<li><a href="../utils_app_logger/devLog.html">devLog</a> — writes to <code>dart:developer</code> (visible in DevTools)</li>
+<li><a href="../utils_app_logger/AppFilter-class.html">AppFilter</a> — <code>LogFilter</code> that passes only warning + error events</li>
+</ul>
+<p><strong>Extensions</strong></p>
+<ul>
+<li><a href="../utils_extensions_context_extension/ContextExtension.html">ContextExtension</a> — <code>BuildContext.m3MarkdownStyle</code> for themed Markdown</li>
+<li><a href="../utils_extensions_string_extension/StringExtension.html">StringExtension</a> — flavor detection and Firebase options from bundle ID</li>
+</ul>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+      <dl>
+          <dt id="AppFilter">
+  <span class="name "><a href="../utils_app_logger/AppFilter-class.html">AppFilter</a></span> 
+
+</dt>
+<dd>
+  A <code>LogFilter</code> that passes only <code>Level.warning</code> and <code>Level.error</code> events.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+    <section class="summary offset-anchor" id="extensions">
+      <h2>Extensions</h2>
+      <dl>
+          <dt id="ContextExtension">
+  <span class="name "><a href="../utils_extensions_context_extension/ContextExtension.html">ContextExtension</a></span>
+  on BuildContext
+  
+
+</dt>
+<dd>
+  Builds a <code>MarkdownStyleSheet</code> derived from the current M3 <code>ColorScheme</code>
+and <code>TextTheme</code>. Call inside <code>build</code> so it picks up light/dark changes.
+</dd>
+
+          <dt id="StringExtension">
+  <span class="name "><a href="../utils_extensions_string_extension/StringExtension.html">StringExtension</a></span>
+  on String
+  
+
+</dt>
+<dd>
+  String helpers used during app startup to resolve the active flavor.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+    <section class="summary offset-anchor" id="functions">
+      <h2>Functions</h2>
+      <dl class="callables">
+          <dt id="customLog" class="callable">
+  <span class="name"><a href="../utils_app_logger/customLog.html">customLog</a></span><span class="signature">(<wbr><span class="parameter" id="customLog-param-level"><span class="type-annotation">Level</span> <span class="parameter-name">level</span>, </span><span class="parameter" id="customLog-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="customLog-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="customLog-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs at an arbitrary <code>Level</code>. Use when the level must be chosen dynamically.
+  
+
+</dd>
+
+          <dt id="debug" class="callable">
+  <span class="name"><a href="../utils_app_logger/debug.html">debug</a></span><span class="signature">(<wbr><span class="parameter" id="debug-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="debug-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="debug-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.debug</code> message (developer diagnostics).
+  
+
+</dd>
+
+          <dt id="devLog" class="callable">
+  <span class="name"><a href="../utils_app_logger/devLog.html">devLog</a></span><span class="signature">(<wbr><span class="parameter" id="devLog-param-mess"><span class="type-annotation">String</span> <span class="parameter-name">mess</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Writes directly to <code>dart:developer</code> log (visible in the DevTools log view).
+  
+
+</dd>
+
+          <dt id="err" class="callable">
+  <span class="name"><a href="../utils_app_logger/err.html">err</a></span><span class="signature">(<wbr><span class="parameter" id="err-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="err-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="err-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.error</code> message (operation failed, app can continue).
+  
+
+</dd>
+
+          <dt id="fatal" class="callable">
+  <span class="name"><a href="../utils_app_logger/fatal.html">fatal</a></span><span class="signature">(<wbr><span class="parameter" id="fatal-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="fatal-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="fatal-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.fatal</code> message (unrecoverable error, app should terminate).
+  
+
+</dd>
+
+          <dt id="info" class="callable">
+  <span class="name"><a href="../utils_app_logger/info.html">info</a></span><span class="signature">(<wbr><span class="parameter" id="info-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="info-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="info-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.info</code> message (expected significant events).
+  
+
+</dd>
+
+          <dt id="simpleLog" class="callable">
+  <span class="name"><a href="../utils_app_logger/simpleLog.html">simpleLog</a></span><span class="signature">(<wbr><span class="parameter" id="simpleLog-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Prints <code>message</code> to the console in debug builds only (no-op in release).
+  
+
+</dd>
+
+          <dt id="trace" class="callable">
+  <span class="name"><a href="../utils_app_logger/trace.html">trace</a></span><span class="signature">(<wbr><span class="parameter" id="trace-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="trace-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="trace-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.trace</code> message (most verbose — granular flow tracing).
+  
+
+</dd>
+
+          <dt id="warn" class="callable">
+  <span class="name"><a href="../utils_app_logger/warn.html">warn</a></span><span class="signature">(<wbr><span class="parameter" id="warn-param-message"><span class="type-annotation">dynamic</span> <span class="parameter-name">message</span>, [</span><span class="parameter" id="warn-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="warn-param-stackTrace"><span class="type-annotation">StackTrace?</span> <span class="parameter-name">stackTrace</span></span>])
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Logs a <code>Level.warning</code> message (unexpected but recoverable situation).
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">flutter_base</a></li>
+    <li class="self-crumb">utils/utils.dart</li>
+</ol>
+
+    <h5><span class="package-name">flutter_base</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../app/">app/app</a></li>
+      <li><a href="../common/">common/common</a></li>
+      <li><a href="../pages/">pages/pages</a></li>
+      <li><a href="../routing/">routing/routing</a></li>
+      <li><a href="../utils/">utils/utils</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>utils library</h5>
+  </div><!--/sidebar-offcanvas-right-->
+</main>
+<footer>
+  <span class="no-break">
+    flutter_base
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

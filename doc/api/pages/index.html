@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="pages library API docs, for the Dart programming language.">
+  <title>pages library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">flutter_base</a></li>
+    <li class="self-crumb">pages/pages.dart</li>
+  </ol>
+  <div class="self-name">pages</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar=""
+    data-below-sidebar="pages&#47;pages-library-sidebar.html">
+  
+    <div>
+      
+
+      <h1>
+        <span class="kind-library">pages/pages</span>
+        library 
+ 
+
+      </h1>
+    </div>
+
+    
+<section class="desc markdown">
+  <p>All screens, cubits, states, and shared widgets of the app.</p>
+<p><strong>Shell</strong></p>
+<ul>
+<li><a href="../pages_shell_shell_page/ShellPage-class.html">ShellPage</a> — root scaffold with bottom navigation bar</li>
+</ul>
+<p><strong>Tab screens</strong></p>
+<ul>
+<li><a href="../pages_home_home_page/HomePage-class.html">HomePage</a> / <a href="../pages_home_home_cubit/HomeCubit-class.html">HomeCubit</a> / <a href="../pages_home_home_state/HomeState-class.html">HomeState</a></li>
+<li><a href="../pages_service_service_page/ServicePage-class.html">ServicePage</a> / <a href="../pages_service_service_cubit/ServiceCubit-class.html">ServiceCubit</a> / <a href="../pages_service_service_state/ServiceState-class.html">ServiceState</a></li>
+<li><a href="../pages_setting_setting_page/SettingPage-class.html">SettingPage</a> / <a href="../pages_setting_setting_cubit/SettingCubit-class.html">SettingCubit</a> / <a href="../pages_setting_setting_state/SettingState-class.html">SettingState</a></li>
+</ul>
+<p><strong>Standalone screens</strong></p>
+<ul>
+<li><a href="../pages_splash_splash_page/SplashPage-class.html">SplashPage</a> / <a href="../pages_splash_splash_cubit/SplashCubit-class.html">SplashCubit</a> / <a href="../pages_splash_splash_state/SplashState-class.html">SplashState</a></li>
+<li><a href="../pages_privacy_privacy_page/PrivacyPage-class.html">PrivacyPage</a> — Privacy Policy rendered from Markdown asset</li>
+<li><a href="../pages_terms_terms_page/TermsPage-class.html">TermsPage</a> — Terms of Service rendered from Markdown asset</li>
+</ul>
+<p><strong>Shared widgets</strong></p>
+<ul>
+<li><a href="../pages_widgets_animated_bottom_navigation_widget/AnimatedBranchContainer-class.html">AnimatedBranchContainer</a> — animated tab body for <code>StatefulShellRoute</code></li>
+<li><a href="../pages_widgets_not_found_page/NotFoundPage-class.html">NotFoundPage</a> — 404 fallback</li>
+<li><a href="../pages_widgets_transition_widget/TransitionPage-class.html">TransitionPage</a> — <code>CustomTransitionPage</code> with <a href="../pages_widgets_transition_widget/PageTransitionType.html">PageTransitionType</a></li>
+<li><a href="../pages_widgets_transition_shell_widget/ShellTransitionType.html">ShellTransitionType</a> — transition styles for shell tab switches</li>
+</ul>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+      <dl>
+          <dt id="AnimatedBranchContainer">
+  <span class="name "><a href="../pages_widgets_animated_bottom_navigation_widget/AnimatedBranchContainer-class.html">AnimatedBranchContainer</a></span> 
+
+</dt>
+<dd>
+  Renders all navigation branches in a <code>Stack</code>, keeping inactive branches
+in an <code>Offstage</code> so their state is preserved. The newly activated branch
+animates in using <a href="../pages_widgets_animated_bottom_navigation_widget/AnimatedBranchContainer/transitionType.html">transitionType</a>.
+</dd>
+
+          <dt id="HomeCubit">
+  <span class="name "><a href="../pages_home_home_cubit/HomeCubit-class.html">HomeCubit</a></span> 
+
+</dt>
+<dd>
+  Cubit for the <a href="../pages_home_home_page/HomePage-class.html">HomePage</a>.
+</dd>
+
+          <dt id="HomePage">
+  <span class="name "><a href="../pages_home_home_page/HomePage-class.html">HomePage</a></span> 
+
+</dt>
+<dd>
+  The Home tab screen, hosted inside the navigation shell at <a href="../routing_routers/Routers.html">Routers.home</a>.
+</dd>
+
+          <dt id="HomeState">
+  <span class="name "><a href="../pages_home_home_state/HomeState-class.html">HomeState</a></span> 
+
+</dt>
+<dd>
+  Immutable state for the <a href="../pages_home_home_page/HomePage-class.html">HomePage</a>, managed by <a href="../pages_home_home_cubit/HomeCubit-class.html">HomeCubit</a>.
+</dd>
+
+          <dt id="NotFoundPage">
+  <span class="name "><a href="../pages_widgets_not_found_page/NotFoundPage-class.html">NotFoundPage</a></span> 
+
+</dt>
+<dd>
+  404 fallback page shown when no route matches.
+</dd>
+
+          <dt id="PrivacyPage">
+  <span class="name "><a href="../pages_privacy_privacy_page/PrivacyPage-class.html">PrivacyPage</a></span> 
+
+</dt>
+<dd>
+  Displays the Privacy Policy loaded from <code>assets/docs/privacy.md</code>.
+</dd>
+
+          <dt id="ServiceCubit">
+  <span class="name "><a href="../pages_service_service_cubit/ServiceCubit-class.html">ServiceCubit</a></span> 
+
+</dt>
+<dd>
+  Cubit for the <a href="../pages_service_service_page/ServicePage-class.html">ServicePage</a>.
+</dd>
+
+          <dt id="ServicePage">
+  <span class="name "><a href="../pages_service_service_page/ServicePage-class.html">ServicePage</a></span> 
+
+</dt>
+<dd>
+  The Service tab screen, hosted inside the navigation shell at <a href="../routing_routers/Routers.html">Routers.service</a>.
+</dd>
+
+          <dt id="ServiceState">
+  <span class="name "><a href="../pages_service_service_state/ServiceState-class.html">ServiceState</a></span> 
+
+</dt>
+<dd>
+  Immutable state for the <a href="../pages_service_service_page/ServicePage-class.html">ServicePage</a>, managed by <a href="../pages_service_service_cubit/ServiceCubit-class.html">ServiceCubit</a>.
+</dd>
+
+          <dt id="SettingCubit">
+  <span class="name "><a href="../pages_setting_setting_cubit/SettingCubit-class.html">SettingCubit</a></span> 
+
+</dt>
+<dd>
+  Cubit for the <a href="../pages_setting_setting_page/SettingPage-class.html">SettingPage</a>.
+</dd>
+
+          <dt id="SettingPage">
+  <span class="name "><a href="../pages_setting_setting_page/SettingPage-class.html">SettingPage</a></span> 
+
+</dt>
+<dd>
+  The Settings tab screen, hosted inside the navigation shell at <a href="../routing_routers/Routers.html">Routers.setting</a>.
+</dd>
+
+          <dt id="SettingState">
+  <span class="name "><a href="../pages_setting_setting_state/SettingState-class.html">SettingState</a></span> 
+
+</dt>
+<dd>
+  Immutable state for the <a href="../pages_setting_setting_page/SettingPage-class.html">SettingPage</a>, managed by <a href="../pages_setting_setting_cubit/SettingCubit-class.html">SettingCubit</a>.
+</dd>
+
+          <dt id="ShellPage">
+  <span class="name "><a href="../pages_shell_shell_page/ShellPage-class.html">ShellPage</a></span> 
+
+</dt>
+<dd>
+  Root scaffold for the bottom-navigation shell.
+</dd>
+
+          <dt id="SplashCubit">
+  <span class="name "><a href="../pages_splash_splash_cubit/SplashCubit-class.html">SplashCubit</a></span> 
+
+</dt>
+<dd>
+  Cubit that drives the two-phase splash animation sequence.
+</dd>
+
+          <dt id="SplashPage">
+  <span class="name "><a href="../pages_splash_splash_page/SplashPage-class.html">SplashPage</a></span> 
+
+</dt>
+<dd>
+  Animated splash screen shown at app startup (<code>/</code>).
+</dd>
+
+          <dt id="SplashState">
+  <span class="name "><a href="../pages_splash_splash_state/SplashState-class.html">SplashState</a></span> 
+
+</dt>
+<dd>
+  Immutable state for <a href="../pages_splash_splash_page/SplashPage-class.html">SplashPage</a>, managed by <a href="../pages_splash_splash_cubit/SplashCubit-class.html">SplashCubit</a>.
+</dd>
+
+          <dt id="TermsPage">
+  <span class="name "><a href="../pages_terms_terms_page/TermsPage-class.html">TermsPage</a></span> 
+
+</dt>
+<dd>
+  Displays the Terms of Service loaded from <code>assets/docs/terms.md</code>.
+</dd>
+
+          <dt id="TransitionPage">
+  <span class="name "><a href="../pages_widgets_transition_widget/TransitionPage-class.html">TransitionPage</a></span> 
+
+</dt>
+<dd>
+  A <code>CustomTransitionPage</code> preconfigured with a <a href="../pages_widgets_transition_widget/PageTransitionType.html">PageTransitionType</a>.
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="enums">
+      <h2>Enums</h2>
+      <dl>
+          <dt id="DialogTransitionType">
+  <span class="name "><a href="../pages_widgets_transition_widget/DialogTransitionType.html">DialogTransitionType</a></span> 
+
+</dt>
+<dd>
+  Transition styles for full-screen dialogs.
+</dd>
+
+          <dt id="PageTransitionType">
+  <span class="name "><a href="../pages_widgets_transition_widget/PageTransitionType.html">PageTransitionType</a></span> 
+
+</dt>
+<dd>
+  Route transition styles for <a href="../pages_widgets_transition_widget/TransitionPage-class.html">TransitionPage</a>.
+</dd>
+
+          <dt id="ShellTransitionType">
+  <span class="name "><a href="../pages_widgets_transition_shell_widget/ShellTransitionType.html">ShellTransitionType</a></span> 
+
+</dt>
+<dd>
+  Transition types for bottom navigation shell tab switches.
+</dd>
+
+          <dt id="SplashStatus">
+  <span class="name "><a href="../pages_splash_splash_state/SplashStatus.html">SplashStatus</a></span> 
+
+</dt>
+<dd>
+  Animation phase of the splash screen.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+    <section class="summary offset-anchor" id="extensions">
+      <h2>Extensions</h2>
+      <dl>
+          <dt id="PageTransitionExt">
+  <span class="name "><a href="../pages_widgets_transition_widget/PageTransitionExt.html">PageTransitionExt</a></span>
+  on <a href="../pages_widgets_transition_widget/PageTransitionType.html">PageTransitionType</a>
+  
+
+</dt>
+<dd>
+  Extension that converts a <a href="../pages_widgets_transition_widget/PageTransitionType.html">PageTransitionType</a> into a concrete transition widget.
+</dd>
+
+          <dt id="ShellTransitionExt">
+  <span class="name "><a href="../pages_widgets_transition_shell_widget/ShellTransitionExt.html">ShellTransitionExt</a></span>
+  on <a href="../pages_widgets_transition_shell_widget/ShellTransitionType.html">ShellTransitionType</a>
+  
+
+</dt>
+<dd>
+  Extension that converts a <a href="../pages_widgets_transition_shell_widget/ShellTransitionType.html">ShellTransitionType</a> into a concrete widget.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">flutter_base</a></li>
+    <li class="self-crumb">pages/pages.dart</li>
+</ol>
+
+    <h5><span class="package-name">flutter_base</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../app/">app/app</a></li>
+      <li><a href="../common/">common/common</a></li>
+      <li><a href="../pages/">pages/pages</a></li>
+      <li><a href="../routing/">routing/routing</a></li>
+      <li><a href="../utils/">utils/utils</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>pages library</h5>
+  </div><!--/sidebar-offcanvas-right-->
+</main>
+<footer>
+  <span class="no-break">
+    flutter_base
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

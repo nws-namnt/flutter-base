@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="dart_cli API docs, for the Dart programming language.">
+  <title>dart_cli - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">dart_cli package</li>
+  </ol>
+  <div class="self-name">dart_cli</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="dart_cli--custom-flutter-development-cli">dart_cli — Custom Flutter Development CLI</h1>
+<p>An interactive command-line tool for Flutter development workflows. Wraps common <code>flutter</code> and <code>dart pub</code> commands behind a navigable menu, with FVM (Flutter Version Manager) detection, colored output, and animated spinners.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#menu-structure">Menu Structure</a></li>
+<li><a href="#commands">Commands</a>
+<ul>
+<li><a href="#basic-commands">Basic Commands</a></li>
+<li><a href="#pub-commands">Pub Commands</a></li>
+<li><a href="#dart-doc-commands">Dart Doc Commands</a></li>
+</ul>
+</li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#fvm-support">FVM Support</a></li>
+<li><a href="#project-structure">Project Structure</a></li>
+</ul>
+<hr>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Dart SDK <code>^3.8.1</code></li>
+<li>Flutter SDK (or FVM)</li>
+</ul>
+<hr>
+<h2 id="installation">Installation</h2>
+<h3 id="clone-the-repository">Clone the repository</h3>
+<pre class="language-bash"><code class="language-bash">cd pkgs/dart_cli
+dart pub get
+</code></pre>
+<h3 id="option-1--global-activation-recommended-for-development">Option 1 — Global activation (recommended for development)</h3>
+<p>Activate the package globally so <code>dart_cli</code> is available from any directory:</p>
+<pre class="language-bash"><code class="language-bash">dart pub global activate --source path .
+</code></pre>
+<p>Run the CLI:</p>
+<pre class="language-bash"><code class="language-bash">dart_cli           # opens interactive menu
+dart_cli &lt;command&gt; # runs a specific command directly
+</code></pre>
+<blockquote>
+<p>Make sure <code>~/.pub-cache/bin</code> is on your <code>$PATH</code>. Add this to your shell profile if needed:</p>
+<pre class="language-bash"><code class="language-bash">export PATH="$PATH:$HOME/.pub-cache/bin"
+</code></pre>
+</blockquote>
+<h3 id="option-2--compile-to-binary-recommended-for-distribution">Option 2 — Compile to binary (recommended for distribution)</h3>
+<p>Produces a self-contained executable with fast startup and no Dart SDK dependency:</p>
+<pre class="language-bash"><code class="language-bash">dart compile exe bin/cli_runner.dart -o dart_cli
+</code></pre>
+<p>Run directly:</p>
+<pre class="language-bash"><code class="language-bash">./dart_cli           # interactive menu
+./dart_cli &lt;command&gt; # direct command
+</code></pre>
+<p>Move to <code>$PATH</code> for global access:</p>
+<pre class="language-bash"><code class="language-bash">sudo mv dart_cli /usr/local/bin/
+</code></pre>
+<h3 id="option-3--shell-script-wrapper-recommended-for-team-setup">Option 3 — Shell script wrapper (recommended for team setup)</h3>
+<p>Create a <code>run.sh</code> in the package root:</p>
+<pre class="language-bash"><code class="language-bash">#!/bin/bash
+# run.sh — wrapper for dart_cli
+# Automatically uses FVM if available, falls back to system dart.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &amp;&amp; pwd)"
+
+if command -v fvm &amp;&gt; /dev/null; then
+    fvm dart run "$SCRIPT_DIR/bin/cli_runner.dart" "$@"
+else
+    dart run "$SCRIPT_DIR/bin/cli_runner.dart" "$@"
+fi
+</code></pre>
+<p>Make it executable:</p>
+<pre class="language-bash"><code class="language-bash">chmod +x run.sh
+</code></pre>
+<p>Run:</p>
+<pre class="language-bash"><code class="language-bash">./run.sh           # interactive menu
+./run.sh &lt;command&gt; # direct command
+./run.sh --help
+</code></pre>
+<blockquote>
+<p>This option requires the Dart SDK (or FVM) to be installed but avoids the global activation step. Useful for sharing within a team via the repo — everyone just runs <code>./run.sh</code>.</p>
+</blockquote>
+<hr>
+<h2 id="usage">Usage</h2>
+<h3 id="interactive-menu">Interactive menu</h3>
+<p>Running without arguments opens the full interactive menu:</p>
+<pre class="language-bash"><code class="language-bash">dart_cli
+</code></pre>
+<p>Navigate with arrow keys, confirm with Enter.</p>
+<h3 id="direct-command-invocation">Direct command invocation</h3>
+<p>Commands can also be called directly without going through the menu:</p>
+<pre class="language-bash"><code class="language-bash">dart_cli run --flavor dev --mode debug --device &lt;device_id&gt;
+dart_cli build --flavor prod --type apk --mode release
+dart_cli gen
+dart_cli doctor
+dart_cli clean
+dart_cli device
+dart_cli emulator
+dart_cli get
+dart_cli cache-clean
+dart_cli cache-repair
+dart_cli gen-doc
+dart_cli view-doc
+</code></pre>
+<h3 id="help">Help</h3>
+<pre class="language-bash"><code class="language-bash">dart_cli --help
+dart_cli &lt;command&gt; --help
+</code></pre>
+<hr>
+<h2 id="menu-structure">Menu Structure</h2>
+<pre class="language-dart"><code>Main menu
+├── Basic command
+│   ├── Run
+│   ├── Build
+│   ├── Generate model
+│   ├── Doctor
+│   ├── Clean
+│   ├── Device
+│   ├── Emulator
+│   ├── Back
+│   └── Exit
+├── Pub
+│   ├── Pub Get
+│   ├── Pub Cache Clean
+│   ├── Pub Cache Repair
+│   ├── Back
+│   └── Exit
+├── Dart doc
+│   ├── Gen doc
+│   ├── View doc
+│   ├── Back
+│   └── Exit
+└── Exit
+</code></pre>
+<hr>
+<h2 id="commands">Commands</h2>
+<h3 id="basic-commands">Basic Commands</h3>
+<h4 id="run"><code>run</code></h4>
+<p>Runs the Flutter app on a connected device or emulator.</p>
+<p><strong>Interactive mode</strong> — prompts for flavor, run mode, and device selection:</p>
+<pre class="language-bash"><code class="language-bash">dart_cli run
+</code></pre>
+<p><strong>Direct mode</strong> — pass all options as flags:</p>
+<pre class="language-bash"><code class="language-bash">dart_cli run --flavor dev --mode debug --device &lt;device_id&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Abbr</th>
+<th>Values</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--flavor</code></td>
+<td><code>-f</code></td>
+<td><code>dev</code>, <code>uat</code>, <code>prod</code></td>
+<td><code>dev</code></td>
+</tr>
+<tr>
+<td><code>--mode</code></td>
+<td><code>-m</code></td>
+<td><code>debug</code>, <code>profile</code>, <code>release</code></td>
+<td><code>debug</code></td>
+</tr>
+<tr>
+<td><code>--device</code></td>
+<td><code>-d</code></td>
+<td>any device id</td>
+<td><em>(prompted)</em></td>
+</tr>
+</tbody>
+</table>
+<p>When run interactively, the device list is fetched live via <code>flutter devices --machine</code> and presented as a selector. The default flavor and mode are read from <code>cli_config.yaml</code> if present.</p>
+<hr>
+<h4 id="build"><code>build</code></h4>
+<p>Builds the Flutter app for a target flavor and output type.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli build
+dart_cli build --flavor prod --type apk --mode release
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Abbr</th>
+<th>Values</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--flavor</code></td>
+<td><code>-f</code></td>
+<td><code>dev</code>, <code>uat</code>, <code>prod</code></td>
+<td><code>dev</code></td>
+</tr>
+<tr>
+<td><code>--type</code></td>
+<td><code>-t</code></td>
+<td><code>apk</code>, <code>appbundle</code>, <code>ipa</code></td>
+<td><code>apk</code></td>
+</tr>
+<tr>
+<td><code>--mode</code></td>
+<td><code>-m</code></td>
+<td><code>debug</code>, <code>profile</code>, <code>release</code></td>
+<td><code>release</code></td>
+</tr>
+</tbody>
+</table>
+<p>After a successful build, the output path is printed and automatically:</p>
+<ul>
+<li>copied to the clipboard (macOS only, via <code>pbcopy</code>)</li>
+<li>opened in Finder</li>
+</ul>
+<p>Output paths by type:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apk</code></td>
+<td><code>build/app/outputs/flutter-apk/</code></td>
+</tr>
+<tr>
+<td><code>appbundle</code></td>
+<td><code>build/app/outputs/bundle/&lt;flavor&gt;&lt;Mode&gt;/</code></td>
+</tr>
+<tr>
+<td><code>ipa</code></td>
+<td><code>build/ios/ipa/</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="gen"><code>gen</code></h4>
+<p>Runs <code>build_runner</code> for code generation (Retrofit, JSON serializable, Hive adapters).</p>
+<pre class="language-bash"><code class="language-bash">dart_cli gen          # interactive mode — prompts for build or watch
+dart_cli gen build    # one-time build
+dart_cli gen watch    # watch mode (Ctrl+C to stop)
+</code></pre>
+<p>Executes: <code>flutter pub run build_runner &lt;mode&gt; --delete-conflicting-outputs</code></p>
+<hr>
+<h4 id="doctor"><code>doctor</code></h4>
+<p>Runs <code>flutter doctor -v</code> interactively (stdout shared with terminal).</p>
+<pre class="language-bash"><code class="language-bash">dart_cli doctor
+</code></pre>
+<hr>
+<h4 id="clean"><code>clean</code></h4>
+<p>Cleans Flutter build artifacts.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli clean
+</code></pre>
+<p>Executes: <code>flutter clean</code></p>
+<hr>
+<h4 id="device"><code>device</code></h4>
+<p>Lists all connected devices in real time.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli device
+</code></pre>
+<p>Executes: <code>flutter devices</code></p>
+<hr>
+<h4 id="emulator"><code>emulator</code></h4>
+<p>Fetches available emulators and lets you select one to launch.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli emulator
+</code></pre>
+<p>Parses <code>flutter emulators</code> output, presents a selector, then runs <code>flutter emulators --launch &lt;id&gt;</code>.</p>
+<hr>
+<h3 id="pub-commands">Pub Commands</h3>
+<h4 id="get"><code>get</code></h4>
+<p>Fetches package dependencies.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli get
+</code></pre>
+<p>Executes: <code>flutter pub get</code></p>
+<hr>
+<h4 id="cache-clean"><code>cache-clean</code></h4>
+<p>Deletes the local pub cache.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli cache-clean
+</code></pre>
+<p>Executes: <code>flutter pub cache clean</code></p>
+<hr>
+<h4 id="cache-repair"><code>cache-repair</code></h4>
+<p>Reinstall all packages in the pub cache from their sources.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli cache-repair
+</code></pre>
+<p>Executes: <code>flutter pub cache repair</code></p>
+<hr>
+<h3 id="dart-doc-commands">Dart Doc Commands</h3>
+<h4 id="gen-doc"><code>gen-doc</code></h4>
+<p>Generates API documentation for the project at the current working directory.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli gen-doc
+</code></pre>
+<p>Resolves the Dart executable via FVM when available, then executes:</p>
+<pre class="language-dart"><code>fvm dart doc .   # with FVM
+dart doc .       # without FVM
+</code></pre>
+<p>Output is written to <code>doc/api/</code>. Run this before <code>view-doc</code>.</p>
+<hr>
+<h4 id="view-doc"><code>view-doc</code></h4>
+<p>Serves the generated API documentation locally via a Python HTTP server.</p>
+<pre class="language-bash"><code class="language-bash">dart_cli view-doc
+</code></pre>
+<p>Starts <code>python3 -m http.server 8080</code> inside <code>doc/api/</code> and opens it for browsing at:</p>
+<pre class="language-dart"><code>http://localhost:8080
+</code></pre>
+<p>Press <strong>Ctrl+C</strong> to stop the server and return to the menu. Requires <code>doc/api/</code> to exist — run <code>gen-doc</code> first if it does not.</p>
+<hr>
+<h2 id="configuration">Configuration</h2>
+<p>The CLI reads from a YAML config file to set default values for flavor, build type, and run mode. This avoids having to re-select the same options every session.</p>
+<p><strong>File lookup order</strong> (first found wins):</p>
+<ol>
+<li><code>cli_config.local.yaml</code> — personal overrides, not committed to git</li>
+<li><code>cli_config.yaml</code> — team-shared defaults</li>
+</ol>
+<p><strong>Example <code>cli_config.yaml</code>:</strong></p>
+<pre class="language-yaml"><code class="language-yaml">default_flavor: dev
+default_build_type: apk
+default_mode: debug
+</code></pre>
+<p><strong>Example <code>cli_config.local.yaml</code></strong> (personal override):</p>
+<pre class="language-yaml"><code class="language-yaml">default_flavor: uat
+default_build_type: appbundle
+default_mode: release
+</code></pre>
+<p>Add <code>cli_config.local.yaml</code> to <code>.gitignore</code> to keep personal overrides local.</p>
+<p>Supported keys:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Values</th>
+<th>Hardcoded default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default_flavor</code></td>
+<td><code>dev</code>, <code>uat</code>, <code>prod</code></td>
+<td><code>dev</code></td>
+</tr>
+<tr>
+<td><code>default_build_type</code></td>
+<td><code>apk</code>, <code>appbundle</code>, <code>ipa</code></td>
+<td><code>apk</code></td>
+</tr>
+<tr>
+<td><code>default_mode</code></td>
+<td><code>debug</code>, <code>profile</code>, <code>release</code></td>
+<td><code>release</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="fvm-support">FVM Support</h2>
+<p>The CLI automatically detects FVM at startup by checking <code>which fvm</code>. If FVM is found, all Flutter commands are prefixed with <code>fvm</code> (e.g. <code>fvm flutter pub get</code>). The detection result is cached for the entire session — <code>which fvm</code> runs at most once.</p>
+<p>The resolved executable is printed before each command runs:</p>
+<pre class="language-dart"><code>Execute: fvm flutter pub get
+Execute: flutter doctor -v
+</code></pre>
+<p>No configuration is required. If FVM is not installed, the CLI falls back to calling <code>flutter</code> directly.</p>
+<hr>
+<h2 id="project-structure">Project Structure</h2>
+<pre class="language-dart"><code>pkgs/dart_cli/
+├── bin/
+│   └── cli_runner.dart        # Entry point — menu or direct dispatch
+├── lib/
+│   ├── cli_config.dart        # Config loader (cli_config.yaml / env vars)
+│   ├── cli_menu.dart          # Runner (CommandRunner) + interactive menu
+│   ├── cli_models.dart        # MenuOption enum + firstLevelMenu data
+│   ├── cli_utils.dart         # FVM detection, runFlutter, printExec, logging
+│   └── cmd/
+│       ├── index.dart         # Barrel export
+│       ├── basic_cmd.dart     # RunCommand, BuildCommand, GenCommand, DoctorCommand,
+│       │                      # CleanCommand, DeviceCommand, EmulatorCommand
+│       ├── pub_cmd.dart       # GetCommand, CacheCleanCommand, CacheRepairCommand
+│       └── dart_doc_cmd.dart  # GenDocCommand, ViewDocCommand
+└── pubspec.yaml
+</code></pre>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="dart_cli">
+  <span class="name"><a href="dart_cli/">dart_cli</a></span> 
+
+</dt>
+<dd>A custom Flutter development CLI tool.
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">dart_cli package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">dart_cli</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="dart_cli/">dart_cli</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    dart_cli
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

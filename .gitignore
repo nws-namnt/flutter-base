@@ -28,6 +28,9 @@ devtools_options.yaml
 
 # Flutter/Dart/Pub related
 **/doc/api/
+!doc/api/
+!pkgs/dart_cli/doc/api/
+
 **/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins-dependencies
