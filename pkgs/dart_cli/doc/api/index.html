@@ -83,11 +83,9 @@ dart pub get
 <pre class="language-bash"><code class="language-bash">dart_cli           # opens interactive menu
 dart_cli &lt;command&gt; # runs a specific command directly
 </code></pre>
-<blockquote>
 <p>Make sure <code>~/.pub-cache/bin</code> is on your <code>$PATH</code>. Add this to your shell profile if needed:</p>
-<pre class="language-bash"><code class="language-bash">export PATH="$PATH:$HOME/.pub-cache/bin"
+<pre class="language-bash"><code class="language-bash">  export PATH="$PATH:$HOME/.pub-cache/bin"
 </code></pre>
-</blockquote>
 <h3 id="option-2--compile-to-binary-recommended-for-distribution">Option 2 — Compile to binary (recommended for distribution)</h3>
 <p>Produces a self-contained executable with fast startup and no Dart SDK dependency:</p>
 <pre class="language-bash"><code class="language-bash">dart compile exe bin/cli_runner.dart -o dart_cli

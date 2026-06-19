@@ -51,10 +51,10 @@ dart_cli           # opens interactive menu
 dart_cli <command> # runs a specific command directly
 ```
 
-> Make sure `~/.pub-cache/bin` is on your `$PATH`. Add this to your shell profile if needed:
-> ```bash
-> export PATH="$PATH:$HOME/.pub-cache/bin"
-> ```
+Make sure `~/.pub-cache/bin` is on your `$PATH`. Add this to your shell profile if needed:
+```bash
+  export PATH="$PATH:$HOME/.pub-cache/bin"
+```
 
 ### Option 2 — Compile to binary (recommended for distribution)
 
