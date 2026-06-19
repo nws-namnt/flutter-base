@@ -7,17 +7,29 @@ import 'app_config.dart' show AppConfig;
 /// Adapted for project: deprecated `colorScheme.background` replaced with
 /// `colorScheme.surface` per Material 3 spec.
 class M3Theme {
+  /// Creates an [M3Theme] instance. All scheme getters are static; this
+  /// constructor exists so the object can be stored as a `static final` field.
   const M3Theme();
 
+  /// Light theme at standard contrast.
   ThemeData get light => lightScheme.theme;
+
+  /// Light theme at medium contrast (accessibility).
   ThemeData get lightMediumContrast => lightMediumContrastScheme.theme;
+
+  /// Light theme at high contrast (accessibility).
   ThemeData get lightHighContrast => lightHighContrastScheme.theme;
 
+  /// Dark theme at standard contrast.
   ThemeData get dark => darkScheme.theme;
+
+  /// Dark theme at medium contrast (accessibility).
   ThemeData get darkMediumContrast => darkMediumContrastScheme.theme;
+
+  /// Dark theme at high contrast (accessibility).
   ThemeData get darkHighContrast => darkHighContrastScheme.theme;
 
-  // Light schemes
+  // ── Light color schemes ───────────────────────────────────────────────────
   static ColorScheme get lightScheme => const ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff000110),
@@ -310,8 +322,14 @@ class M3Theme {
   );
 }
 
-/// Extension for building new app theme
+/// Convenience extension that converts a [ColorScheme] into a full [ThemeData].
+///
+/// Used internally by [M3Theme] getters — not part of the public API.
 extension _AppThemeExtension on ColorScheme {
+  /// Builds a Material 3 [ThemeData] from this [ColorScheme].
+  ///
+  /// - Text colors are derived from [onSurface] so they adapt to dark/light.
+  /// - [InkSparkle] is used as the splash factory for a modern ripple effect.
   ThemeData get theme => ThemeData(
     useMaterial3: true,
     colorScheme: this,
@@ -321,6 +339,7 @@ extension _AppThemeExtension on ColorScheme {
     splashFactory: InkSparkle.splashFactory,
   );
 
+  /// Returns the Google Font text theme keyed by [AppConfig.kTextTheme].
   TextTheme get textTheme => GoogleFonts.getTextTheme(AppConfig.kTextTheme);
 }
 

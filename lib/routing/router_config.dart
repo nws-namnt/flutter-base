@@ -12,12 +12,23 @@ import '../pages/widgets/not_found_page.dart';
 import '../pages/widgets/transition_widget.dart';
 import 'routers.dart';
 
+/// Root [NavigatorState] key shared between [AppRouter] and route builders.
+///
+/// Required by [StatefulShellRoute.parentNavigatorKey] so routes that need
+/// to push above the shell (e.g. full-screen dialogs) can use the root navigator.
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: '_kRoot');
+
+/// Key for the [StatefulNavigationShell] that hosts the bottom-nav branches.
 final shellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: '_kShell');
+
+// Branch navigator keys — one per tab in [ShellPage].
 final _homeBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kHome');
 final _serviceBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kService');
 final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 
+/// Top-level route list consumed by [GoRouter].
+///
+/// Order matters: GoRouter matches routes top-to-bottom.
 List<RouteBase> routes = [_splashRoute, _shellRoute, _termRoute, _privacyRoute, _notFoundRoute];
 
 // Splash — entry point

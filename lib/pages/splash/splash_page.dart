@@ -7,7 +7,16 @@ import '../../routing/routers.dart';
 import 'splash_cubit.dart';
 import 'splash_state.dart';
 
+/// Animated splash screen shown at app startup (`/`).
+///
+/// Creates a [SplashCubit] and immediately calls [SplashCubit.runSequence].
+/// When the cubit emits [SplashStatus.done], the listener navigates to
+/// [Routers.home] via `context.go`.
+///
+/// Status-bar style is synced to the active [Brightness] via
+/// [AnnotatedRegion] so the system icons remain legible.
 class SplashPage extends StatefulWidget {
+  /// Creates a [SplashPage].
   const SplashPage({super.key});
 
   @override

@@ -4,10 +4,22 @@ import 'package:go_router/go_router.dart';
 import '../widgets/animated_bottom_navigation_widget.dart';
 import '../widgets/transition_shell_widget.dart' show ShellTransitionType;
 
+/// Root scaffold for the bottom-navigation shell.
+///
+/// Wraps [AnimatedBranchContainer] (the tab body) and a [NavigationBar].
+/// Re-tapping the active tab calls `shell.goBranch(index, initialLocation: true)`
+/// which pops nested routes back to the branch root.
+///
+/// Built by [router_config.dart]'s `navigatorContainerBuilder` callback;
+/// not instantiated directly in app code.
 class ShellPage extends StatelessWidget {
+  /// The [StatefulNavigationShell] provided by GoRouter.
   final StatefulNavigationShell shell;
+
+  /// Prebuilt branch widgets from GoRouter's navigator container builder.
   final List<Widget> children;
 
+  /// Creates a [ShellPage].
   const ShellPage({super.key, required this.shell, required this.children});
 
   @override

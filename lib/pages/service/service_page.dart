@@ -4,7 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'service_cubit.dart';
 import 'service_state.dart';
 
+/// The Service tab screen, hosted inside the navigation shell at [Routers.service].
+///
+/// Instantiates and owns its [ServiceCubit]; the cubit is closed in [dispose].
 class ServicePage extends StatefulWidget {
+  /// Creates a [ServicePage].
   const ServicePage({super.key});
 
   @override

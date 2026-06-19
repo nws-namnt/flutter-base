@@ -4,7 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'home_cubit.dart';
 import 'home_state.dart';
 
+/// The Home tab screen, hosted inside the navigation shell at [Routers.home].
+///
+/// Instantiates and owns its [HomeCubit]; the cubit is closed in [dispose].
 class HomePage extends StatefulWidget {
+  /// Creates a [HomePage].
   const HomePage({super.key});
 
   @override

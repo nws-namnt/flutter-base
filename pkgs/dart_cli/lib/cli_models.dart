@@ -1,4 +1,8 @@
-/// Define constant enum for menu items
+/// Menu option definitions for the dart_cli interactive interface.
+///
+/// Each [MenuOption] maps a human-readable [title] to a [cliTitle] used as the
+/// command name in the `args` package runner, and a [description] shown in help
+/// text.
 enum MenuOption {
   basic(
     title: 'Basic command',
@@ -71,8 +75,13 @@ enum MenuOption {
     cliTitle: 'exit',
   );
 
+  /// Human-readable label shown in the interactive menu.
   final String title;
+
+  /// Short description shown in `--help` output.
   final String description;
+
+  /// Command name used by the [args] runner (e.g. `dart_cli run`).
   final String cliTitle;
 
   const MenuOption({
@@ -82,20 +91,22 @@ enum MenuOption {
   });
 }
 
-/// Define model for menu items.
+/// A menu item pairing a [MenuOption] with an optional list of sub-options.
 class MenuItem {
+  /// The option this menu item represents.
   final MenuOption option;
 
-  // Optional
+  /// Sub-options shown when this item is selected, or null for leaf items.
   final List<MenuOption>? items;
 
+  /// Creates a [MenuItem] for [option], optionally with nested [items].
   MenuItem({
     required this.option,
     this.items,
   });
 }
 
-/// Define menu items data.
+/// Top-level menu structure displayed on the interactive main screen.
 final List<MenuItem> firstLevelMenu = [
   MenuItem(
     option: MenuOption.basic,

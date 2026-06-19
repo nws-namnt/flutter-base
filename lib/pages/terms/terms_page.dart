@@ -4,9 +4,15 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 import '../../utils/extensions/context_extension.dart' show ContextExtension;
 
+/// Displays the Terms of Service loaded from `assets/docs/terms.md`.
+///
+/// The Markdown content is rendered with [ContextExtension.m3MarkdownStyle]
+/// so it adapts automatically to light/dark theme changes.
 class TermsPage extends StatelessWidget {
+  /// Creates a [TermsPage].
   const TermsPage({super.key});
 
+  // Loaded once at class-init time; the Future is cached so rebuilds don't re-read the asset.
   static final _content = rootBundle.loadString('assets/docs/terms.md');
 
   @override

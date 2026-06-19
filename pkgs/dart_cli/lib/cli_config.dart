@@ -2,9 +2,21 @@ import 'dart:io';
 
 import 'package:cli_config/cli_config.dart';
 
+/// CLI configuration loaded from `cli_config.yaml` or `cli_config.local.yaml`.
+///
+/// Values are resolved in priority order:
+/// 1. Environment variables
+/// 2. `cli_config.local.yaml` (personal override, not committed)
+/// 3. `cli_config.yaml` (team default)
+/// 4. Hard-coded fallback defaults
 class CliConfig {
+  /// The default flavor used when no `--flavor` flag is passed.
   final String defaultFlavor;
+
+  /// The default build type (e.g. `apk`, `appbundle`, `ipa`).
   final String defaultBuildType;
+
+  /// The default build/run mode (e.g. `debug`, `release`).
   final String defaultMode;
 
   CliConfig._({
@@ -13,10 +25,9 @@ class CliConfig {
     required this.defaultMode,
   });
 
-  /// Loads config with priority:
-  /// ENV var > cli_config.local.yaml > cli_config.yaml > hardcoded default
+  /// Loads the CLI config, applying the priority order described in [CliConfig].
   static Future<CliConfig> load() async {
-    // Personal override takes priority over team default
+    // Personal override takes priority over the team default.
     final localFile   = File('cli_config.local.yaml');
     final defaultFile = File('cli_config.yaml');
     final configFile  = localFile.existsSync() ? localFile : defaultFile;

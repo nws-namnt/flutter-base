@@ -1,0 +1,24 @@
+dartdoc:
+  # ── How dartdoc matches libraries ────────────────────────────────────────────
+  # dartdoc identifies libraries by the value of their `library <name>;`
+  # directive.  Files that omit this directive are unnamed and cannot be
+  # targeted by `include` or `exclude`.  This app has no explicit `library`
+  # declarations, so we do NOT use `include` (which would require a named
+  # library to exist).  dartdoc will document all libraries it discovers
+  # inside lib/ that belong to this package.
+  #
+  # To suppress auto-generated files (lib/generated/, lib/firebase/) we add
+  # a `// dart:nodoc` comment to those files — or rely on the fact that
+  # dart doc skips files without any public symbols.
+
+  # ── Warnings ─────────────────────────────────────────────────────────────────
+  # Promote unresolved cross-references to warnings (not errors) so that
+  # references to Flutter/third-party types don't fail the build.
+  warnings:
+    - unresolved-doc-reference
+    - missing-from-search-index
+
+  # ── Output ───────────────────────────────────────────────────────────────────
+  # Docs are generated into doc/api/ (dartdoc default).
+  # Run:  fvm dart doc .
+  # No hosted URL configured — local generation only.

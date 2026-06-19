@@ -1,0 +1,249 @@
+# dartdoc_options.yaml
+#
+# Configuration file for `dart doc` (dartdoc).
+# Place this file at the root of the package you want to document.
+#
+# Run:  dart doc .
+# Output is generated to ./doc/api/ by default.
+#
+# Official reference: https://pub.dev/packages/dartdoc
+# Effective Dart docs: https://dart.dev/effective-dart/documentation
+#
+# NOTE: All paths below are relative to this file's directory (the package root)
+#       and must use POSIX separators (forward slash), even on Windows.
+# ─────────────────────────────────────────────────────────────────────────────
+
+dartdoc:
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 1 — Content filtering
+  #
+  # Controls which libraries and files are included in the generated docs.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # exclude
+  #   Removes entire libraries by name from the generated docs.
+  #   Use when a library is public, but you don't want it documented.
+  #   Note: if an excluded class is re-exported from another library,
+  #   it may still appear there. Use `nodoc` for stricter exclusion.
+  #
+  # Example: exclude the generated l10n library and all firebase flavor files.
+  #
+  # exclude:
+  #   - lib/generated
+  #   - lib/firebase/dev
+  #   - lib/firebase/uat
+  #   - lib/firebase/prod
+
+  # nodoc
+  #   Accepts glob patterns (file paths, not library names).
+  #   Applies the @nodoc tag to every element in matched files —
+  #   those elements will NOT appear in docs even if re-exported elsewhere.
+  #   Stricter than `exclude`, but does NOT remove the library entry from the
+  #   sidebar — use `exclude` or `include` (whitelist) for that.
+  #
+  # (not needed here — `include` below handles visibility more cleanly)
+
+  # include
+  #   Whitelists specific library names; all others are silently ignored.
+  #   Library name = the `library` directive name declared in the file,
+  #   or the file path relative to lib/ without .dart extension when no
+  #   directive is present (e.g. lib/cli_menu.dart → "cli_menu").
+  #
+  # ✅ ACTIVE: dart_cli exposes a single barrel library (`lib/dart_cli.dart`)
+  #    that re-exports all public API. Documenting only that entry point
+  #    mirrors the flutter_bloc pattern — one library in the sidebar,
+  #    all classes listed inside it.
+  include:
+    - dart_cli
+
+  # includeExternal
+  #   Adds files outside lib/ (e.g. bin/ scripts) to the documented set.
+  #   Useful for CLI tools whose entry point is in bin/ and has public API docs.
+  #
+  # ✅ ACTIVE for dart_cli: the entry point lives in bin/ and has doc comments.
+  includeExternal:
+    - 'bin/cli_runner.dart'
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 2 — Branding / appearance
+  #
+  # Customizes the look of the generated HTML site.
+  # All paths are relative to this file.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # favicon
+  #   Path to a .ico or .png file used as the browser tab icon.
+  #
+  # favicon: 'doc/assets/favicon.ico'
+
+  # header
+  #   List of HTML snippet files injected at the top of every page.
+  #   Useful for adding a custom banner or analytics script.
+  #
+  # header:
+  #   - 'doc/assets/header.html'
+
+  # footer
+  #   List of HTML snippet files injected at the bottom of every page.
+  #
+  # footer:
+  #   - 'doc/assets/footer.html'
+
+  # footerText
+  #   List of plain-text files whose content appears next to the
+  #   package name and version in the footer area.
+  #
+  # footerText:
+  #   - 'doc/assets/footer_note.txt'
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 3 — Warnings and errors
+  #
+  # dartdoc emits diagnostics when doc comments contain broken references,
+  # ambiguous links, etc. You can promote a warning to an error (CI fails),
+  # demote an error to a warning, or silence it entirely.
+  #
+  # Run `dart help doc` to see the full list of warning codes.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # errors
+  #   Warnings in this list are treated as build errors (non-zero exit code).
+  #   Use in CI so that broken [ClassName] links are caught before release.
+  #
+  # ✅ ACTIVE: fail the build if a doc reference cannot be resolved.
+  errors:
+    - unresolved-doc-reference   # e.g. [NonExistentClass] in a /// comment
+
+  # warnings
+  #   Codes to treat as simple warnings (printed but do not fail the build).
+  #   Use when you want visibility but don't want to break CI yet.
+  #
+  # warnings:
+  #   - tool-error
+
+  # ignore
+  #   Codes to suppress entirely — no output, no failure.
+  #   Use sparingly; prefer fixing the root cause.
+  #
+  # ✅ ACTIVE: ambiguous re-exports are common in CLI packages and rarely
+  #    actionable, so silence them here.
+  ignore:
+    - ambiguous-doc-reference
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 4 — Cross-package linking  (linkTo)
+  #
+  # When another package depends on dart_cli and generates its own docs,
+  # `linkTo` tells dartdoc the base URL of dart_cli's hosted documentation
+  # so that cross-package hyperlinks are generated correctly.
+  #
+  # ⛔ NOT ACTIVE: dart_cli is an internal tool, not published to pub.dev.
+  #    Enable only if you host the generated docs at a public URL.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # linkTo:
+  #   url: "https://your-docs-host.com/%n%/%v%"
+  #   # Placeholders:
+  #   #   %n%  — package name  (from pubspec.yaml)
+  #   #   %v%  — package version
+  #   #   %b%  — branch tag derived from version
+  #   #          (e.g. "2.0.0-dev.3" → branch "dev"; stable has no branch)
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 5 — Source linking  (linkToSource)
+  #
+  # Adds a "View source" link on each documented symbol that opens
+  # the corresponding line in the source repository (e.g. GitHub).
+  #
+  # ⛔ NOT ACTIVE: enable when the repo is public, and you want readers
+  #    to be able to navigate directly to source code.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # linkToSource:
+  #   root: '.'                    # directory considered the repo root
+  #   uriTemplate: 'https://github.com/your-org/flutter_base/blob/main/%f%#L%l%'
+  #   # Placeholders:
+  #   #   %f%  — file path relative to root
+  #   #   %l%  — line number
+  #   #   %r%  — git revision (use when you want to pin to a specific commit)
+  #   #
+  #   # excludes:                  # directories to skip source linking for
+  #   #   - build
+  #   #   - .dart_tool
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 6 — Categories
+  #
+  # Groups libraries, classes, and top-level symbols into labeled sections
+  # shown in the sidebar and package page.
+  #
+  # Step 1 — define categories here.
+  # Step 2 — tag symbols in code:  /// {@category commands}
+  #
+  # ⛔ NOT ACTIVE: dart_cli is small enough that categories add little value.
+  #    Enable when the package grows and the sidebar becomes hard to navigate.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # categories:
+  #   commands:
+  #     displayName: Commands         # label shown in the rendered HTML
+  #     markdown: doc/categories/commands.md   # optional intro page for the category
+  #   utilities:
+  #     displayName: Utilities
+  #     markdown: doc/categories/utilities.md
+
+  # categoryOrder
+  #   Controls the display order of categories in the sidebar.
+  #   Names must match the keys in `categories` above.
+  #
+  # categoryOrder: [commands, utilities]
+
+  # showUndocumentedCategories
+  #   Whether to show category sections that have no matching markdown file.
+  #   Default: false.
+  #
+  # showUndocumentedCategories: true
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 7 — Tools  (advanced)
+  #
+  # Pipes sections of doc comments through an external script and injects
+  # the output back into the generated HTML.
+  # Example use cases: render ASCII diagrams, fetch live data, run a linter.
+  #
+  # Usage in doc comment:
+  #   /// {@tool my_tool --flag $INPUT}
+  #   /// content sent to the tool as stdin
+  #   /// {@end-tool}
+  #
+  # ⛔ NOT ACTIVE: not needed for dart_cli.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # tools:
+  #   my_tool:
+  #     command: ['bin/my_tool.dart']   # .dart files are auto-run via dart
+  #     description: 'Transforms doc content.'
+  #     # Platform-specific variants:
+  #     # macos:   ['/bin/sh', '-c', 'echo']
+  #     # linux:   ['/bin/sh', '-c', 'echo']
+  #     # windows: ['C:\\Windows\\System32\\cmd.exe', '/c', 'echo']
+
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # GROUP 8 — Experimental Dart features
+  #
+  # Enables experimental language features during doc generation.
+  # Equivalent to passing `--enable-experiment=<name>` on the command line.
+  #
+  # ⛔ NOT ACTIVE: dart_cli uses only stable language features.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  # enable-experiment:
+  #   - macros

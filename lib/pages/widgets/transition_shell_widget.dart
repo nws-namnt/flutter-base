@@ -23,6 +23,7 @@ enum ShellTransitionType {
   scaleFade,
 }
 
+/// Extension that converts a [ShellTransitionType] into a concrete widget.
 extension ShellTransitionExt on ShellTransitionType {
   /// Wraps [child] with the appropriate transition widget.
   ///

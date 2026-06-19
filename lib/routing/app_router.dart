@@ -6,11 +6,21 @@ import 'router_notifier.dart';
 import 'router_observer.dart';
 import 'routers.dart';
 
+/// Configures and exposes the app's [GoRouter] instance.
+///
+/// Wires together [RouterNotifier], [RouterObserver], and the route tree
+/// defined in [router_config.dart]. Instantiated once in [AppPage.initState].
 class AppRouter {
+  /// The [RouterNotifier] used as [GoRouter.refreshListenable].
+  ///
+  /// Trigger [RouterNotifier.attachAuthStateChange] / [RouterNotifier.detachAuthStateChange]
+  /// to force a redirect evaluation (e.g. after login / logout).
   final RouterNotifier routerNotifier;
 
+  /// Creates an [AppRouter] wired to the given [routerNotifier].
   AppRouter(this.routerNotifier);
 
+  /// The configured [GoRouter] instance to pass to [MaterialApp.router].
   GoRouter get goRouter => GoRouter(
     initialLocation: Routers.root.routerPath,
     navigatorKey: rootNavigatorKey,

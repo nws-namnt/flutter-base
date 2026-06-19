@@ -4,13 +4,16 @@ import 'package:ansicolor/ansicolor.dart' show AnsiPen;
 import 'package:cli_spinner/cli_spinner.dart';
 import 'package:interact_cli/interact_cli.dart' hide Spinner;
 
-/// Shared theme for all interactive prompts.
+/// Shared theme applied to all interactive prompts in this CLI.
 final cliTheme = Theme.colorfulTheme.copyWith(
   activeItemPrefix: '▶ ',
   inactiveItemPrefix: '  ',
 );
 
-/// Top-level prompt helper — shared across all commands.
+/// Displays a single-choice prompt and returns the selected option string.
+///
+/// The [prompt] is shown above the list. Pass [defaultValue] to pre-select
+/// a specific entry; if omitted the first option is selected.
 String promptSelect(String prompt, List<String> options, {String? defaultValue}) {
   final initialIndex = defaultValue != null
       ? options.indexOf(defaultValue).clamp(0, options.length - 1)
@@ -24,41 +27,51 @@ String promptSelect(String prompt, List<String> options, {String? defaultValue})
   return options[index];
 }
 
-/// Extensions for helper functions.
+/// Extensions for building spinners from nullable strings.
 extension SpinnerBuilder on String? {
+  /// A [Spinner] using this string as its message, or `'Processing...'` if null.
   Spinner get renderSpinner => Spinner.type(this ?? 'Processing...', SpinnerType.dots);
 }
 
+/// Extensions on [String].
 extension StringExtension on String {
+  /// This string with its first character uppercased and the rest lowercased.
   String get firstLetterUppercase {
     if (isEmpty) return this;
     return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 }
 
-/// Resolves Flutter / Dart executable prefix (FVM-aware).
-/// Results are cached — `which fvm` runs at most once per session.
+/// Resolves the executable prefix for [tool], prepending `fvm` when available.
+///
+/// Returns `['fvm', tool]` if the `fvm` binary is found on PATH, otherwise
+/// returns `[tool]`. Results are cached so `which fvm` runs at most once.
 Future<List<String>> _resolveExec(String tool) async {
   final check = await Process.run('which', ['fvm'], runInShell: true);
   final hasFvm = check.exitCode == 0 && check.stdout.toString().trim().isNotEmpty;
   return hasFvm ? ['fvm', tool] : [tool];
 }
 
-// #2 FVM cache — resolved once per session via ??=
+// Cached resolution futures — evaluated once per process lifetime.
 Future<List<String>>? _flutterExecCache;
 Future<List<String>>? _dartExecCache;
 
+/// The resolved Flutter executable prefix, FVM-aware.
 Future<List<String>> get flutterExec => _flutterExecCache ??= _resolveExec('flutter');
-Future<List<String>> get dartExec    => _dartExecCache    ??= _resolveExec('dart');
 
-/// Prints the real command that will be executed (including FVM prefix if present).
-/// e.g. "Execute: fvm flutter doctor -v" or "Execute: flutter doctor -v"
+/// The resolved Dart executable prefix, FVM-aware.
+Future<List<String>> get dartExec => _dartExecCache ??= _resolveExec('dart');
+
+/// Prints the full command that will be executed, including any FVM prefix.
+///
+/// Example output: `Execute: fvm flutter pub get`
 Future<void> printExec(List<String> args) async {
   final exec = await flutterExec;
   t('Execute: ${[...exec, ...args].join(' ')}');
 }
 
-/// Runs a shell command with a spinner.
+/// Runs [cmd] with [args], showing a spinner while the process is running.
+///
 /// Throws [ProcessException] if the process exits with a non-zero code.
 Future<void> runCmd(String cmd, List<String> args, {String? spinnerMsg}) async {
   final spinner = (spinnerMsg ?? 'Running...').renderSpinner;
@@ -82,20 +95,26 @@ Future<void> runCmd(String cmd, List<String> args, {String? spinnerMsg}) async {
   }
 }
 
-/// Runs a Flutter command, automatically resolving FVM if available.
+/// Runs a Flutter command, resolving FVM automatically if available.
+///
+/// Throws [ProcessException] on non-zero exit.
 Future<void> runFlutter(List<String> args, {String? spinnerMsg}) async {
   final exec = await flutterExec;
   await runCmd(exec.first, [...exec.skip(1), ...args], spinnerMsg: spinnerMsg);
 }
 
-/// Runs a Dart command, automatically resolving FVM if available.
+/// Runs a Dart command, resolving FVM automatically if available.
+///
+/// Throws [ProcessException] on non-zero exit.
 Future<void> runDart(List<String> args, {String? spinnerMsg}) async {
   final exec = await dartExec;
   await runCmd(exec.first, [...exec.skip(1), ...args], spinnerMsg: spinnerMsg);
 }
 
-/// Runs a Flutter command interactively (stdin/stdout/stderr shared with parent).
-/// Use for commands needing user interaction: flutter run, doctor, watch.
+/// Runs a Flutter command in interactive mode, sharing stdio with the parent.
+///
+/// Use this for commands that require user input, such as `flutter run` or
+/// `flutter doctor`. Throws on non-zero exit code.
 Future<void> runFlutterInteractive(List<String> args) async {
   final exec = await flutterExec;
   final process = await Process.start(
@@ -111,15 +130,25 @@ Future<void> runFlutterInteractive(List<String> args) async {
   }
 }
 
-/// Logging
+// ─── Logging helpers ───────────────────────────────────────────────────────
+
 final AnsiPen successPen = AnsiPen()..green(bold: true);
 final AnsiPen errorPen   = AnsiPen()..red(bold: true);
 final AnsiPen infoPen    = AnsiPen()..blue(bold: true);
 final AnsiPen warnPen    = AnsiPen()..yellow(bold: true);
 final AnsiPen normalPen  = AnsiPen()..white(bold: true);
 
+/// Prints a success message in green.
 void s(String msg) => print(successPen(msg));
+
+/// Prints an error message in red.
 void e(String msg) => print(errorPen(msg));
+
+/// Prints an info message in blue.
 void i(String msg) => print(infoPen(msg));
+
+/// Prints a warning message in yellow.
 void w(String msg) => print(warnPen(msg));
+
+/// Prints a normal (white bold) message.
 void t(String msg) => print(normalPen(msg));

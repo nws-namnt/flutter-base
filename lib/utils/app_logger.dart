@@ -32,24 +32,51 @@ final _logger = Logger(
   output: null, // Use the default LogOutput (-> send everything to console)
 );
 
-/// Logger level
+// ── Structured log helpers ────────────────────────────────────────────────────
+// All functions accept an optional [error] and [stackTrace] for rich output.
+
+/// Logs a [Level.trace] message (most verbose — granular flow tracing).
 void trace(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.t('🖇️ VERBOSE: $message', error: error, stackTrace: stackTrace);
+
+/// Logs a [Level.debug] message (developer diagnostics).
 void debug(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.d('🐛 DEBUG: $message', error: error, stackTrace: stackTrace);
+
+/// Logs a [Level.info] message (expected significant events).
 void info(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.i('ℹ️ INFO: $message', error: error, stackTrace: stackTrace);
+
+/// Logs a [Level.warning] message (unexpected but recoverable situation).
 void warn(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.w('⚠️ WARNING: $message', error: error, stackTrace: stackTrace);
+
+/// Logs a [Level.error] message (operation failed, app can continue).
 void err(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.e('⛔ ERROR: $message', error: error, stackTrace: stackTrace);
+
+/// Logs a [Level.fatal] message (unrecoverable error, app should terminate).
 void fatal(dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.f('💀 ERROR: $message', error: error, stackTrace: stackTrace);
 
+/// Logs at an arbitrary [Level]. Use when the level must be chosen dynamically.
 void customLog(Level level, dynamic message, [dynamic error, StackTrace? stackTrace]) => _logger.log(level, message, error: error, stackTrace: stackTrace);
 
+/// Writes directly to `dart:developer` log (visible in the DevTools log view).
+///
+/// Useful when the [Logger] printer would add too much noise, e.g. inside
+/// tight loops or platform channel callbacks.
 void devLog(String mess) => developer.log('🦊 - $mess');
 
+/// Prints [message] to the console in debug builds only (no-op in release).
 void simpleLog(dynamic message) {
   if (kDebugMode) {
     debugPrint(message);
   }
 }
 
+/// A [LogFilter] that passes only [Level.warning] and [Level.error] events.
+///
+/// Swap in place of `null` in the [Logger] constructor to suppress verbose
+/// output in release / production builds while still capturing actionable issues:
+///
+/// ```dart
+/// filter: AppFilter(),
+/// ```
 class AppFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) {
@@ -57,7 +84,7 @@ class AppFilter extends LogFilter {
       return true;
     }
 
-    return false; // Allow log on production mode
+    return false;
   }
 }
 

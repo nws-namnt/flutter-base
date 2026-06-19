@@ -8,6 +8,10 @@ import '../cli_config.dart';
 import '../cli_models.dart' show MenuOption;
 import '../cli_utils.dart';
 
+/// Runs the Flutter project on a connected device or emulator.
+///
+/// Prompts for flavor, run mode, and device when called interactively.
+/// Accepts `--flavor`, `--mode`, and `--device` flags when called directly.
 class RunCommand extends Command {
   @override
   String get description => MenuOption.run.description;
@@ -15,6 +19,7 @@ class RunCommand extends Command {
   @override
   String get name => MenuOption.run.cliTitle;
 
+  /// Creates a [RunCommand] and registers its flags.
   RunCommand() {
     argParser.addOption('flavor', abbr: 'f', allowed: ['dev', 'uat', 'prod'], defaultsTo: 'dev');
     argParser.addOption('mode',   abbr: 'm', allowed: ['debug', 'profile', 'release'], defaultsTo: 'debug');
@@ -48,6 +53,9 @@ class RunCommand extends Command {
     await runFlutterInteractive(args);
   }
 
+  /// Fetches connected devices and prompts the user to select one.
+  ///
+  /// Returns the selected device ID, or null if no devices are available.
   Future<String?> _promptDevice() async {
     i('Fetching connected devices...');
 
@@ -83,6 +91,10 @@ class RunCommand extends Command {
   }
 }
 
+/// Builds the Flutter project as APK, App Bundle, or IPA.
+///
+/// Prompts for flavor, build type, and mode interactively.
+/// Accepts `--flavor`, `--type`, and `--mode` flags when called directly.
 class BuildCommand extends Command {
   @override
   String get description => MenuOption.build.description;
@@ -90,6 +102,7 @@ class BuildCommand extends Command {
   @override
   String get name => MenuOption.build.cliTitle;
 
+  /// Creates a [BuildCommand] and registers its flags.
   BuildCommand() {
     argParser.addOption('flavor', abbr: 'f', allowed: ['dev', 'uat', 'prod'], defaultsTo: 'dev');
     argParser.addOption('type',   abbr: 't', allowed: ['apk', 'appbundle', 'ipa'], defaultsTo: 'apk');
@@ -151,6 +164,7 @@ class BuildCommand extends Command {
     ]);
   }
 
+  /// The output directory path for [type], [flavor], and [mode].
   String _outputPath(String type, String flavor, String mode) {
     final cwd = Directory.current.path;
     return switch (type) {
@@ -161,8 +175,10 @@ class BuildCommand extends Command {
     };
   }
 
+  /// [s] with its first character uppercased.
   String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
+  /// Copies [text] to the system clipboard using `pbcopy`.
   Future<void> _copyToClipboard(String text) async {
     final process = await Process.start('pbcopy', [], runInShell: true);
     process.stdin.write(text);
@@ -170,12 +186,14 @@ class BuildCommand extends Command {
     await process.exitCode;
   }
 
+  /// Returns an OSC 8 terminal hyperlink for [url] with display [label].
   String _hyperlink(String url, String label) {
     final uri = url.startsWith('http') ? url : 'file://$url';
     return '\x1B]8;;$uri\x07$label\x1B]8;;\x07';
   }
 }
 
+/// Runs `build_runner` for code generation in build or watch mode.
 class GenCommand extends Command {
   @override
   String get description => MenuOption.gen.description;
@@ -208,6 +226,7 @@ class GenCommand extends Command {
   }
 }
 
+/// Runs `flutter doctor -v` to check the environment and dependencies.
 class DoctorCommand extends Command {
   @override
   String get name => MenuOption.doctor.cliTitle;
@@ -222,6 +241,7 @@ class DoctorCommand extends Command {
   }
 }
 
+/// Runs `flutter clean` to remove build artifacts and temporary files.
 class CleanCommand extends Command {
   @override
   String get name => MenuOption.clean.cliTitle;
@@ -241,6 +261,7 @@ class CleanCommand extends Command {
   }
 }
 
+/// Lists all connected devices via `flutter devices`.
 class DeviceCommand extends Command {
   @override
   String get name => MenuOption.device.cliTitle;
@@ -255,6 +276,7 @@ class DeviceCommand extends Command {
   }
 }
 
+/// Lists available emulators and launches the one the user selects.
 class EmulatorCommand extends Command {
   @override
   String get name => MenuOption.emulator.cliTitle;

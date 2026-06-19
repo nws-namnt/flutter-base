@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_logger.dart';
 
+/// [NavigatorObserver] that logs every route lifecycle event via [info].
+///
+/// Registered in [AppRouter.goRouter] via the `observers` parameter.
+/// Useful for debugging navigation flows during development.
 class RouterObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {

@@ -4,9 +4,15 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 import '../../utils/extensions/context_extension.dart' show ContextExtension;
 
+/// Displays the Privacy Policy loaded from `assets/docs/privacy.md`.
+///
+/// The Markdown content is rendered with [ContextExtension.m3MarkdownStyle]
+/// so it adapts automatically to light/dark theme changes.
 class PrivacyPage extends StatelessWidget {
+  /// Creates a [PrivacyPage].
   const PrivacyPage({super.key});
 
+  // Loaded once at class-init time; the Future is cached so rebuilds don't re-read the asset.
   static final _content = rootBundle.loadString('assets/docs/privacy.md');
 
   @override

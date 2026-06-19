@@ -1,21 +1,36 @@
+/// Centralised route registry for the app.
+///
+/// Each value pairs a URL [routerPath] (used with `context.go()`) with a
+/// human-readable [routerName] (used with `context.goNamed()`).
+///
+/// Always add new routes here before wiring them in [router_config.dart].
 enum Routers {
-  /// Splash — entry point
+  /// Splash screen — app entry point (`/`).
   root('/', 'root'),
 
-  /// Shell branches
+  /// Home tab inside the shell (`/home`).
   home('/home', 'home'),
+
+  /// Service tab inside the shell (`/service`).
   service('/service', 'service'),
+
+  /// Settings tab inside the shell (`/setting`).
   setting('/setting', 'setting'),
 
-  /// Pages
+  /// Terms of Service page (`/terms`).
   terms('/terms', 'terms'),
+
+  /// Privacy Policy page (`/privacy`).
   privacy('/privacy', 'privacy'),
 
-  /// Fallback
+  /// 404 fallback page (`/pageNotFound`).
   pageNotFound('/pageNotFound', 'pageNotFound');
 
-  final String routerPath;  /// Path used with context.go()
-  final String routerName;  /// Name used with context.goNamed()
+  /// URL path used with `context.go(routerPath)`.
+  final String routerPath;
+
+  /// Named route used with `context.goNamed(routerName)`.
+  final String routerName;
 
   const Routers(this.routerPath, this.routerName);
 }

@@ -8,7 +8,12 @@ import '../../generated/l10n.dart';
 import 'setting_cubit.dart';
 import 'setting_state.dart';
 
+/// The Settings tab screen, hosted inside the navigation shell at [Routers.setting].
+///
+/// Displays language, theme, and app-info tiles using the `setting_ui_builder` package.
+/// Instantiates and owns its [SettingCubit]; the cubit is closed in [dispose].
 class SettingPage extends StatefulWidget {
+  /// Creates a [SettingPage].
   const SettingPage({super.key});
 
   @override

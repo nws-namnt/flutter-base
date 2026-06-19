@@ -10,7 +10,13 @@ import '../routing/router_notifier.dart';
 import 'app_cubit.dart';
 import 'app_state.dart';
 
+/// Root widget of the application.
+///
+/// Owns the [AppCubit], [RouterNotifier], and [AppRouter] instances.
+/// Builds a [MaterialApp.router] that reacts to theme / locale changes
+/// emitted by [AppCubit].
 class AppPage extends StatefulWidget {
+  /// Creates the root [AppPage].
   const AppPage({super.key});
 
   @override

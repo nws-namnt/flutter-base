@@ -5,7 +5,9 @@ import 'cli_models.dart';
 import 'cli_utils.dart';
 import 'cmd/index.dart';
 
+/// Command runner that registers all available CLI sub-commands.
 class Runner extends CommandRunner {
+  /// Creates a [Runner] and registers all available commands.
   Runner() : super('dart_cli', 'A custom Flutter development CLI tool.') {
     addCommand(RunCommand());
     addCommand(BuildCommand());
@@ -20,6 +22,7 @@ class Runner extends CommandRunner {
   }
 }
 
+/// Runs the interactive menu loop until the user selects Exit.
 Future<void> get menu async {
   final runner = Runner();
 
@@ -56,6 +59,8 @@ Future<void> get menu async {
 }
 
 // ─── Level 1: Main menu ────────────────────────────────────────────────────
+
+/// Displays the main menu and returns the selected [MenuOption].
 MenuOption _firstLevelMenu() {
   final titles = firstLevelMenu.map((e) => e.option.title.firstLetterUppercase).toList();
   final index = Select.withTheme(
@@ -67,7 +72,9 @@ MenuOption _firstLevelMenu() {
   return firstLevelMenu[index].option;
 }
 
-// ─── Level 2: Sub submenu ────────────────────────────────────────────────
+// ─── Level 2: Sub-menu ─────────────────────────────────────────────────────
+
+/// Displays the sub-menu for [mainOption] and returns the selected [MenuOption].
 MenuOption _showSubMenu(MenuOption mainOption) {
   final menuItem = firstLevelMenu.firstWhere((e) => e.option == mainOption);
   final options  = menuItem.items!.map((e) => e.title).toList();
@@ -79,4 +86,3 @@ MenuOption _showSubMenu(MenuOption mainOption) {
   i('You selected: ${menuItem.items![index].title}');
   return menuItem.items![index];
 }
-
