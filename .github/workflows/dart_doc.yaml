@@ -49,30 +49,7 @@ jobs:
           channel: 'stable'
           cache: true             # cache the Flutter SDK between runs
 
-      # ── 3. Install dependencies — flutter_base (root) ───────────────────
-      - name: Get packages (flutter_base)
-        run: flutter pub get
-
-      # ── 4. Generate dart doc — flutter_base ─────────────────────────────
-      # Reads dartdoc_options.yaml at repo root.
-      # Output goes to doc/api/ (dartdoc default).
-      - name: Dart doc (flutter_base)
-        run: dart doc .
-
-      # ── 5. Install dependencies — dart_cli ──────────────────────────────
-      - name: Get packages (dart_cli)
-        working-directory: pkgs/dart_cli
-        run: dart pub get
-
-      # ── 6. Generate dart doc — dart_cli ─────────────────────────────────
-      # working-directory scopes both pub get and dart doc to pkgs/dart_cli.
-      # Reads pkgs/dart_cli/dartdoc_options.yaml if present.
-      # Output goes to pkgs/dart_cli/doc/api/.
-      - name: Dart doc (dart_cli)
-        working-directory: pkgs/dart_cli
-        run: dart doc .
-
-      # ── 7. Merge outputs into a single deploy folder ─────────────────────
+      # ── 3. Merge outputs into a single deploy folder ─────────────────────
       # deploy/
       # ├── index.html              ← landing page (created in step 8)
       # ├── api/                    ← flutter_base doc
@@ -84,7 +61,7 @@ jobs:
           cp -r doc/api/. deploy/api/
           cp -r pkgs/dart_cli/doc/api/. deploy/pkgs/dart_cli/api/
 
-      # ── 8. Create landing page ───────────────────────────────────────────
+      # ── 4. Create landing page ───────────────────────────────────────────
       # Simple HTML index so visitors see both doc links at the root URL.
       # Replace the content with your own branding if needed.
       - name: Create landing page
@@ -103,7 +80,7 @@ jobs:
           </html>
           EOF
 
-      # ── 9. Upload artifact to Pages ──────────────────────────────────────
+      # ── 5. Upload artifact to Pages ──────────────────────────────────────
       # Packages the deployment/ folder as a Pages artifact.
       # actions/upload-pages-artifact expects a flat folder, not a zip.
       - name: Upload Pages artifact
@@ -111,7 +88,7 @@ jobs:
         with:
           path: deploy
 
-      # ── 10. Deploy to GitHub Pages ───────────────────────────────────────
+      # ── 6. Deploy to GitHub Pages ───────────────────────────────────────
       # Publishes the uploaded artifact to the Pages environment.
       # The live URL is captured in steps.deployment.outputs.page_url
       # and shown in the Actions summary.
