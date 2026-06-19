@@ -52,20 +52,111 @@ jobs:
           cp -r pkgs/dart_cli/doc/api/. deploy/pkgs/dart_cli/api/
 
       # ── 3. Create landing page ───────────────────────────────────────────
-      # Simple HTML index so visitors see both doc links at the root URL.
-      # Replace the content with your own branding if needed.
+      # Branded landing page linking to both doc sites.
       - name: Create landing page
         run: |
           cat > deploy/index.html << 'EOF'
           <!DOCTYPE html>
           <html lang="en">
-          <head><meta charset="utf-8"><title>API Docs</title></head>
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>flutter_base — API Docs</title>
+            <style>
+              *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+              body {
+                min-height: 100vh;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #0d47a1 0%, #1565c0 40%, #42a5f5 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                color: #fff;
+              }
+
+              /* Flutter logo SVG */
+              .logo { width: 72px; height: 72px; margin-bottom: 1.25rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,.3)); }
+
+              h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.5px; }
+              .subtitle { margin-top: .4rem; font-size: 1rem; opacity: .8; }
+
+              .divider {
+                width: 48px; height: 3px;
+                background: rgba(255,255,255,.4);
+                border-radius: 2px;
+                margin: 1.75rem auto;
+              }
+
+              .cards {
+                display: flex;
+                gap: 1.25rem;
+                flex-wrap: wrap;
+                justify-content: center;
+              }
+
+              .card {
+                background: rgba(255,255,255,.12);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255,255,255,.2);
+                border-radius: 16px;
+                padding: 1.75rem 2.25rem;
+                text-decoration: none;
+                color: #fff;
+                width: 220px;
+                transition: transform .2s, background .2s;
+                text-align: center;
+              }
+              .card:hover { transform: translateY(-4px); background: rgba(255,255,255,.22); }
+
+              .card-icon { font-size: 2.25rem; margin-bottom: .75rem; }
+              .card-title { font-size: 1.05rem; font-weight: 700; }
+              .card-desc { margin-top: .35rem; font-size: .82rem; opacity: .75; line-height: 1.4; }
+
+              .badge {
+                display: inline-block;
+                margin-top: .75rem;
+                padding: .2rem .7rem;
+                background: rgba(255,255,255,.18);
+                border-radius: 99px;
+                font-size: .72rem;
+                letter-spacing: .4px;
+              }
+
+              footer { margin-top: 3rem; font-size: .78rem; opacity: .5; }
+            </style>
+          </head>
           <body>
-            <h2>API Documentation</h2>
-            <ul>
-              <li><a href="api/">flutter_base</a></li>
-              <li><a href="pkgs/dart_cli/api/">dart_cli</a></li>
-            </ul>
+            <!-- Flutter logo -->
+            <svg class="logo" viewBox="0 0 66 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M38.8 0L3 36 14.5 47.5 62 0H38.8Z" fill="white"/>
+              <path d="M38.8 40.2L21.7 57.3 33.2 68.8 62 40.2H38.8Z" fill="white" fill-opacity=".9"/>
+              <path d="M21.7 57.3L33.2 68.8 21.7 75 10.2 63.5 21.7 57.3Z" fill="white" fill-opacity=".6"/>
+            </svg>
+
+            <h1>flutter_base</h1>
+            <p class="subtitle">Production Flutter boilerplate · API Documentation</p>
+
+            <div class="divider"></div>
+
+            <div class="cards">
+              <a class="card" href="api/">
+                <div class="card-icon">📱</div>
+                <div class="card-title">flutter_base</div>
+                <div class="card-desc">App layer, theming, routing, pages &amp; utilities</div>
+                <span class="badge">dart doc</span>
+              </a>
+              <a class="card" href="pkgs/dart_cli/api/">
+                <div class="card-icon">⌨️</div>
+                <div class="card-title">dart_cli</div>
+                <div class="card-desc">Interactive Flutter development CLI tool</div>
+                <span class="badge">dart doc</span>
+              </a>
+            </div>
+
+            <footer>nws-namnt / flutter-base</footer>
           </body>
           </html>
           EOF
