@@ -29,5 +29,4 @@ export 'cli_config.dart';
 export 'cli_menu.dart';
 export 'cli_models.dart';
 export 'cli_utils.dart';
-export 'cmd/basic_cmd.dart';
-export 'cmd/pub_cmd.dart';
+export 'cmd/index.dart';

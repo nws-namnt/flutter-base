@@ -13,6 +13,7 @@ An interactive command-line tool for Flutter development workflows. Wraps common
 - [Commands](#commands)
   - [Basic Commands](#basic-commands)
   - [Pub Commands](#pub-commands)
+  - [Dart Doc Commands](#dart-doc-commands)
 - [Configuration](#configuration)
 - [FVM Support](#fvm-support)
 - [Project Structure](#project-structure)
@@ -139,6 +140,8 @@ dart_cli emulator
 dart_cli get
 dart_cli cache-clean
 dart_cli cache-repair
+dart_cli gen-doc
+dart_cli view-doc
 ```
 
 ### Help
@@ -168,6 +171,11 @@ Main menu
 │   ├── Pub Get
 │   ├── Pub Cache Clean
 │   ├── Pub Cache Repair
+│   ├── Back
+│   └── Exit
+├── Dart doc
+│   ├── Gen doc
+│   ├── View doc
 │   ├── Back
 │   └── Exit
 └── Exit
@@ -332,6 +340,45 @@ Executes: `flutter pub cache repair`
 
 ---
 
+### Dart Doc Commands
+
+#### `gen-doc`
+
+Generates API documentation for the project at the current working directory.
+
+```bash
+dart_cli gen-doc
+```
+
+Resolves the Dart executable via FVM when available, then executes:
+
+```
+fvm dart doc .   # with FVM
+dart doc .       # without FVM
+```
+
+Output is written to `doc/api/`. Run this before `view-doc`.
+
+---
+
+#### `view-doc`
+
+Serves the generated API documentation locally via a Python HTTP server.
+
+```bash
+dart_cli view-doc
+```
+
+Starts `python3 -m http.server 8080` inside `doc/api/` and opens it for browsing at:
+
+```
+http://localhost:8080
+```
+
+Press **Ctrl+C** to stop the server and return to the menu. Requires `doc/api/` to exist — run `gen-doc` first if it does not.
+
+---
+
 ## Configuration
 
 The CLI reads from a YAML config file to set default values for flavor, build type, and run mode. This avoids having to re-select the same options every session.
@@ -399,6 +446,7 @@ pkgs/dart_cli/
 │       ├── index.dart         # Barrel export
 │       ├── basic_cmd.dart     # RunCommand, BuildCommand, GenCommand, DoctorCommand,
 │       │                      # CleanCommand, DeviceCommand, EmulatorCommand
-│       └── pub_cmd.dart       # GetCommand, CacheCleanCommand, CacheRepairCommand
+│       ├── pub_cmd.dart       # GetCommand, CacheCleanCommand, CacheRepairCommand
+│       └── dart_doc_cmd.dart  # GenDocCommand, ViewDocCommand
 └── pubspec.yaml
 ```

@@ -19,6 +19,8 @@ class Runner extends CommandRunner {
     addCommand(GetCommand());
     addCommand(CacheCleanCommand());
     addCommand(CacheRepairCommand());
+    addCommand(GenDocCommand());
+    addCommand(ViewDocCommand());
   }
 }
 
@@ -51,6 +53,17 @@ Future<void> get menu async {
       if (pubCmd == MenuOption.exit) { t('👋 Goodbye!'); break; }
 
       await runner.run([pubCmd.cliTitle]);
+      print('\n----------------------------------------\n');
+      print('🔄 Returning to menu...\n');
+      continue;
+    }
+
+    if (option == MenuOption.dartDoc) {
+      final docCmd = _showSubMenu(option);
+      if (docCmd == MenuOption.back) continue;
+      if (docCmd == MenuOption.exit) { t('👋 Goodbye!'); break; }
+
+      await runner.run([docCmd.cliTitle]);
       print('\n----------------------------------------\n');
       print('🔄 Returning to menu...\n');
       continue;
