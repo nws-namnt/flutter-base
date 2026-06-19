@@ -46,7 +46,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          channel: 'stable'
           cache: true             # cache the Flutter SDK between runs
 
       # ── 3. Install dependencies — flutter_base (root) ───────────────────
