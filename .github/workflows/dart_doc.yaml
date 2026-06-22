@@ -7,8 +7,8 @@ name: Dart Doc
 
 # ── Triggers ────────────────────────────────────────────────────────────────
 on:
-  push:
-    branches: [main]       # auto-run on every push to main
+#  push:
+#    branches: [main]       # auto-run on every push to main
   workflow_dispatch:        # allow manual trigger from the Actions tab
 
 # ── Permissions ─────────────────────────────────────────────────────────────
