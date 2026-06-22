@@ -20,8 +20,10 @@ class AppRouter {
   /// Creates an [AppRouter] wired to the given [routerNotifier].
   AppRouter(this.routerNotifier);
 
+  GoRouter get goRouter => _goRouter;
+
   /// The configured [GoRouter] instance to pass to [MaterialApp.router].
-  GoRouter get goRouter => GoRouter(
+  GoRouter get _goRouter => GoRouter(
     initialLocation: Routers.root.routerPath,
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,

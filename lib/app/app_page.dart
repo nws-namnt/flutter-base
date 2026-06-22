@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 import '../common/app_env.dart';
 import '../common/app_themes.dart';
@@ -10,6 +11,7 @@ import '../routing/router_notifier.dart';
 import 'app_cubit.dart';
 import 'app_state.dart';
 
+late GoRouter appRouter;
 /// Root widget of the application.
 ///
 /// Owns the [AppCubit], [RouterNotifier], and [AppRouter] instances.
@@ -25,7 +27,6 @@ class AppPage extends StatefulWidget {
 
 class _AppPageState extends State<AppPage> {
   late final RouterNotifier _routerNotifier;
-  late final AppRouter _appRouter;
 
   static final _m3 = const M3Theme();
   static final _lightTheme = _m3.light;
@@ -37,7 +38,7 @@ class _AppPageState extends State<AppPage> {
   void initState() {
     super.initState();
     _routerNotifier = RouterNotifier();
-    _appRouter = AppRouter(_routerNotifier);
+    appRouter = AppRouter(_routerNotifier).goRouter;
   }
 
   @override
@@ -51,6 +52,7 @@ class _AppPageState extends State<AppPage> {
     return BlocProvider(
       create: (_) => AppCubit(),
       child: BlocBuilder<AppCubit, AppState>(
+        buildWhen: (pre, cur) => pre.locale != cur.locale || pre.themeMode != cur.themeMode,
         builder: (context, state) {
           return MaterialApp.router(
             title: 'Flutter Base',
@@ -61,14 +63,14 @@ class _AppPageState extends State<AppPage> {
             highContrastTheme: _lightHighContrastTheme,
             highContrastDarkTheme: _darkHighContrastTheme,
             locale: state.locale,
-            supportedLocales: const [Locale('en'), Locale('vi')],
+            supportedLocales: const [Locale('en'), Locale('vi'), Locale('ja')],
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            routerConfig: _appRouter.goRouter,
+            routerConfig: appRouter,
           );
         },
       ),

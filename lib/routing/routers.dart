@@ -22,6 +22,9 @@ enum Routers {
 
   /// Privacy Policy page (`/privacy`).
   privacy('/privacy', 'privacy'),
+  
+  /// Bottom sheet
+  languageSheet('/languageSheet', 'languageSheet'),
 
   /// 404 fallback page (`/pageNotFound`).
   pageNotFound('/pageNotFound', 'pageNotFound');

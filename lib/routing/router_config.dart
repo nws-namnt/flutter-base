@@ -1,15 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_base/pages/widgets/bottom_sheet_widget.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/home/home_page.dart';
-import '../pages/privacy/privacy_page.dart';
-import '../pages/service/service_page.dart';
-import '../pages/setting/setting_page.dart';
-import '../pages/shell/shell_page.dart';
-import '../pages/splash/splash_page.dart';
-import '../pages/terms/terms_page.dart';
-import '../pages/widgets/not_found_page.dart';
-import '../pages/widgets/transition_widget.dart';
+import '../pages/pages.dart';
 import 'routers.dart';
 
 /// Root [NavigatorState] key shared between [AppRouter] and route builders.
@@ -29,7 +22,14 @@ final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 /// Top-level route list consumed by [GoRouter].
 ///
 /// Order matters: GoRouter matches routes top-to-bottom.
-List<RouteBase> routes = [_splashRoute, _shellRoute, _termRoute, _privacyRoute, _notFoundRoute];
+List<RouteBase> routes = [
+  _splashRoute,
+  _shellRoute,
+  _termRoute,
+  _privacyRoute,
+  _languageSheetRoute,
+  _notFoundRoute,
+];
 
 // Splash — entry point
 GoRoute get _splashRoute => GoRoute(
@@ -98,6 +98,18 @@ GoRoute get _privacyRoute => GoRoute(
   name: Routers.privacy.routerName,
   path: Routers.privacy.routerPath,
   pageBuilder: (context, state) => TransitionPage(child: const PrivacyPage(), transitionType: PageTransitionType.slideFromRight),
+);
+
+
+// Bottom sheet
+GoRoute get _languageSheetRoute => GoRoute(
+  name: Routers.languageSheet.routerName,
+  path: Routers.languageSheet.routerPath,
+  pageBuilder: (context, state) => BottomSheetWidget.unScroll(
+    builder: (context) => const LanguageBottomSheet(),
+    barrierLabel: Routers.languageSheet.routerName,
+    isDismissible: false,
+  ),
 );
 
 // 404 fallback
