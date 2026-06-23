@@ -1,17 +1,51 @@
 {
   "@@locale": "en",
+  "er_email_field": "The email format is not correct.",
+  "@er_email_field": {
+    "description": "Show when the email field is invalid."
+  },
+  "er_name_field": "Name format is not correct.",
+  "@er_name_field": {
+    "description": "Show when the name field is invalid."
+  },
+  "er_password_field": "The password format is not correct.",
+  "@er_password_field": {
+    "description": "Show when the password field is invalid."
+  },
+  "er_phone_field": "The phone number format is not correct.",
+  "@er_phone_field": {
+    "description": "Show when the phone field is invalid."
+  },
+  "er_required_field": "This field is required.",
+  "@er_required_field": {
+    "description": "Show when the field is null or empty."
+  },
   "lb_about": "About",
-  "@lb_about": {},
+  "@lb_about": {
+    "description": "Label text for the About section or page."
+  },
   "lb_dark_mode": "Dark Mode",
-  "@lb_dark_mode": {},
+  "@lb_dark_mode": {
+    "description": "Label for the Dark Mode toggle/setting."
+  },
   "lb_general": "General",
-  "@lb_general": {},
+  "@lb_general": {
+    "description": "Header or label for General settings."
+  },
   "lb_language": "Language",
-  "@lb_language": {},
+  "@lb_language": {
+    "description": "Label for the Language selection setting."
+  },
   "lb_policy": "Privacy & Policy",
-  "@lb_policy": {},
+  "@lb_policy": {
+    "description": "Label text for the Privacy Policy section."
+  },
   "lb_terms": "Terms & Conditions",
-  "@lb_terms": {},
+  "@lb_terms": {
+    "description": "Label text for the Terms and Conditions section."
+  },
   "lb_version": "Version",
-  "@lb_version": {}
+  "@lb_version": {
+    "description": "Label text for the Terms and Conditions section."
+  }
 }

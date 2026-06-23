@@ -1,17 +1,51 @@
 {
   "@@locale": "ja",
+  "er_email_field": "メールアドレスの形式が正しくありません。",
+  "@er_email_field": {
+    "description": "Show when the email field is invalid."
+  },
+  "er_name_field": "名前の形式が正しくありません。",
+  "@er_name_field": {
+    "description": "Show when the name field is invalid."
+  },
+  "er_password_field": "パスワードの形式が正しくありません。",
+  "@er_password_field": {
+    "description": "Show when the password field is invalid."
+  },
+  "er_phone_field": "電話番号の形式が正しくありません。",
+  "@er_phone_field": {
+    "description": "Show when the phone field is invalid."
+  },
+  "er_required_field": "この項目は必須です。",
+  "@er_required_field": {
+    "description": "Show when the field is null or empty."
+  },
   "lb_about": "情報",
-  "@lb_about": {},
+  "@lb_about": {
+    "description": "Label text for the About section or page."
+  },
   "lb_dark_mode": "ダークモード",
-  "@lb_dark_mode": {},
+  "@lb_dark_mode": {
+    "description": "Label for the Dark Mode toggle/setting."
+  },
   "lb_general": "全般",
-  "@lb_general": {},
+  "@lb_general": {
+    "description": "Header or label for General settings."
+  },
   "lb_language": "言語",
-  "@lb_language": {},
+  "@lb_language": {
+    "description": "Label for the Language selection setting."
+  },
   "lb_policy": "プライバシーポリシー",
-  "@lb_policy": {},
+  "@lb_policy": {
+    "description": "Label text for the Privacy Policy section."
+  },
   "lb_terms": "利用規約",
-  "@lb_terms": {},
+  "@lb_terms": {
+    "description": "Label text for the Terms and Conditions section."
+  },
   "lb_version": "バージョン",
-  "@lb_version": {}
+  "@lb_version": {
+    "description": "Label text for the Terms and Conditions section."
+  }
 }
