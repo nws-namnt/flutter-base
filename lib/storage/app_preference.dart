@@ -70,10 +70,7 @@ class AppPreference {
   /// Clears the entire [SharedPreferences] store, including keys outside [AppPreferenceKey].
   Future<void> clearAll() => _prefs.clear();
 
-  // ---------------------------------------------------------------------------
   // Key-specific helpers — add one set (set / get / remove) per AppPreferenceKey.
-  // ---------------------------------------------------------------------------
-
   /// Persists [value] under [AppPreferenceKey.kTest].
   Future<void> setTest(bool value) => _prefs.setBool(AppPreferenceKey.kTest.key, value);
 

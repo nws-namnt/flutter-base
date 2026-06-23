@@ -64,10 +64,7 @@ class AppStorage {
   /// Returns `true` if [key] has a stored value.
   bool existData(AppStorageKey key) => _storage.hasData(key.key);
 
-  // ---------------------------------------------------------------------------
   // Key-specific helpers — add one set (set / get / remove) per AppStorageKey.
-  // ---------------------------------------------------------------------------
-
   /// Persists [value] under [AppStorageKey.kTest].
   Future<void> setTest(bool value) => _storage.write(AppStorageKey.kTest.key, value);
 
