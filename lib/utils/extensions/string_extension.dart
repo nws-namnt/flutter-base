@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 
 import '../../firebase/dev/firebase_options.dart' as firebase_dev show DefaultFirebaseOptions;
-import '../../firebase/dev/firebase_options.dart' as firebase_prod show DefaultFirebaseOptions;
-import '../../firebase/dev/firebase_options.dart' as firebase_uat show DefaultFirebaseOptions;
+import '../../firebase/prod/firebase_options.dart' as firebase_prod show DefaultFirebaseOptions;
+import '../../firebase/uat/firebase_options.dart' as firebase_uat show DefaultFirebaseOptions;
 
 /// String helpers used during app startup to resolve the active flavor.
 ///

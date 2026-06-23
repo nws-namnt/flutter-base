@@ -11,13 +11,18 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app/app_page.dart';
 import 'common/app_env.dart';
+import 'services/firebase_notification_service.dart';
 import 'storage/app_preference.dart';
 import 'storage/app_storage.dart';
 
 /// Background FCM handler — must be a top-level function.
+/// Runs in a separate Dart isolate; initialize Firebase with the correct flavor
+/// options using [appFlavor], a compile-time constant baked in at build time.
 @pragma('vm:entry-point')
 Future<void> _onBackgroundMessage(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(options: appFlavor.firebaseOptions);
+  }
   // TODO: handle background push notification
 }
 
@@ -40,7 +45,12 @@ Future<void> main() async {
     // Firebase — pick options matching the active flavor.
     // On iOS, Firebase may auto-initialize from GoogleService-Info.plist before Flutter starts.
     await Firebase.initializeApp(options: flavor.firebaseOptions);
+
+    // Register background handler BEFORE initialize() — FCM requirement.
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+
+    // Init local notifications + FCM token + foreground/background message streams.
+    await FirebaseNotificationService.instance.initialize();
 
     // Local storage.
     await AppStorage.init();

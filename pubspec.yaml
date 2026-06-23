@@ -55,6 +55,7 @@ dependencies:
   # UI components
   another_flushbar: ^2.2.4
   gap: ^3.0.1
+  flutter_local_notifications: ^22.0.1
 
   # Animations
   animations: ^2.2.0

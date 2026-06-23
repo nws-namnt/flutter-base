@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../services/firebase_notification_service.dart';
 import 'splash_state.dart';
 
 /// Cubit that drives the two-phase splash animation sequence.
@@ -17,7 +18,12 @@ class SplashCubit extends Cubit<SplashState> {
   /// - Phase 2: waits 1.5 s, then emits [SplashStatus.done] (triggers navigation).
   ///
   /// Guards each emit with an [isClosed] check so disposal mid-sequence is safe.
-  Future<void> runSequence() async {
+  Future<void> onInitialize() async {
+    // Request notification permission now that the splash screen is visible.
+    // Fire-and-forget — the system dialog appears over the splash UI (correct
+    // per Apple UX guidelines). Animation is not blocked by user response.
+    FirebaseNotificationService.instance.requestPermissionAndFetchToken();
+
     // Phase 1 — hold mark only for 2s, then expand to horizontal
     await Future.delayed(const Duration(seconds: 2));
     if (isClosed) return;
