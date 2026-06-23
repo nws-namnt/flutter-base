@@ -82,6 +82,10 @@ dependencies:
   firebase_messaging: ^16.3.0
   firebase_remote_config: ^6.5.2
   firebase_crashlytics: ^5.2.4
+
+  # Native method channel
+  pigeon: ^27.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

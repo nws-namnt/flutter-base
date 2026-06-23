@@ -62,8 +62,16 @@ GoogleService-Info.plist
 *.freezed.dart
 *.mocks.dart
 
-# intl_utils generated files
-lib/generated/
+# Pigeon-generated Dart output — commit alongside native generated files so the repo
+# builds without requiring `dart run pigeon` after a fresh clone.
+!lib/generated/pigeon_api.g.dart
+
+# intl_utils / flutter_gen output — list files explicitly so the pigeon exception above works
+# (git cannot un-ignore a file inside an excluded directory)
+lib/generated/l10n.dart
+lib/generated/intl/
+lib/generated/assets.dart
+lib/generated/app_assets.dart
 
 # Environment files — real values must NOT be committed
 # Commit only the .example templates, not the real .env files

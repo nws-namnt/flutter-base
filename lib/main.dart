@@ -38,6 +38,7 @@ Future<void> main() async {
     await AppEnv.load(flavor: flavor);
 
     // Firebase — pick options matching the active flavor.
+    // On iOS, Firebase may auto-initialize from GoogleService-Info.plist before Flutter starts.
     await Firebase.initializeApp(options: flavor.firebaseOptions);
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
 
