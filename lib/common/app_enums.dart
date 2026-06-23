@@ -31,3 +31,14 @@ enum AppPreferenceKey {
 
   const AppPreferenceKey(this.key);
 }
+
+enum ValidatorType {
+  email(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
+  password(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$'),
+  name(r'^[a-zA-Z0-9\s]{0,255}$'),
+  phone(r'^\d{10}$');
+
+  final String rawReg;
+
+  const ValidatorType(this.rawReg);
+}
