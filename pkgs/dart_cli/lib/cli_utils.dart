@@ -1,3 +1,5 @@
+library cli_utils;
+
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart' show AnsiPen;

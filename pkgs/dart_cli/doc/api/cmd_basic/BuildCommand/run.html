@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the run method from the BuildCommand class, for the Dart programming language.">
+  <title>run method - BuildCommand class - cmd_basic library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">dart_cli</a></li>
+    <li><a href="../../cmd_basic/">cmd&#47;basic_cmd.dart</a></li>
+    <li><a href="../../cmd_basic/BuildCommand-class.html">BuildCommand</a></li>
+    <li class="self-crumb">run method</li>
+  </ol>
+  <div class="self-name">run</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="cmd_basic&#47;BuildCommand-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">run</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@override</li>
+    </ol>
+  </div>
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">run</span>(<wbr>)
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Runs this command.</p>
+<p>The return value is wrapped in a <code>Future</code> if necessary and returned by
+<code>CommandRunner.runCommand</code>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+Future&lt;void&gt; run() async {
+  final hasArgs = argResults!.arguments.isNotEmpty;
+  final cliConfig = await CliConfig.load();
+
+  final flavor = hasArgs
+      ? argResults![&#39;flavor&#39;] as String
+      : promptSelect(&#39;Select flavor:&#39;, [&#39;dev&#39;, &#39;uat&#39;, &#39;prod&#39;], defaultValue: cliConfig.defaultFlavor);
+
+  final type = hasArgs
+      ? argResults![&#39;type&#39;] as String
+      : promptSelect(&#39;Select build type:&#39;, [&#39;apk&#39;, &#39;appbundle&#39;, &#39;ipa&#39;], defaultValue: cliConfig.defaultBuildType);
+
+  final mode = hasArgs
+      ? argResults![&#39;mode&#39;] as String
+      : promptSelect(&#39;Select build mode:&#39;, [&#39;debug&#39;, &#39;profile&#39;, &#39;release&#39;], defaultValue: cliConfig.defaultMode);
+
+  final args = [&#39;build&#39;, type, &#39;--flavor&#39;, flavor, &#39;--$mode&#39;];
+  await printExec(args);
+
+  try {
+    await runFlutter(args, spinnerMsg: &#39;Building $type ($flavor &#47; $mode)...&#39;);
+  } catch (_) {
+    e(&#39;❌ Build failed.&#39;);
+    return;
+  }
+
+  final outputPath = _outputPath(type, flavor, mode);
+  s(&#39;✅ Build completed — $type &#47; $flavor &#47; $mode&#39;);
+  i(&#39;📂 Output: ${_hyperlink(outputPath, outputPath)}&#39;);
+
+  final spinners = MultiSpinner();
+  final s1 = spinners.add(Spinner(
+    icon: &#39;📋&#39;,
+    rightPrompt: (state) =&gt; switch (state) {
+      SpinnerStateType.inProgress =&gt; &#39;Copying output path...&#39;,
+      SpinnerStateType.done       =&gt; &#39;Path copied to clipboard&#39;,
+      SpinnerStateType.failed     =&gt; &#39;Copy failed&#39;,
+    },
+  ));
+  final s2 = spinners.add(Spinner(
+    icon: &#39;📂&#39;,
+    rightPrompt: (state) =&gt; switch (state) {
+      SpinnerStateType.inProgress =&gt; &#39;Opening Finder...&#39;,
+      SpinnerStateType.done       =&gt; &#39;Finder opened&#39;,
+      SpinnerStateType.failed     =&gt; &#39;Could not open Finder&#39;,
+    },
+  ));
+
+  await Future.wait([
+    _copyToClipboard(outputPath).then((_) =&gt; s1.done()).catchError((_) =&gt; s1.failed()),
+    Process.run(&#39;open&#39;, [outputPath], runInShell: true).then((_) =&gt; s2.done()).catchError((_) =&gt; s2.failed()),
+  ]);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">dart_cli</a></li>
+    <li><a href="../../cmd_basic/">cmd_basic</a></li>
+    <li><a href="../../cmd_basic/BuildCommand-class.html">BuildCommand</a></li>
+    <li class="self-crumb">run method</li>
+</ol>
+
+    <h5>BuildCommand class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    dart_cli
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

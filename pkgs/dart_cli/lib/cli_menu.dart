@@ -1,3 +1,5 @@
+library cli_menu;
+
 import 'package:args/command_runner.dart' show CommandRunner;
 import 'package:interact_cli/interact_cli.dart';
 

@@ -1,3 +1,5 @@
+library cli_config;
+
 import 'dart:io';
 
 import 'package:cli_config/cli_config.dart';

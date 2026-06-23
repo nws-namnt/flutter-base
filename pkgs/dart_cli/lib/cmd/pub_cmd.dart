@@ -1,3 +1,5 @@
+library cmd_pub;
+
 import 'dart:io';
 
 import 'package:args/command_runner.dart';

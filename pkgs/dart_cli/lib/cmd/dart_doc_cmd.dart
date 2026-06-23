@@ -1,3 +1,5 @@
+library cmd_dart_doc;
+
 import 'dart:io';
 
 import 'package:args/command_runner.dart' show Command;

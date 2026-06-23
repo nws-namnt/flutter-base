@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the runCmd function from the cli_utils library, for the Dart programming language.">
+  <title>runCmd function - cli_utils library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">dart_cli</a></li>
+    <li><a href="../cli_utils/">cli_utils.dart</a></li>
+    <li class="self-crumb">runCmd function</li>
+  </ol>
+  <div class="self-name">runCmd</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="cli_utils&#47;cli_utils-library-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-function">runCmd</span> function 
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+<span class="returntype">Future<span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">runCmd</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="runCmd-param-cmd"><span class="type-annotation">String</span> <span class="parameter-name">cmd</span>, </span></li>
+<li><span class="parameter" id="runCmd-param-args"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter">String</span>&gt;</span></span> <span class="parameter-name">args</span>, {</span></li>
+<li><span class="parameter" id="runCmd-param-spinnerMsg"><span class="type-annotation">String?</span> <span class="parameter-name">spinnerMsg</span>, </span></li>
+</ol>})
+
+        
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Runs <code>cmd</code> with <code>args</code>, showing a spinner while the process is running.</p>
+<p>Throws <code>ProcessException</code> if the process exits with a non-zero code.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; runCmd(String cmd, List&lt;String&gt; args, {String? spinnerMsg}) async {
+  final spinner = (spinnerMsg ?? &#39;Running...&#39;).renderSpinner;
+  spinner.start();
+
+  try {
+    final result = await Process.run(cmd, args, runInShell: true);
+
+    spinner.stop();
+
+    if (result.exitCode != 0) {
+      final errMsg = result.stderr.toString().trim();
+      if (errMsg.isNotEmpty) e(errMsg);
+      throw ProcessException(cmd, args, &#39;Exited with code ${result.exitCode}&#39;, result.exitCode);
+    }
+
+    if (result.stdout.toString().isNotEmpty) t(result.stdout.toString());
+  } catch (err) {
+    spinner.stop();
+    rethrow;
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">dart_cli</a></li>
+    <li><a href="../cli_utils/">cli_utils</a></li>
+    <li class="self-crumb">runCmd function</li>
+</ol>
+
+    <h5>cli_utils library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    dart_cli
+      1.0.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

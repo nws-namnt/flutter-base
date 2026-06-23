@@ -1,3 +1,5 @@
+library cmd_basic;
+
 import 'dart:convert';
 import 'dart:io';
 

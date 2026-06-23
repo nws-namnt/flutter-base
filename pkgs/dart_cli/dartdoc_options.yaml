@@ -50,12 +50,19 @@ dartdoc:
   #   or the file path relative to lib/ without .dart extension when no
   #   directive is present (e.g. lib/cli_menu.dart → "cli_menu").
   #
-  # ✅ ACTIVE: dart_cli exposes a single barrel library (`lib/dart_cli.dart`)
-  #    that re-exports all public API. Documenting only that entry point
-  #    mirrors the flutter_bloc pattern — one library in the sidebar,
-  #    all classes listed inside it.
+  # ✅ ACTIVE: each sub-library has an explicit `library` directive so dartdoc
+  #    generates class detail pages under their canonical library folder.
+  #    All library names listed here must match the `library <name>;` directive
+  #    in the corresponding source file.
   include:
     - dart_cli
+    - cli_config
+    - cli_menu
+    - cli_models
+    - cli_utils
+    - cmd_basic
+    - cmd_pub
+    - cmd_dart_doc
 
   # includeExternal
   #   Adds files outside lib/ (e.g. bin/ scripts) to the documented set.

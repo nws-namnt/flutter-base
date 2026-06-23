@@ -1,3 +1,5 @@
+library cli_models;
+
 /// Menu option definitions for the dart_cli interactive interface.
 ///
 /// Each [MenuOption] maps a human-readable [title] to a [cliTitle] used as the
