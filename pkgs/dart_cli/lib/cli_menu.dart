@@ -12,6 +12,7 @@ class Runner extends CommandRunner {
     addCommand(RunCommand());
     addCommand(BuildCommand());
     addCommand(GenCommand());
+    addCommand(PigeonCommand());
     addCommand(DoctorCommand());
     addCommand(CleanCommand());
     addCommand(DeviceCommand());

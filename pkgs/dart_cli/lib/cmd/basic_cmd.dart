@@ -193,6 +193,35 @@ class BuildCommand extends Command {
   }
 }
 
+/// Regenerates Pigeon type-safe platform channel code.
+///
+/// Runs `dart run pigeon --input pigeon/api.dart` from the project root,
+/// which overwrites the three generated files:
+///   - `lib/generated/pigeon_api.g.dart`
+///   - `android/.../generated/PigeonApi.g.kt`
+///   - `ios/Runner/generated/PigeonApi.g.swift`
+///
+/// Run this whenever `pigeon/api.dart` is modified.
+class PigeonCommand extends Command {
+  @override
+  String get description => MenuOption.pigeon.description;
+
+  @override
+  String get name => MenuOption.pigeon.cliTitle;
+
+  @override
+  Future<void> run() async {
+    final args = ['run', 'pigeon', '--input', 'pigeon/api.dart'];
+    await printExecDart(args);
+    try {
+      await runDart(args, spinnerMsg: 'Generating Pigeon bridge code...');
+      s('✅ Pigeon generation completed.');
+    } catch (_) {
+      e('❌ Pigeon generation failed.');
+    }
+  }
+}
+
 /// Runs `build_runner` for code generation in build or watch mode.
 class GenCommand extends Command {
   @override

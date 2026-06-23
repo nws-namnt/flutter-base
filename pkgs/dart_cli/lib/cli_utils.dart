@@ -62,11 +62,19 @@ Future<List<String>> get flutterExec => _flutterExecCache ??= _resolveExec('flut
 /// The resolved Dart executable prefix, FVM-aware.
 Future<List<String>> get dartExec => _dartExecCache ??= _resolveExec('dart');
 
-/// Prints the full command that will be executed, including any FVM prefix.
+/// Prints the full Flutter command that will be executed, including any FVM prefix.
 ///
 /// Example output: `Execute: fvm flutter pub get`
 Future<void> printExec(List<String> args) async {
   final exec = await flutterExec;
+  t('Execute: ${[...exec, ...args].join(' ')}');
+}
+
+/// Prints the full Dart command that will be executed, including any FVM prefix.
+///
+/// Example output: `Execute: fvm dart run pigeon --input pigeon/api.dart`
+Future<void> printExecDart(List<String> args) async {
+  final exec = await dartExec;
   t('Execute: ${[...exec, ...args].join(' ')}');
 }
 

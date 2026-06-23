@@ -28,6 +28,12 @@ enum MenuOption {
     description: 'Code generation model utilities.',
     cliTitle: 'gen',
   ),
+  /// Regenerates Pigeon type-safe platform channel code.
+  pigeon(
+    title: 'Pigeon',
+    description: 'Regenerate Pigeon native bridge (dart/kotlin/swift).',
+    cliTitle: 'pigeon',
+  ),
   /// Checks environment and dependencies.
   doctor(
     title: 'Doctor',
@@ -150,6 +156,7 @@ final List<MenuItem> firstLevelMenu = [
       MenuOption.run,
       MenuOption.build,
       MenuOption.gen,
+      MenuOption.pigeon,
       MenuOption.doctor,
       MenuOption.clean,
       MenuOption.device,
