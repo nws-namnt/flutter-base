@@ -15,3 +15,19 @@ enum AppLanguage {
     required this.flag,
   });
 }
+
+enum AppStorageKey {
+  kTest('kTest');
+
+  final String key;
+
+  const AppStorageKey(this.key);
+}
+
+enum AppPreferenceKey {
+  kTest('kTest');
+
+  final String key;
+
+  const AppPreferenceKey(this.key);
+}

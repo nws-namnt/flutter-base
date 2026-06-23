@@ -7,11 +7,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_base/utils/extensions/string_extension.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app/app_page.dart';
 import 'common/app_env.dart';
+import 'storage/app_preference.dart';
+import 'storage/app_storage.dart';
 
 /// Background FCM handler — must be a top-level function.
 @pragma('vm:entry-point')
@@ -41,7 +42,8 @@ Future<void> main() async {
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
 
     // Local storage.
-    await GetStorage.init();
+    await AppStorage.init();
+    await AppPreference.init();
 
     // Disable Crashlytics in debug mode to avoid noise on the dashboard.
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
