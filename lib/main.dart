@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -46,21 +45,21 @@ Future<void> main() async {
 
     await AppEnv.load(flavor: flavor);
 
-    // Firebase initialization — flavor-aware, platform-aware.
+    // Firebase initialization.
     //
-    // iOS: FLTFirebaseCorePlugin.registerWithRegistrar() auto-calls [FIRApp configure]
-    //      during plugin registration (before Dart starts), using the
-    //      GoogleService-Info.plist already copied to the app bundle by the
-    //      Xcode Run Script phase. Dart must NOT pass options again — it just
-    //      connects to the already-configured native app via initializeApp().
+    // On ALL platforms, Firebase is auto-initialized by the native layer before
+    // Dart starts:
+    //   - iOS/macOS: FLTFirebaseCorePlugin calls [FIRApp configure] during plugin
+    //     registration, using GoogleService-Info.plist copied by the Xcode Run Script.
+    //   - Android: FirebaseInitProvider (a ContentProvider) runs at app start using
+    //     the google-services.json baked in by the google-services Gradle plugin.
+    //     For this project, flavor-specific files under src/<flavor>/google-services.json
+    //     are automatically selected at build time, so the correct Firebase project is
+    //     always used.
     //
-    // Android: no native auto-config; pass explicit options so the correct
-    //          flavor config is used at runtime.
-    if (Platform.isIOS || Platform.isMacOS) {
-      await Firebase.initializeApp();
-    } else {
-      await Firebase.initializeApp(options: flavor.firebaseOptions);
-    }
+    // Dart's initializeApp() must NOT pass options — it only attaches to the
+    // already-running native instance.
+    await Firebase.initializeApp();
 
     // Register background handler BEFORE initialize() — FCM requirement.
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);

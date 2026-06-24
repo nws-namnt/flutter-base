@@ -56,6 +56,15 @@ class _SettingPageState extends State<SettingPage> {
 
               return Scaffold(
                 backgroundColor: AppColors.oldLace,
+                floatingActionButton: FloatingActionButton.extended(
+                  onPressed: () => context.pushNamed(
+                    Routers.aiSupport.routerName,
+                    extra: {'screenName': 'Settings'},
+                  ),
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                  label: const Text('AI Support'),
+                  tooltip: 'Open AI Support chat',
+                ),
                 body: SettingsList(
                   sections: [
                     SettingsSection(

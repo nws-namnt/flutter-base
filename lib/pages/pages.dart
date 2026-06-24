@@ -21,6 +21,7 @@
 // ignore: unnecessary_library_name
 library pages;
 
+export 'ai_support/ai_support_page.dart';
 export 'home/home_page.dart';
 export 'privacy/privacy_page.dart';
 export 'service/service_page.dart';

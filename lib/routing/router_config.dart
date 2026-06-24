@@ -27,6 +27,7 @@ List<RouteBase> routes = [
   _shellRoute,
   _termRoute,
   _privacyRoute,
+  _aiSupportRoute,
   _languageSheetRoute,
   _notFoundRoute,
 ];
@@ -110,6 +111,20 @@ GoRoute get _languageSheetRoute => GoRoute(
     barrierLabel: Routers.languageSheet.routerName,
     isDismissible: false,
   ),
+);
+
+// AI Support chat
+GoRoute get _aiSupportRoute => GoRoute(
+  name: Routers.aiSupport.routerName,
+  path: Routers.aiSupport.routerPath,
+  pageBuilder: (context, state) {
+    final extra = state.extra as Map<String, dynamic>?;
+    final screenName = extra?['screenName'] as String? ?? 'App';
+    return TransitionPage(
+      child: AiSupportPage(screenName: screenName),
+      transitionType: PageTransitionType.slideFromRight,
+    );
+  },
 );
 
 // 404 fallback

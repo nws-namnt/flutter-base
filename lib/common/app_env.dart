@@ -25,6 +25,12 @@ class AppEnv {
   /// API key / token. Defaults to empty string.
   static String get apiKey => _optional('API_KEY', '');
 
+  /// Gemini API key for AI features. Defaults to empty string.
+  ///
+  /// Get a free key at https://aistudio.google.com/apikey and set
+  /// GEMINI_API_KEY in each `assets/env/.env.<flavor>` file.
+  static String get geminiApiKey => _optional('GEMINI_API_KEY', '');
+
   /// Whether verbose (request/response) logging is enabled. Defaults to false.
   static bool get enableLogging =>
       _optional('ENABLE_LOGGING', 'false').toLowerCase() == 'true';
