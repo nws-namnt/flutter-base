@@ -13,6 +13,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'app/app_page.dart';
 import 'common/app_env.dart';
 import 'services/firebase_notification_service.dart';
+import 'services/network_service.dart';
 import 'storage/app_preference.dart';
 import 'storage/app_storage.dart';
 
@@ -70,6 +71,10 @@ Future<void> main() async {
     // Local storage.
     await AppStorage.init();
     await AppPreference.init();
+
+    // Network monitoring — must run before runApp so isConnected is valid
+    // on the first frame.
+    await networkService.initialize();
 
     // Disable Crashlytics in debug mode to avoid noise on the dashboard.
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);

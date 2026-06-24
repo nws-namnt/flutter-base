@@ -3,6 +3,7 @@ import 'package:flutter_base/base.dart';
 
 import 'api_client.dart';
 import 'api_interceptors.dart';
+import 'api_retry_interceptor.dart';
 import 'curl_logger_interceptor.dart';
 import 'dio_logger_interceptor.dart';
 
@@ -23,8 +24,9 @@ import 'dio_logger_interceptor.dart';
 /// ## Interceptor stack (in registration order)
 ///
 /// 1. [ApiInterceptors] — auth token injection and error-recovery logic.
-/// 2. [DioLoggerInterceptor] — pretty-printed request/response logging.
-/// 3. [CurlLoggerInterceptor] — cURL export; dev only via `ENABLE_CURL_LOGGING`.
+/// 2. [ApiRetryInterceptor] — queues failed requests and retries on reconnect.
+/// 3. [DioLoggerInterceptor] — pretty-printed request/response logging.
+/// 4. [CurlLoggerInterceptor] — cURL export; dev only via `ENABLE_CURL_LOGGING`.
 ///
 /// ## Usage
 ///
@@ -51,12 +53,16 @@ class ApiUtil {
       _dio!.options.receiveTimeout =  Duration(milliseconds: AppEnv.timeoutMs);
 
       _dio!.interceptors.add(ApiInterceptors());
+      _dio!.interceptors.add(
+        ApiRetryInterceptor(
+          requestRetries: DioConnectivityRequestRetries(dio: _dio!),
+        ),
+      );
       _dio!.interceptors.add(DioLoggerInterceptor());
 
       if (AppEnv.enableCurlLogging) {
         _dio!.interceptors.add(CurlLoggerInterceptor());
       }
-      // Retry on no internet: add ApiRetryInterceptor here when implemented.
     }
     return _dio!;
   }
