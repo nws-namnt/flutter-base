@@ -75,6 +75,10 @@ dependencies:
   json_annotation: ^4.12.0
   timezone: ^0.11.0
 
+  # AI
+  genkit: ^0.14.1
+  genkit_google_genai: ^0.2.9
+
   # Logging
   logger: ^2.7.0
 
