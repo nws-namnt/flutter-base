@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/animated_bottom_navigation_widget.dart';
@@ -24,45 +25,54 @@ class ShellPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: AnimatedBranchContainer(
-          currentIndex: shell.currentIndex,
-          transitionType: ShellTransitionType.fade,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-          children: children,
-        ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: shell.currentIndex,
-          onDestinationSelected: (index) => shell.goBranch(
-            index,
-            // Re-tap active tab → pop to branch root
-            initialLocation: index == shell.currentIndex,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: theme.scaffoldBackgroundColor,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      ),
+      child: SafeArea(
+        child: Scaffold(
+          body: AnimatedBranchContainer(
+            currentIndex: shell.currentIndex,
+            transitionType: ShellTransitionType.fade,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            children: children,
           ),
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          animationDuration: const Duration(milliseconds: 150),
-          height: 60,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
-              tooltip: 'Home',
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: shell.currentIndex,
+            onDestinationSelected: (index) => shell.goBranch(
+              index,
+              // Re-tap active tab → pop to branch root
+              initialLocation: index == shell.currentIndex,
             ),
-            NavigationDestination(
-              icon: Icon(Icons.miscellaneous_services_outlined),
-              selectedIcon: Icon(Icons.miscellaneous_services),
-              label: 'Service',
-              tooltip: 'Service',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: 'Settings',
-              tooltip: 'Settings',
-            ),
-          ],
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+            animationDuration: const Duration(milliseconds: 150),
+            height: 60,
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: 'Home',
+                tooltip: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.miscellaneous_services_outlined),
+                selectedIcon: Icon(Icons.miscellaneous_services),
+                label: 'Service',
+                tooltip: 'Service',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings),
+                label: 'Settings',
+                tooltip: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
     );
