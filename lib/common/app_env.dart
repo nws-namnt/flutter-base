@@ -25,17 +25,27 @@ class AppEnv {
   /// API key / token. Defaults to empty string.
   static String get apiKey => _optional('API_KEY', '');
 
-  /// Whether verbose logging is enabled. Defaults to false.
+  /// Whether verbose (request/response) logging is enabled. Defaults to false.
   static bool get enableLogging =>
       _optional('ENABLE_LOGGING', 'false').toLowerCase() == 'true';
+
+  /// Whether cURL logging is enabled. Defaults to false.
+  ///
+  /// When true, [CurlLoggerInterceptor] is attached to the Dio client so every
+  /// outgoing request is also printed as a cURL command — useful for reproducing
+  /// requests in Postman or a terminal. Should be false in uat/prod.
+  static bool get enableCurlLogging =>
+      _optional('ENABLE_CURL_LOGGING', 'false').toLowerCase() == 'true';
 
   /// Whether the debug banner is shown. Defaults to false.
   static bool get showDebugBanner =>
       _optional('SHOW_DEBUG_BANNER', 'false').toLowerCase() == 'true';
 
-  /// Network timeout in seconds. Defaults to 30.
-  static int get timeoutSeconds =>
-      int.tryParse(_optional('TIMEOUT_SECONDS', '30')) ?? 30;
+  /// Network connect/receive timeout in milliseconds. Defaults to 30000 (30 s).
+  ///
+  /// Maps to [Dio.options.connectTimeout] and [Dio.options.receiveTimeout].
+  static int get timeoutMs =>
+      int.tryParse(_optional('TIMEOUT_MS', '30000')) ?? 30000;
 
   /// Load the env file for [flavor] and validate required keys.
   /// Must be called before accessing any getter (typically in main()).

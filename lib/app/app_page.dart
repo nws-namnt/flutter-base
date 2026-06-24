@@ -1,51 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:go_router/go_router.dart';
 
 import '../common/app_env.dart';
 import '../common/app_themes.dart';
 import '../generated/l10n.dart' show S;
-import '../routing/app_router.dart';
-import '../routing/router_notifier.dart';
+import '../routing/app_router.dart' show appRouter;
 import 'app_cubit.dart';
 import 'app_state.dart';
 
-late GoRouter appRouter;
 /// Root widget of the application.
 ///
-/// Owns the [AppCubit], [RouterNotifier], and [AppRouter] instances.
-/// Builds a [MaterialApp.router] that reacts to theme / locale changes
-/// emitted by [AppCubit].
-class AppPage extends StatefulWidget {
-  /// Creates the root [AppPage].
+/// Provides [AppCubit] to the widget tree and builds a [MaterialApp.router]
+/// that reacts to theme and locale changes. Navigation and auth-redirect
+/// state are managed by the [AppRouter] singleton — see [appRouter] and
+/// [routerNotifier] for context-free navigation.
+class AppPage extends StatelessWidget {
   const AppPage({super.key});
-
-  @override
-  State<AppPage> createState() => _AppPageState();
-}
-
-class _AppPageState extends State<AppPage> {
-  late final RouterNotifier _routerNotifier;
 
   static final _m3 = const M3Theme();
   static final _lightTheme = _m3.light;
   static final _darkTheme = _m3.dark;
   static final _lightHighContrastTheme = _m3.lightHighContrast;
   static final _darkHighContrastTheme = _m3.darkHighContrast;
-
-  @override
-  void initState() {
-    super.initState();
-    _routerNotifier = RouterNotifier();
-    appRouter = AppRouter(_routerNotifier).goRouter;
-  }
-
-  @override
-  void dispose() {
-    _routerNotifier.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

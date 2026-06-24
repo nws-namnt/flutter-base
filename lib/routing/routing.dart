@@ -1,8 +1,9 @@
 /// Navigation layer — GoRouter configuration, route registry, and helpers.
 ///
 /// - [Routers] — enum of all named routes with path + name pairs
-/// - [AppRouter] — [GoRouter] instance wired to [RouterNotifier]
-/// - [RouterNotifier] — [ChangeNotifier] that triggers redirect re-evaluation
+/// - [AppRouter] — singleton that owns the [GoRouter] and [RouterNotifier]
+/// - [appRouter] — top-level getter for context-free navigation
+/// - [routerNotifier] — top-level getter to trigger auth-based redirects
 /// - [RouterObserver] — [NavigatorObserver] that logs route lifecycle events
 /// - [RouterExtension] — convenience helpers on [BuildContext] (back, goHome…)
 /// - [GoRouterExtension] — context-free [GoRouter.location] getter
