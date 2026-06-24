@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -20,8 +21,10 @@ import 'storage/app_storage.dart';
 /// options using [appFlavor], a compile-time constant baked in at build time.
 @pragma('vm:entry-point')
 Future<void> _onBackgroundMessage(RemoteMessage message) async {
-  if (Firebase.apps.isEmpty) {
+  try {
     await Firebase.initializeApp(options: appFlavor.firebaseOptions);
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
   }
   // TODO: handle background push notification
 }
@@ -42,9 +45,21 @@ Future<void> main() async {
 
     await AppEnv.load(flavor: flavor);
 
-    // Firebase — pick options matching the active flavor.
-    // On iOS, Firebase may auto-initialize from GoogleService-Info.plist before Flutter starts.
-    await Firebase.initializeApp(options: flavor.firebaseOptions);
+    // Firebase initialization — flavor-aware, platform-aware.
+    //
+    // iOS: FLTFirebaseCorePlugin.registerWithRegistrar() auto-calls [FIRApp configure]
+    //      during plugin registration (before Dart starts), using the
+    //      GoogleService-Info.plist already copied to the app bundle by the
+    //      Xcode Run Script phase. Dart must NOT pass options again — it just
+    //      connects to the already-configured native app via initializeApp().
+    //
+    // Android: no native auto-config; pass explicit options so the correct
+    //          flavor config is used at runtime.
+    if (Platform.isIOS || Platform.isMacOS) {
+      await Firebase.initializeApp();
+    } else {
+      await Firebase.initializeApp(options: flavor.firebaseOptions);
+    }
 
     // Register background handler BEFORE initialize() — FCM requirement.
     FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);

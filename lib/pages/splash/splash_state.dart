@@ -1,27 +1,16 @@
 import 'package:equatable/equatable.dart';
-
-/// Animation phase of the splash screen.
-enum SplashStatus {
-  /// Logo mark is shown; animation has not started.
-  initial,
-
-  /// Logo has expanded to the full horizontal lockup.
-  expanded,
-
-  /// Animation complete; the page should navigate away.
-  done,
-}
+import 'package:flutter_base/common/app_enums.dart';
 
 /// Immutable state for [SplashPage], managed by [SplashCubit].
 class SplashState extends Equatable {
   /// Current animation phase.
-  final SplashStatus status;
+  final LoadStatus status;
 
-  /// Creates [SplashState] starting at [SplashStatus.initial].
-  const SplashState({this.status = SplashStatus.initial});
+  /// Creates [SplashState] starting at [LoadStatus.initial].
+  const SplashState({this.status = LoadStatus.initial});
 
   /// Returns a copy of this state with [status] replaced.
-  SplashState copyWith({SplashStatus? status}) =>
+  SplashState copyWith({LoadStatus? status}) =>
       SplashState(status: status ?? this.status);
 
   @override

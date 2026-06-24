@@ -71,3 +71,36 @@ enum ValidatorType {
 
   const ValidatorType(this.rawReg);
 }
+
+/// Represents the status of a data-loading operation.
+enum LoadStatus {
+  /// No load has been triggered yet.
+  initial,
+
+  /// A load is currently in progress.
+  loading,
+
+  /// The load completed successfully.
+  success,
+
+  /// The load failed due to an error.
+  failure,
+}
+
+/// Represents the status of a user-initiated action (e.g. submit, delete).
+enum ActionStatus {
+  /// No action has been triggered yet.
+  initial,
+
+  /// The action is currently in progress.
+  loading,
+
+  /// The action completed successfully.
+  success,
+
+  /// The action failed due to an error.
+  failure,
+
+  /// Additional items are being loaded (pagination).
+  loadMore,
+}

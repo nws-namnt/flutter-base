@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../common/app_enums.dart' show LoadStatus;
 import '../../routing/routers.dart';
 import 'splash_cubit.dart';
 import 'splash_state.dart';
@@ -44,12 +45,12 @@ class _SplashPageState extends State<SplashPage> {
     return BlocProvider.value(
       value: _cubit,
       child: BlocConsumer<SplashCubit, SplashState>(
-        listenWhen: (_, curr) => curr.status == SplashStatus.done,
+        listenWhen: (_, curr) => curr.status == LoadStatus.success,
         listener: (context, _) => context.go(Routers.home.routerPath),
         builder: (context, state) {
           final bgColor = Theme.of(context).colorScheme.surface;
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final style = state.status == SplashStatus.expanded
+          final style = state.status == LoadStatus.loading
               ? FlutterLogoStyle.horizontal
               : FlutterLogoStyle.markOnly;
 
