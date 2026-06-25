@@ -1,4 +1,37 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Required for all network calls (Dio, Firebase, connectivity check).
+         Must be in the main manifest — debug/profile manifests are not merged into release builds. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Required to check network interface state (used by connectivity_plus).
+         The plugin auto-merges this, but declared here for clarity. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Required to show notifications on Android 13+ (API 33+).
+         Ignored automatically on API < 33 — no maxSdkVersion needed.
+         Runtime permission: must also be requested via firebase_messaging.requestPermission()
+         or flutter_local_notifications.requestNotificationsPermission(). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Required to vibrate the device when a notification is displayed.
+         Used by the default notification channel (enableVibration: true in NotificationService). -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Required to deliver BOOT_COMPLETED broadcast to ScheduledNotificationBootReceiver.
+         Without this permission, the receiver is registered but never invoked after reboot. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- Required to schedule exact-time alarms on Android 12+ (API 31+).
+         Covers all API levels — no maxSdkVersion set intentionally.
+         On API 31–32: granted at install time, not user-revocable.
+         On API 33+: user can revoke via Settings → Apps → Special app access → Alarms & reminders;
+           app must handle the revoked case (check canScheduleExactAlarms() before scheduling).
+         USE_EXACT_ALARM is intentionally omitted — it is restricted by Google Play to alarm clock
+         and calendar app categories only and would require policy justification. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
     <application
         android:label="flutter_base"
         android:name="${applicationName}"
@@ -11,7 +44,10 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            tools:ignore="NewApi">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -25,11 +61,47 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+
+        <!-- FCM: overrides the default notification channel used when a data-only message
+             arrives while the app is in the background/killed. Must match
+             AppConstants.kAndroidChannelId so all FCM notifications land in the correct channel. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="fox_channel"/>
+
+        <!-- Do not delete — used by the Flutter tool to generate GeneratedPluginRegistrant.java. -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- flutter_local_notifications: receives the broadcast fired by AlarmManager when a
+             scheduled/periodic notification is due. Required for exact-alarm scheduling to work
+             while the app is in background or killed. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false"/>
+
+        <!-- flutter_local_notifications: re-registers all scheduled/periodic notifications after
+             the device reboots (exact alarms are cleared on reboot).
+             Requires RECEIVE_BOOT_COMPLETED permission.
+             QUICKBOOT_POWERON covers HTC / some OEM fast-boot sequences. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- Disable Impeller rendering engine on Android.
+             Impeller is Flutter's newer rendering backend — disabled here due to known visual
+             artifacts on certain GPU drivers. Re-enable once stable for your target device range. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -40,6 +112,31 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- url_launcher: required on Android 11+ (API 30+) to resolve a browser app for https/http.
+             The BROWSABLE category is mandatory — without it canLaunchUrl() returns false because
+             the system does not match the intent to a browser, even if one is installed. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="http"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="mailto"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.DIAL"/>
+            <data android:scheme="tel"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="sms"/>
         </intent>
     </queries>
 </manifest>
