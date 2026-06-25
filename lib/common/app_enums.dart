@@ -104,3 +104,43 @@ enum ActionStatus {
   /// Additional items are being loaded (pagination).
   loadMore,
 }
+
+/// URI scheme used when launching an external app via [onLaunchExternalApp].
+///
+/// Each value maps to a well-known URI scheme. Pass the matching [data] type
+/// documented on [onLaunchExternalApp] to avoid a malformed URI.
+enum LaunchExternalType {
+  /// Opens the default SMS app pre-filled with a recipient number.
+  ///
+  /// Scheme: `sms:`. Pass a phone number as `data`, e.g. `'+84123456789'`.
+  sms('sms'),
+
+  /// Dials a phone number in the default phone app.
+  ///
+  /// Scheme: `tel:`. Pass a phone number as `data`, e.g. `'+84123456789'`.
+  tel('tel'),
+
+  /// Opens the default email client with a pre-filled recipient.
+  ///
+  /// Scheme: `mailto:`. Pass an email address as `data`, e.g. `'user@example.com'`.
+  /// Use the `mailSubject` parameter on [onLaunchExternalApp] to set the subject line.
+  mail('mailto'),
+
+  /// Opens a URL in a browser or in-app web view.
+  ///
+  /// Scheme derived from the URL itself via [Uri.parse]. Pass a full URL as
+  /// `data`, e.g. `'https://example.com/path?q=1'`.
+  webview('https'),
+
+  /// Opens a local file with the system's default handler for its MIME type.
+  ///
+  /// Scheme: `file:`. Pass an absolute file-system path as `data`,
+  /// e.g. `'/storage/emulated/0/document.pdf'`.
+  /// The file must exist on disk; [onLaunchExternalApp] checks existence before launching.
+  file('file');
+
+  /// The URI scheme string associated with this type.
+  final String type;
+
+  const LaunchExternalType(this.type);
+}
