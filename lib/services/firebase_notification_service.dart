@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' show RemoteMessage, FirebaseMessaging, NotificationSettings, AuthorizationStatus;
 import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -130,23 +131,29 @@ class FirebaseNotificationService {
     // await NotificationService.instance.requestPlatformPermission();
     // Or you can rely on the Firebase messaging for ask permission
     /// Request permission
-    NotificationSettings settings = await _messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false, // requires Apple special entitlement — do not enable unless approved
-      provisional: false,   // provisional = silent delivery without explicit user consent; set true for soft permission flow
-      sound: true,
-    );
+    try {
+      NotificationSettings settings = await _messaging.requestPermission(
+            alert: true,
+            announcement: false,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false, // requires Apple special entitlement — do not enable unless approved
+            provisional: false,   // provisional = silent delivery without explicit user consent; set true for soft permission flow
+            sound: true,
+          );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      devLog('User granted permission');
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      devLog('User granted provisional permission');
-    } else {
-      devLog('User declined or has not accepted permission');
-      return;
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+            devLog('User granted permission');
+          } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+            devLog('User granted provisional permission');
+          } else {
+            devLog('User declined or has not accepted permission');
+            return;
+          }
+    } on FirebaseException catch (e) {
+      // Swallow "already running" race condition on hot restart (development only).
+      // In production this path is unreachable because the process is cold-started.
+      devLog('⚠️ requestPermission skipped: ${e.message}');
     }
   }
 

@@ -28,6 +28,22 @@
   "@lb_dark_mode": {
     "description": "Label for the Dark Mode toggle/setting."
   },
+  "lb_flush_error": "Lỗi",
+  "@lb_flush_error": {
+    "description": "Label title for flush bar in error state"
+  },
+  "lb_flush_info": "Thông tin",
+  "@lb_flush_info": {
+    "description": "Label title for flush bar in info state"
+  },
+  "lb_flush_success": "Thành công",
+  "@lb_flush_success": {
+    "description": "Label title for flush bar in success state"
+  },
+  "lb_flush_warning": "Cảnh báo",
+  "@lb_flush_warning": {
+    "description": "Label title for flush bar in warning state"
+  },
   "lb_general": "Chung",
   "@lb_general": {
     "description": "Header or label for General settings."

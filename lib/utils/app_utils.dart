@@ -1,6 +1,8 @@
 import 'dart:io' show File;
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart' hide PickedFile;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,14 +46,12 @@ Future<void> onLaunchExternalApp({
   try {
     final Uri uri = switch (externalType) {
       LaunchExternalType.mail => Uri(
-          scheme: externalType.type,
-          path: data,
-          queryParameters: mailSubject != null ? {'subject': mailSubject} : null,
-        ),
-      LaunchExternalType.sms || LaunchExternalType.tel => Uri(
-          scheme: externalType.type,
-          path: data,
-        ),
+        scheme: externalType.type,
+        path: data,
+        queryParameters: mailSubject != null ? {'subject': mailSubject} : null,
+      ),
+      LaunchExternalType.sms ||
+      LaunchExternalType.tel => Uri(scheme: externalType.type, path: data),
       LaunchExternalType.webview => Uri.parse(data),
       LaunchExternalType.file => Uri.file(data),
     };
@@ -64,10 +64,11 @@ Future<void> onLaunchExternalApp({
 
     // inAppWebView/inAppBrowserView only support http(s) — fall back for other schemes
     final effectiveMode =
-        (mode == LaunchMode.inAppWebView || mode == LaunchMode.inAppBrowserView) &&
-                !(uri.scheme == 'https' || uri.scheme == 'http')
-            ? LaunchMode.externalApplication
-            : mode;
+        (mode == LaunchMode.inAppWebView ||
+                mode == LaunchMode.inAppBrowserView) &&
+            !(uri.scheme == 'https' || uri.scheme == 'http')
+        ? LaunchMode.externalApplication
+        : mode;
 
     // canLaunchUrl is unreliable on Android for well-known schemes (https, http, mailto, tel, sms)
     // — it frequently returns false even when the device can handle the URL, due to Android 11+
@@ -244,3 +245,61 @@ Future<List<PickedFile>> pickMultipleFiles({
     return [];
   }
 }
+
+/// Shows a native toast using [Fluttertoast] — no [BuildContext] required.
+///
+/// Wraps [Fluttertoast.showToast] with sensible defaults and optional
+/// [AppNotifyType]-based styling. Because this uses the platform's native
+/// toast API (Android) or Toastify-JS (web), it works outside the widget tree
+/// and is ideal for quick one-liner feedback from services or utilities.
+///
+/// **Android 11+ note:** Only [msg] and [toastLength] are respected on
+/// Android 11 and above — all visual properties ([backgroundColor],
+/// [textColor], [fontSize]) are silently ignored by the OS. Use
+/// [BuildContext.showNotify] (flushbar-based) when full UI control is needed.
+///
+/// Parameters mirror [Fluttertoast.showToast]:
+///
+/// - [msg] — the message string to display (required).
+/// - [type] — when provided, [backgroundColor] and [textColor] default to
+///   [AppNotifyType.bgColor] and [Colors.white] respectively; pass explicit
+///   values to override.
+/// - [toastLength] — [Toast.LENGTH_SHORT] (default) or [Toast.LENGTH_LONG].
+/// - [gravity] — vertical position; [ToastGravity.BOTTOM] by default.
+/// - [timeInSecForIosWeb] — visible duration in seconds on iOS and web.
+/// - [backgroundColor] — overrides the [type]-derived background color.
+/// - [textColor] — text color; defaults to [Colors.white].
+/// - [fontSize] — text size in logical pixels.
+///
+/// Returns a [Future] that resolves to `true` when the toast is shown,
+/// `false` on failure, or `null` when the platform returns no result.
+///
+/// Example:
+/// ```dart
+/// showToast('Profile saved!', type: AppNotifyType.success);
+/// showToast('Network error', type: AppNotifyType.error, toastLength: Toast.LENGTH_LONG);
+/// ```
+Future<bool?> showToast(
+  String msg, {
+  AppNotifyType type = AppNotifyType.info,
+  Toast toastLength = Toast.LENGTH_SHORT,
+  ToastGravity gravity = ToastGravity.BOTTOM,
+  int timeInSecForIosWeb = 1,
+  Color? backgroundColor,
+  Color textColor = Colors.white,
+  double fontSize = 16.0,
+}) => Fluttertoast.showToast(
+  msg: msg,
+  toastLength: toastLength,
+  gravity: gravity,
+  timeInSecForIosWeb: timeInSecForIosWeb,
+  backgroundColor: backgroundColor ?? type.bgColor,
+  textColor: textColor,
+  fontSize: fontSize,
+);
+
+/// Cancels all pending toasts immediately.
+///
+/// Useful when navigating away from a screen to prevent stale messages
+/// from appearing on the next screen.
+Future<bool?> cancelToast() => Fluttertoast.cancel();

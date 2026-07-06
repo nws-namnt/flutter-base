@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../generated/l10n.dart';
+
 /// Supported app locales.
 ///
 /// Each value carries the [Locale], a display [label], and a [flag] emoji.
@@ -143,4 +145,30 @@ enum LaunchExternalType {
   final String type;
 
   const LaunchExternalType(this.type);
+}
+
+enum AppNotifyType {
+  success(bgColor: Colors.green, icon: Icons.check_circle),
+  error(bgColor: Colors.red, icon: Icons.error),
+  warning(bgColor: Colors.yellow, icon: Icons.warning),
+  info(bgColor: Colors.blue, icon: Icons.info);
+
+  final Color bgColor;
+  final IconData icon;
+
+  String get title => switch (this) {
+    success => S.current.lb_flush_success,
+    error => S.current.lb_flush_error,
+    warning => S.current.lb_flush_warning,
+    info => S.current.lb_flush_info,
+  };
+
+  String get message => switch (this) {
+    success => S.current.lb_flush_success,
+    error => S.current.lb_flush_error,
+    warning => S.current.lb_flush_warning,
+    info => S.current.lb_flush_info,
+  };
+
+  const AppNotifyType({required this.bgColor, required this.icon});
 }

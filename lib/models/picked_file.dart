@@ -19,25 +19,18 @@ enum PickedFileType {
   static PickedFileType fromExtension(String? extension) {
     if (extension == null) return other;
     final ext = extension.toLowerCase();
-    if (_imageExts.contains(ext)) return image;
-    if (_videoExts.contains(ext)) return video;
-    if (_audioExts.contains(ext)) return audio;
-    if (_docExts.contains(ext)) return document;
+    if (_supportExtensions['image']!.contains(ext)) return image;
+    if (_supportExtensions['video']!.contains(ext)) return video;
+    if (_supportExtensions['audio']!.contains(ext)) return audio;
+    if (_supportExtensions['document']!.contains(ext)) return document;
     return other;
   }
 
-  static const _imageExts = {
-    'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic', 'heif', 'tiff',
-  };
-  static const _videoExts = {
-    'mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v', '3gp', 'flv',
-  };
-  static const _audioExts = {
-    'mp3', 'aac', 'wav', 'ogg', 'm4a', 'flac', 'wma', 'opus', 'amr',
-  };
-  static const _docExts = {
-    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-    'txt', 'csv', 'rtf', 'odt', 'ods',
+  static const Map<String, Set<String>> _supportExtensions = {
+    'image': {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic', 'heif', 'tiff'},
+    'video': {'mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v', '3gp', 'flv'},
+    'audio': {'mp3', 'aac', 'wav', 'ogg', 'm4a', 'flac', 'wma', 'opus', 'amr'},
+    'document': {'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'rtf', 'odt', 'ods'},
   };
 }
 
