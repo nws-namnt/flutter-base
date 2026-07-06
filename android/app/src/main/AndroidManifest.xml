@@ -9,6 +9,54 @@
          The plugin auto-merges this, but declared here for clarity. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- ───── CAMERA ─────
+         Required to capture photos/videos via image_picker (ImageSource.camera).
+         Not needed if only picking from gallery. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- Declares that the app uses camera hardware but does not require it.
+         android:required="false" means the app can still be installed on devices
+         without a camera (e.g. some tablets) — camera features will simply be unavailable.
+         Without this tag, Google Play assumes required="true" and filters out camera-less devices. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+
+    <!-- ───── STORAGE — legacy (API 28 and below) ─────
+         READ_EXTERNAL_STORAGE: read files from shared storage (images, video, audio, documents).
+           Effective on API 32 and below. On API 33+, scoped media permissions replace it —
+           but since we use Android Photo Picker and SAF, READ_EXTERNAL_STORAGE is only needed
+           for devices on API 32- that access files outside a system picker.
+           maxSdkVersion="32" prevents the permission from being requested on API 33+.
+
+         WRITE_EXTERNAL_STORAGE: write files to shared storage.
+           Effective only on API 28 and below — on API 29+ it is silently ignored by the OS
+           regardless of whether it is declared (scoped storage disallows broad write access).
+           maxSdkVersion="28" makes the intent explicit and suppresses the lint warning. -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
+
+    <!-- ───── MEDIA — granular (API 33+) ─────
+         Replaces READ_EXTERNAL_STORAGE for each media type on Android 13+.
+         Each permission is independent — request only what the app actually needs. -->
+
+    <!-- READ_MEDIA_IMAGES and READ_MEDIA_VIDEO are intentionally omitted.
+         Google Play's Photo & Video Permissions policy (enforced May 2025) rejects apps
+         that declare these unless they have an approved core use case requiring broad library access.
+         image_picker uses the Android Photo Picker internally (no permission needed).
+         file_picker uses SAF (Storage Access Framework) — also no permission needed. -->
+
+    <!-- READ_MEDIA_AUDIO: file_picker uses SAF for audio files, so this is also not required.
+         Declare only if the app reads audio files programmatically outside a system picker. -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/> -->
+
+    <!-- ───── MEDIA LOCATION ─────
+         Required on API 29+ to read GPS/EXIF location metadata from photos/videos.
+         Without this, location tags are stripped from media even if READ_MEDIA_IMAGES is granted. -->
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+
     <!-- Required to show notifications on Android 13+ (API 33+).
          Ignored automatically on API < 33 — no maxSdkVersion needed.
          Runtime permission: must also be requested via firebase_messaging.requestPermission()
@@ -32,6 +80,13 @@
          and calendar app categories only and would require policy justification. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
+    <!-- showWhenLocked: display the activity over the lock screen without requiring unlock.
+     Requires API 27+. On API 24–26 (minSdk), this attribute is silently ignored —
+     use Window.FLAG_SHOW_WHEN_LOCKED programmatically for those versions if needed.
+     tools:targetApi="27" suppresses the lint warning without raising minSdkVersion. -->
+    <!-- turnScreenOn: turn on the screen when the activity starts (e.g. incoming call/alarm).
+     Requires API 27+. Same limitation as showWhenLocked on API 24–26. -->
+
     <application
         android:label="flutter_base"
         android:name="${applicationName}"
@@ -47,15 +102,14 @@
             android:windowSoftInputMode="adjustResize"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
-            tools:ignore="NewApi">
+            tools:targetApi="27">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+              android:resource="@style/NormalTheme" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -98,6 +98,7 @@ class PermissionService {
           Permission.bluetoothAdvertise,
           Permission.bluetoothConnect,
         ]);
+
         if (results.values.any((s) => s.isPermanentlyDenied)) {
           await openAppSettings();
           return PermissionStatus.permanentlyDenied;
@@ -118,49 +119,48 @@ class PermissionService {
   Future<PermissionStatus> requestLocationWhenInUse() =>
       requestPermission(Permission.locationWhenInUse);
 
-  /// Requests access to photos/images.
+  /// Requests access to photos/images before opening a picker.
   ///
-  /// Android 13+ (API 33+): `READ_MEDIA_IMAGES`
-  /// Android 12 and below: `READ_EXTERNAL_STORAGE`
-  /// iOS: `PHPhotoLibrary` read+write — plist: `NSPhotoLibraryUsageDescription`
+  /// Android 13+ (API 33+): no permission needed — image_picker uses the
+  /// Android Photo Picker (system UI) which does not require any manifest
+  /// permission. Returns [PermissionStatus.granted] immediately.
+  /// Android 12 and below (API 32-): requests `READ_EXTERNAL_STORAGE`.
+  /// iOS: requests `PHPhotoLibrary` — plist: `NSPhotoLibraryUsageDescription`.
   Future<PermissionStatus> requestPhotos() async {
     if (defaultTargetPlatform == TargetPlatform.android) {
       final sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
-      return requestPermission(
-        sdk >= 33 ? Permission.photos : Permission.storage,
-      );
+      if (sdk >= 33) return PermissionStatus.granted;
+      return requestPermission(Permission.storage);
     }
     return requestPermission(Permission.photos);
   }
 
-  /// Requests access to video files.
+  /// Requests access to video files before opening a picker.
   ///
-  /// Android 13+ (API 33+): `READ_MEDIA_VIDEO`
-  /// Android 12 and below: `READ_EXTERNAL_STORAGE`
-  /// iOS: not applicable — returns [PermissionStatus.granted] directly,
-  /// video files are accessible via file picker without a runtime permission.
+  /// Android 13+ (API 33+): no permission needed — image_picker uses the
+  /// Android Photo Picker; file_picker uses SAF. Returns [PermissionStatus.granted].
+  /// Android 12 and below (API 32-): requests `READ_EXTERNAL_STORAGE`.
+  /// iOS: no permission needed — returns [PermissionStatus.granted] directly.
   Future<PermissionStatus> requestVideos() async {
     if (defaultTargetPlatform == TargetPlatform.android) {
       final sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
-      return requestPermission(
-        sdk >= 33 ? Permission.videos : Permission.storage,
-      );
+      if (sdk >= 33) return PermissionStatus.granted;
+      return requestPermission(Permission.storage);
     }
     return PermissionStatus.granted;
   }
 
-  /// Requests access to audio files.
+  /// Requests access to audio files before opening a picker.
   ///
-  /// Android 13+ (API 33+): `READ_MEDIA_AUDIO`
-  /// Android 12 and below: `READ_EXTERNAL_STORAGE`
-  /// iOS: not applicable — returns [PermissionStatus.granted] directly,
-  /// audio files are accessible via file picker without a runtime permission.
+  /// Android 13+ (API 33+): no permission needed — file_picker uses SAF.
+  /// Returns [PermissionStatus.granted] immediately.
+  /// Android 12 and below (API 32-): requests `READ_EXTERNAL_STORAGE`.
+  /// iOS: no permission needed — returns [PermissionStatus.granted] directly.
   Future<PermissionStatus> requestAudio() async {
     if (defaultTargetPlatform == TargetPlatform.android) {
       final sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
-      return requestPermission(
-        sdk >= 33 ? Permission.audio : Permission.storage,
-      );
+      if (sdk >= 33) return PermissionStatus.granted;
+      return requestPermission(Permission.storage);
     }
     return PermissionStatus.granted;
   }

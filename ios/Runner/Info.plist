@@ -66,6 +66,56 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<!-- ══════════════════════════════════════════════════════
+	     CAMERA
+	     Required by image_picker when using ImageSource.camera.
+	     Not needed if only picking from gallery.
+	     ══════════════════════════════════════════════════════ -->
+
+	<!-- Shown in the system permission dialog when the app first requests camera access.
+	     Also appears in Settings → Privacy & Security → Camera. -->
+	<key>NSCameraUsageDescription</key>
+	<string>Used to take photos and record videos.</string>
+
+	<!-- Required when recording video with audio via image_picker.
+	     Without this key, video recording will silently produce clips with no audio.
+	     Also shown in Settings → Privacy & Security → Microphone. -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used to record audio when capturing videos.</string>
+
+	<!-- ══════════════════════════════════════════════════════
+	     PHOTO LIBRARY
+	     Required by image_picker when using ImageSource.gallery.
+	     file_picker uses UIDocumentPickerViewController — does NOT require these keys.
+	     ══════════════════════════════════════════════════════ -->
+
+	<!-- Full read + write access to the photo library.
+	     iOS 14+: users can grant full access or limited access (specific photos only).
+	     Required for image_picker gallery mode.
+	     Shown in Settings → Privacy & Security → Photos. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to select photos and videos from your library.</string>
+
+	<!-- Write-only access — save images/videos to the library without reading existing ones.
+	     Required when calling ImagePicker.saveToAlbum or writing generated media to the gallery.
+	     If not declared and the app attempts to save, iOS throws a permission crash. -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Used to save photos and videos to your library.</string>
+
+	<!-- ══════════════════════════════════════════════════════
+	     FILE PICKER — UIDocumentPickerViewController
+	     file_picker uses the native document picker UI.
+	     No special plist keys are required for:
+	       - picking any file type (pdf, doc, zip, etc.)
+	       - picking audio files (FileType.audio)
+	       - picking video files (FileType.video) from Files app
+	     The system handles access sandboxing automatically.
+	     ══════════════════════════════════════════════════════ -->
+
+	<!-- ══════════════════════════════════════════════════════
+	     NOTIFICATION
+	     ══════════════════════════════════════════════════════ -->
+
 	<!-- Notification permission usage description — required on iOS 14 and below.
 	     On iOS 15+, the system uses the FirebaseMessaging/UNUserNotificationCenter prompt instead.
 	     This string appears in Settings → Notifications if the user reviews app permissions. -->

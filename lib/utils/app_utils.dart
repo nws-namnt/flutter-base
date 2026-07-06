@@ -1,8 +1,13 @@
 import 'dart:io' show File;
 
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart' hide PickedFile;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/app_enums.dart';
+import '../models/picked_file.dart';
+import '../services/permission_service.dart';
 import 'app_logger.dart' show err;
 
 /// Launches an external app or URL using [url_launcher].
@@ -77,5 +82,165 @@ Future<void> onLaunchExternalApp({
     await launchUrl(uri, mode: effectiveMode);
   } catch (e) {
     err(e.toString());
+  }
+}
+
+// IMAGE PICKERS
+
+/// Captures a photo with the device camera.
+///
+/// Requests [Permission.camera] before launching. Returns `null` when the
+/// permission is denied or the user cancels the camera UI.
+Future<PickedFile?> pickImageFromCamera() async {
+  try {
+    final status = await permissionService.requestCamera();
+    if (!status.isGranted) return null;
+    final file = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (file == null) return null;
+    return PickedFile.fromXFile(file, size: await file.length());
+  } catch (e) {
+    err('pickImageFromCamera: $e');
+    return null;
+  }
+}
+
+/// Opens the system image gallery and lets the user pick a single image.
+///
+/// Requests photo library permission before launching (platform-aware — see
+/// [PermissionService.requestPhotos]). Returns `null` on permission denied or
+/// user cancellation.
+Future<PickedFile?> pickImageFromGallery() async {
+  try {
+    final status = await permissionService.requestPhotos();
+    if (!status.isGranted) return null;
+    final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (file == null) return null;
+    return PickedFile.fromXFile(file, size: await file.length());
+  } catch (e) {
+    err('pickImageFromGallery: $e');
+    return null;
+  }
+}
+
+/// Opens the system image gallery and lets the user pick multiple images.
+///
+/// Returns an empty list on permission denied or user cancellation.
+Future<List<PickedFile>> pickMultipleImagesFromGallery() async {
+  try {
+    final status = await permissionService.requestPhotos();
+    if (!status.isGranted) return [];
+    final files = await ImagePicker().pickMultiImage();
+    return Future.wait(
+      files.map((f) async => PickedFile.fromXFile(f, size: await f.length())),
+    );
+  } catch (e) {
+    err('pickMultipleImagesFromGallery: $e');
+    return [];
+  }
+}
+
+// VIDEO PICKERS
+
+/// Records a video with the device camera.
+///
+/// Requests [Permission.camera] before launching. Returns `null` when the
+/// permission is denied or the user cancels.
+Future<PickedFile?> pickVideoFromCamera() async {
+  try {
+    final status = await permissionService.requestCamera();
+    if (!status.isGranted) return null;
+    final file = await ImagePicker().pickVideo(source: ImageSource.camera);
+    if (file == null) return null;
+    return PickedFile.fromXFile(file, size: await file.length());
+  } catch (e) {
+    err('pickVideoFromCamera: $e');
+    return null;
+  }
+}
+
+/// Opens the system video gallery and lets the user pick a single video.
+///
+/// Requests video access permission before launching (platform-aware — see
+/// [PermissionService.requestVideos]). Returns `null` on denial or cancellation.
+Future<PickedFile?> pickVideoFromGallery() async {
+  try {
+    final status = await permissionService.requestVideos();
+    if (!status.isGranted) return null;
+    final file = await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (file == null) return null;
+    return PickedFile.fromXFile(file, size: await file.length());
+  } catch (e) {
+    err('pickVideoFromGallery: $e');
+    return null;
+  }
+}
+
+// AUDIO PICKER
+
+/// Opens the system file picker filtered to audio files.
+///
+/// Uses `file_picker` with [FileType.audio], which routes to
+/// `UIDocumentPickerViewController` on iOS and SAF on Android — no manifest
+/// permission is required on API 33+; [PermissionService.requestAudio] handles
+/// the legacy READ_EXTERNAL_STORAGE case on API 32 and below.
+///
+/// Returns `null` on permission denied or user cancellation.
+Future<PickedFile?> pickAudio() async {
+  try {
+    final status = await permissionService.requestAudio();
+    if (!status.isGranted) return null;
+    final result = await FilePicker.platform.pickFiles(type: FileType.audio);
+    if (result == null) return null;
+    return PickedFile.fromPlatformFile(result.files.single);
+  } catch (e) {
+    err('pickAudio: $e');
+    return null;
+  }
+}
+
+// FILE PICKERS
+
+/// Opens the system file picker and lets the user pick a single file.
+///
+/// When [allowedExtensions] is provided (e.g. `['pdf', 'docx']`), the picker
+/// is filtered to those types ([FileType.custom]). Otherwise all file types are
+/// shown ([FileType.any]).
+///
+/// No runtime permission is requested — `file_picker` uses SAF on Android and
+/// `UIDocumentPickerViewController` on iOS, both of which are sandboxed by the OS.
+///
+/// Returns `null` when the user cancels.
+Future<PickedFile?> pickSingleFile({List<String>? allowedExtensions}) async {
+  try {
+    final result = await FilePicker.platform.pickFiles(
+      type: allowedExtensions != null ? FileType.custom : FileType.any,
+      allowedExtensions: allowedExtensions,
+    );
+    if (result == null) return null;
+    return PickedFile.fromPlatformFile(result.files.single);
+  } catch (e) {
+    err('pickSingleFile: $e');
+    return null;
+  }
+}
+
+/// Opens the system file picker and lets the user pick multiple files.
+///
+/// Behaves like [pickSingleFile] but with `allowMultiple: true`.
+/// Returns an empty list when the user cancels.
+Future<List<PickedFile>> pickMultipleFiles({
+  List<String>? allowedExtensions,
+}) async {
+  try {
+    final result = await FilePicker.platform.pickFiles(
+      type: allowedExtensions != null ? FileType.custom : FileType.any,
+      allowedExtensions: allowedExtensions,
+      allowMultiple: true,
+    );
+    if (result == null) return [];
+    return result.files.map(PickedFile.fromPlatformFile).toList();
+  } catch (e) {
+    err('pickMultipleFiles: $e');
+    return [];
   }
 }

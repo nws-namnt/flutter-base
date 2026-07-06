@@ -81,3 +81,11 @@ assets/env/.env.prod
 
 # CLI personal config override (team default fx_config.yaml is committed)
 cli_config.yaml
+
+# Claude Cowork session data
+.claude/
+
+# CocoaPods — not used when project is on Swift Package Manager
+ios/Podfile
+ios/Podfile.lock
+ios/Pods/
