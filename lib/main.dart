@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_base/utils/extensions/_extension.dart';
 import 'package:flutter_base/utils/extensions/string_extension.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -41,7 +42,7 @@ Future<void> main() async {
     //   com.example.app.uat → 'uat'
     //   com.example.app     → 'prod'
     final packageInfo = await PackageInfo.fromPlatform();
-    final flavor = packageInfo.packageName.flavor;
+    final flavor = packageInfo.flavor;
 
     await AppEnv.load(flavor: flavor);
 
