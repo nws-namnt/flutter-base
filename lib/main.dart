@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_base/pages/widgets/render_error_widget.dart' show RenderErrorWidget;
 import 'package:flutter_base/utils/extensions/_extension.dart';
 import 'package:flutter_base/utils/extensions/string_extension.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -40,71 +41,84 @@ Future<void> _onBackgroundMessage(RemoteMessage message) async {
 /// Crashlytics error reporting, then runs [AppPage] inside a guarded zone
 /// so uncaught async errors are reported instead of crashing silently.
 Future<void> main() async {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    // Lock orientation to portrait.
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      // Replace Flutter's default red error screen. Must be set before any
+      // widget builds — as early as possible in main().
+      ErrorWidget.builder = (details) => RenderErrorWidget(details: details);
 
-    // Detect flavor from bundle ID / package name suffix:
-    //   com.example.app.dev → 'dev'
-    //   com.example.app.uat → 'uat'
-    //   com.example.app     → 'prod'
-    final packageInfo = await PackageInfo.fromPlatform();
-    final flavor = packageInfo.flavor;
+      // Lock orientation to portrait.
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
 
-    await AppEnv.load(flavor: flavor);
+      // Detect flavor from bundle ID / package name suffix:
+      //   com.example.app.dev → 'dev'
+      //   com.example.app.uat → 'uat'
+      //   com.example.app     → 'prod'
+      final packageInfo = await PackageInfo.fromPlatform();
+      final flavor = packageInfo.flavor;
 
-    // Firebase initialization.
-    //
-    // On ALL platforms, Firebase is auto-initialized by the native layer before
-    // Dart starts:
-    //   - iOS/macOS: FLTFirebaseCorePlugin calls [FIRApp configure] during plugin
-    //     registration, using GoogleService-Info.plist copied by the Xcode Run Script.
-    //   - Android: FirebaseInitProvider (a ContentProvider) runs at app start using
-    //     the google-services.json baked in by the google-services Gradle plugin.
-    //     For this project, flavor-specific files under src/<flavor>/google-services.json
-    //     are automatically selected at build time, so the correct Firebase project is
-    //     always used.
-    //
-    // Dart's initializeApp() must NOT pass options — it only attaches to the
-    // already-running native instance.
-    await Firebase.initializeApp();
+      await AppEnv.load(flavor: flavor);
 
-    // Register background handler BEFORE initialize() — FCM requirement.
-    FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
+      // Firebase initialization.
+      //
+      // On ALL platforms, Firebase is auto-initialized by the native layer before
+      // Dart starts:
+      //   - iOS/macOS: FLTFirebaseCorePlugin calls [FIRApp configure] during plugin
+      //     registration, using GoogleService-Info.plist copied by the Xcode Run Script.
+      //   - Android: FirebaseInitProvider (a ContentProvider) runs at app start using
+      //     the google-services.json baked in by the google-services Gradle plugin.
+      //     For this project, flavor-specific files under src/<flavor>/google-services.json
+      //     are automatically selected at build time, so the correct Firebase project is
+      //     always used.
+      //
+      // Dart's initializeApp() must NOT pass options — it only attaches to the
+      // already-running native instance.
+      await Firebase.initializeApp();
 
-    // Init local notifications + FCM token + foreground/background message streams.
-    await FirebaseNotificationService.instance.initialize();
+      // Register background handler BEFORE initialize() — FCM requirement.
+      FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);
 
-    // Local storage.
-    await AppStorage.init();
-    await AppPreference.init();
+      // Init local notifications + FCM token + foreground/background message streams.
+      await FirebaseNotificationService.instance.initialize();
 
-    // Sweep stale copies out of the temp `Files` directory (see
-    // file_extension.dart). Fire-and-forget: cleanup hygiene shouldn't delay
-    // app launch, and a failure here is non-fatal (logged internally).
-    unawaited(clearExpiredTmpFiles());
+      // Local storage.
+      await AppStorage.init();
+      await AppPreference.init();
 
-    // Network monitoring — must run before runApp so isConnected is valid
-    // on the first frame.
-    await networkService.initialize();
+      // Sweep stale copies out of the temp `Files` directory (see
+      // file_extension.dart). Fire-and-forget: cleanup hygiene shouldn't delay
+      // app launch, and a failure here is non-fatal (logged internally).
+      unawaited(clearExpiredTmpFiles());
 
-    // Disable Crashlytics in debug mode to avoid noise on the dashboard.
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+      // Network monitoring — must run before runApp so isConnected is valid
+      // on the first frame.
+      await networkService.initialize();
 
-    // Catch errors thrown by the Flutter framework (widget build, layout, render, etc.)
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      // Disable Crashlytics in debug mode to avoid noise on the dashboard.
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+        !kDebugMode,
+      );
 
-    // Catch async errors outside the Flutter framework (platform-level errors).
-    PlatformDispatcher.instance.onError = (error, stack) {
+      // Catch errors thrown by the Flutter framework (widget build, layout, render, etc.)
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+      // Catch async errors outside the Flutter framework (platform-level errors).
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+
+      runApp(const AppPage());
+    },
+    (error, stack) {
+      // Catch uncaught async errors in this Dart zone (Future, Stream, Timer).
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-
-    runApp(const AppPage());
-  }, (error, stack) {
-    // Catch uncaught async errors in this Dart zone (Future, Stream, Timer).
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-  });
+    },
+  );
 }

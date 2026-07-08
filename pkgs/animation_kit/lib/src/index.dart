@@ -1,4 +1,5 @@
 /// Barrel file exporting all loading indicator widgets in this package.
+library;
 export 'chasing_dots.dart';
 export 'circle.dart';
 export 'cube_grid.dart';
