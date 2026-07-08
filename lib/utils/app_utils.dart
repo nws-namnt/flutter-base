@@ -1,9 +1,13 @@
-import 'dart:io' show File;
+import 'dart:io' show File, Directory, Platform;
+import 'dart:math' show Random;
 
+import 'package:external_path/external_path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart' hide PickedFile;
+import 'package:path/path.dart' show join;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,6 +15,93 @@ import '../common/app_enums.dart';
 import '../models/picked_file.dart';
 import '../services/permission_service.dart';
 import 'app_logger.dart' show err;
+
+
+/// Resolves the directory the app should save generated files into, plus a
+/// ready-to-use unique file path inside it.
+///
+/// - Android: the public Downloads directory, via `external_path`, when
+///   [PermissionService.requestDownloadsWrite] reports the write is
+///   actually usable — visible outside the app (e.g. in a file manager or
+///   the system Downloads app). Otherwise falls back to the app's sandboxed
+///   documents directory (see [_resolveDirectory]).
+/// - iOS / other platforms: the app's sandboxed documents directory.
+///
+/// [prefix] and [fileExtension] are forwarded to [genUniqueFileName] to build
+/// the returned [path]'s file name.
+///
+/// Returns `null` (and logs via [err]) only if the directory can't be
+/// created at all — permission issues on Android degrade to the documents
+/// directory instead of failing (see [_resolveDirectory]).
+Future<({Directory dir, String path})?> getAppDirectory({
+  String prefix = 'default',
+  String fileExtension = 'pdf',
+}) async {
+  try {
+    final dir = await _resolveDirectory();
+
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+
+    final fileName = genUniqueFileName(
+      prefix: prefix,
+      fileExtension: fileExtension,
+    );
+    final path = join(dir.path, fileName);
+    return (dir: dir, path: path);
+  } catch (e) {
+    err('getAppDirectory: $e');
+    return null;
+  }
+}
+
+/// Picks the actual directory backing [getAppDirectory].
+///
+/// On Android, requests [PermissionService.requestDownloadsWrite] first.
+/// Scoped storage on API 30+ means that permission commonly can't be
+/// satisfied for a raw path write (see its doc comment for why) — in that
+/// case this silently falls back to [getApplicationDocumentsDirectory]
+/// (app-private, always available, no permission required) rather than
+/// letting [getAppDirectory] fail outright.
+Future<Directory> _resolveDirectory() async {
+  if (Platform.isAndroid) {
+    final status = await permissionService.requestDownloadsWrite();
+    if (status.isGranted) {
+      final downloadsDirectory =
+          await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOAD,
+      );
+      return Directory(downloadsDirectory);
+    }
+    err(
+      'getAppDirectory: Downloads write not available ($status) — likely '
+      'scoped storage on API 30+. Falling back to the app documents '
+      'directory.',
+    );
+  }
+  return getApplicationDocumentsDirectory();
+}
+
+/// Generates a filesystem-safe, collision-resistant file name, e.g.
+/// `default_1737955200123456_a1b2c3.pdf`.
+///
+/// Combines a microsecond timestamp with a random suffix so that calls made
+/// in quick succession — e.g. inside `Future.wait` over multiple picked
+/// files — don't collide and silently overwrite one another.
+///
+/// [fileExtension] may be passed with or without a leading dot.
+String genUniqueFileName({
+  String prefix = 'default',
+  String fileExtension = 'pdf',
+}) {
+  final ext = fileExtension.startsWith('.')
+      ? fileExtension.substring(1)
+      : fileExtension;
+  final timestamp = DateTime.now().microsecondsSinceEpoch;
+  final random = Random().nextInt(0xFFFFFF).toRadixString(16).padLeft(6, '0');
+  return '${prefix}_${timestamp}_$random.$ext';
+}
 
 /// Launches an external app or URL using [url_launcher].
 ///
@@ -249,7 +340,7 @@ Future<List<PickedFile>> pickMultipleFiles({
 /// Shows a native toast using [Fluttertoast] — no [BuildContext] required.
 ///
 /// Wraps [Fluttertoast.showToast] with sensible defaults and optional
-/// [AppNotifyType]-based styling. Because this uses the platform's native
+/// [NotifyType]-based styling. Because this uses the platform's native
 /// toast API (Android) or Toastify-JS (web), it works outside the widget tree
 /// and is ideal for quick one-liner feedback from services or utilities.
 ///
@@ -262,7 +353,7 @@ Future<List<PickedFile>> pickMultipleFiles({
 ///
 /// - [msg] — the message string to display (required).
 /// - [type] — when provided, [backgroundColor] and [textColor] default to
-///   [AppNotifyType.bgColor] and [Colors.white] respectively; pass explicit
+///   [NotifyType.bgColor] and [Colors.white] respectively; pass explicit
 ///   values to override.
 /// - [toastLength] — [Toast.LENGTH_SHORT] (default) or [Toast.LENGTH_LONG].
 /// - [gravity] — vertical position; [ToastGravity.BOTTOM] by default.
@@ -276,12 +367,12 @@ Future<List<PickedFile>> pickMultipleFiles({
 ///
 /// Example:
 /// ```dart
-/// showToast('Profile saved!', type: AppNotifyType.success);
-/// showToast('Network error', type: AppNotifyType.error, toastLength: Toast.LENGTH_LONG);
+/// showToast('Profile saved!', type: NotifyType.success);
+/// showToast('Network error', type: NotifyType.error, toastLength: Toast.LENGTH_LONG);
 /// ```
 Future<bool?> showToast(
   String msg, {
-  AppNotifyType type = AppNotifyType.info,
+  NotifyType type = NotifyType.info,
   Toast toastLength = Toast.LENGTH_SHORT,
   ToastGravity gravity = ToastGravity.BOTTOM,
   int timeInSecForIosWeb = 1,

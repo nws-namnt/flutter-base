@@ -13,6 +13,7 @@ enum _BubbleAction { copy, reAsk }
 /// - AI messages: left-aligned, surfaceContainerHighest.
 ///   Renders Markdown (bold, lists, code blocks, etc.).
 class ChatBubbleWidget extends StatelessWidget {
+  /// Creates a [ChatBubbleWidget] for the given [message].
   const ChatBubbleWidget({
     super.key,
     required this.message,
@@ -20,6 +21,7 @@ class ChatBubbleWidget extends StatelessWidget {
     this.onReAsk,
   });
 
+  /// The chat message to render.
   final AiChatMessage message;
 
   /// When true and this is an AI message, shows an animated typing indicator.

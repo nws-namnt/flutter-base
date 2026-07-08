@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 /// page can pre-fill the field (e.g. when the user picks "Re-ask" on a bubble).
 /// If not provided, internal instances are created and managed automatically.
 class ChatInputWidget extends StatefulWidget {
+  /// Creates a [ChatInputWidget].
   const ChatInputWidget({
     super.key,
     required this.onSend,

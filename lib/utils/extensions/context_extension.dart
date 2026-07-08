@@ -1,12 +1,18 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_base/utils/extensions/widget_extension.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:gap/gap.dart';
 
-import '../../common/app_enums.dart' show AppNotifyType;
+import '../../common/app_enums.dart' show NotifyType;
 
-/// Builds a [MarkdownStyleSheet] derived from the current M3 [ColorScheme]
-/// and [TextTheme]. Call inside [build] so it picks up light/dark changes.
+/// Extension helpers for deriving Material 3 styling from a [BuildContext].
 extension ContextExtension on BuildContext {
+  /// Builds a [MarkdownStyleSheet] derived from the current M3 [ColorScheme]
+  /// and [TextTheme].
+  ///
+  /// Call this inside a widget's `build` method (not cached in `initState`)
+  /// so the returned style stays in sync with light/dark theme changes.
   MarkdownStyleSheet get m3MarkdownStyle {
     final scheme = Theme.of(this).colorScheme;
     final text = Theme.of(this).textTheme;
@@ -99,17 +105,20 @@ extension ContextExtension on BuildContext {
   }
 }
 
-/// Adds [showNotify] to [BuildContext] for imperative flushbar-based
-/// notifications that require the widget tree.
+/// Adds imperative, [BuildContext]-driven notification helpers:
+/// [showNotify] (Flushbar-based toast), [showSnackBar] / [hideSnackBar]
+/// (Material [SnackBar]), and [showM3Banner] / [hideM3Banner] (Material
+/// [MaterialBanner]).
 ///
 /// Unlike [showToast] (which is context-free and uses the platform toast API),
-/// this extension renders a fully customisable overlay widget via
-/// `another_flushbar` and therefore needs a mounted [BuildContext].
+/// everything in this extension renders through the widget tree and
+/// therefore needs a mounted [BuildContext] — every method here is a no-op
+/// when [mounted] is `false`.
 ///
 /// Typical usage:
 /// ```dart
-/// context.showNotify(type: AppNotifyType.success, messageText: 'Saved!');
-/// context.showNotify(type: AppNotifyType.error, messageText: 'Upload failed');
+/// context.showNotify(type: NotifyType.success, messageText: 'Saved!');
+/// context.showSnackBar(message: 'Upload failed', type: NotifyType.error);
 /// ```
 extension NotifyExtension on BuildContext {
   /// Shows a [Flushbar] notification anchored to this [BuildContext].
@@ -120,7 +129,7 @@ extension NotifyExtension on BuildContext {
   ///
   /// Key parameters:
   ///
-  /// - [type] — semantic category; defaults to [AppNotifyType.info].
+  /// - [type] — semantic category; defaults to [NotifyType.info].
   /// - [messageText] — plain-text body (uses [type]'s default when omitted).
   /// - [titleText] — plain-text heading (uses [type]'s default when omitted).
   /// - [message] / [title] — custom [Widget] overrides for body and heading.
@@ -131,7 +140,7 @@ extension NotifyExtension on BuildContext {
   /// Returns the [Future] from [Flushbar.show], which completes when the bar
   /// is fully dismissed.
   Future<void> showNotify({
-    final AppNotifyType type = AppNotifyType.info,
+    final NotifyType type = NotifyType.info,
 
     final Widget? icon,
     final double? maxWidth,
@@ -186,58 +195,351 @@ extension NotifyExtension on BuildContext {
     final Color? routeColor,
     final Form? userInputForm,
     final Offset? endOffset,
-  }) => Flushbar(
-    icon: icon ?? Icon(type.icon),
-    maxWidth: maxWidth,
-    backgroundColor: backgroundColor ?? (type.bgColor),
-    duration: duration,
-    boxShadows: boxShadows,
-    backgroundGradient: backgroundGradient,
+  }) {
+    if (!mounted) return Future<void>.value();
 
-    onTap: onTap,
+    return Flushbar(
+      icon: icon ?? Icon(type.icon),
+      maxWidth: maxWidth,
+      backgroundColor: backgroundColor ?? (type.bgColor),
+      duration: duration,
+      boxShadows: boxShadows,
+      backgroundGradient: backgroundGradient,
 
-    title: titleText ?? (type.title),
-    titleColor: titleColor,
-    titleSize: titleSize,
-    titleText: title,
+      onTap: onTap,
 
-    message: messageText ?? (type.message),
-    messageColor: messageColor,
-    messageSize: messageSize,
-    messageText: message,
+      title: titleText ?? (type.title),
+      titleColor: titleColor,
+      titleSize: titleSize,
+      titleText: title,
 
-    safeArea: safeArea,
-    shouldIconPulse: shouldIconPulse,
-    isDismissible: isDismissible,
-    showProgressIndicator: showProgressIndicator,
-    blockBackgroundInteraction: blockBackgroundInteraction,
+      message: messageText ?? (type.message),
+      messageColor: messageColor,
+      messageSize: messageSize,
+      messageText: message,
 
-    dismissDirection: dismissDirection,
-    flushbarPosition: flushbarPosition,
-    flushbarStyle: flushbarStyle,
-    textDirection: textDirection,
+      safeArea: safeArea,
+      shouldIconPulse: shouldIconPulse,
+      isDismissible: isDismissible,
+      showProgressIndicator: showProgressIndicator,
+      blockBackgroundInteraction: blockBackgroundInteraction,
 
-    margin: margin,
-    padding: padding,
+      dismissDirection: dismissDirection,
+      flushbarPosition: flushbarPosition,
+      flushbarStyle: flushbarStyle,
+      textDirection: textDirection,
 
-    borderRadius: borderRadius,
-    borderColor: borderColor,
-    borderWidth: borderWidth,
+      margin: margin,
+      padding: padding,
 
-    forwardAnimationCurve: forwardAnimationCurve,
-    reverseAnimationCurve: reverseAnimationCurve,
-    animationDuration: animationDuration,
+      borderRadius: borderRadius,
+      borderColor: borderColor,
+      borderWidth: borderWidth,
 
-    leftBarIndicatorColor: leftBarIndicatorColor,
-    mainButton: mainButton,
-    progressIndicatorController: progressIndicatorController,
-    progressIndicatorBackgroundColor: progressIndicatorBackgroundColor,
-    progressIndicatorValueColor: progressIndicatorValueColor,
-    positionOffset: positionOffset,
-    barBlur: barBlur,
-    routeBlur: routeBlur,
-    routeColor: routeColor,
-    userInputForm: userInputForm,
-    endOffset: endOffset,
-  ).show(this);
+      forwardAnimationCurve: forwardAnimationCurve,
+      reverseAnimationCurve: reverseAnimationCurve,
+      animationDuration: animationDuration,
+
+      leftBarIndicatorColor: leftBarIndicatorColor,
+      mainButton: mainButton,
+      progressIndicatorController: progressIndicatorController,
+      progressIndicatorBackgroundColor: progressIndicatorBackgroundColor,
+      progressIndicatorValueColor: progressIndicatorValueColor,
+      positionOffset: positionOffset,
+      barBlur: barBlur,
+      routeBlur: routeBlur,
+      routeColor: routeColor,
+      userInputForm: userInputForm,
+      endOffset: endOffset,
+    ).show(this);
+  }
+
+  /// Shows a Material [SnackBar] anchored to this [BuildContext], with
+  /// [type]-driven default icon/colors and an optional action button.
+  ///
+  /// Any snack bar currently visible on this [BuildContext]'s
+  /// [ScaffoldMessenger] is hidden first (via
+  /// [ScaffoldMessengerState.hideCurrentSnackBar]), so repeated calls replace
+  /// rather than queue up behind one another.
+  ///
+  /// Provide **either** [content] (a fully custom widget) **or** [message]
+  /// (plain text rendered with a [type]-derived icon) — passing neither
+  /// trips an assertion in debug mode and silently shows a blank body in
+  /// release mode.
+  ///
+  /// Key parameters:
+  ///
+  /// - [type] — semantic category; defaults to [NotifyType.info]. Drives
+  ///   the default icon, text color, and background when [content] /
+  ///   [bgColor] are omitted.
+  /// - [content] — custom widget override; when provided, [message] is
+  ///   ignored entirely.
+  /// - [message] — plain-text body used to build the default [content].
+  /// - [onAction] / [actionLabel] — convenience for building a
+  ///   [SnackBarAction] without constructing one manually; ignored when
+  ///   [action] is supplied directly.
+  /// - [duration] — visible duration before auto-dismiss; defaults to
+  ///   2500ms.
+  /// - [persist] — when `true`, the snack bar stays visible until dismissed
+  ///   instead of timing out. If omitted, defaults to `true` whenever an
+  ///   [action] is present.
+  ///
+  /// The remaining parameters ([elevation], [margin], [padding], [width],
+  /// [shape], [hitTestBehavior], [behavior], [actionOverflowThreshold],
+  /// [showCloseIcon], [closeIconColor], [animation], [onVisible],
+  /// [dismissDirection], [clipBehavior]) map 1:1 to [SnackBar]'s constructor
+  /// — see there for full documentation.
+  ///
+  /// Does nothing if this [BuildContext] is no longer [mounted].
+  ///
+  /// Example:
+  /// ```dart
+  /// context.showSnackBar(message: 'Saved!', type: NotifyType.success);
+  /// context.showSnackBar(
+  ///   message: 'Upload failed',
+  ///   type: NotifyType.error,
+  ///   onAction: () => retryUpload(),
+  ///   actionLabel: 'Retry',
+  /// );
+  /// ```
+  void showSnackBar({
+    Widget? content,
+    String? message,
+    Color? bgColor,
+    double? elevation,
+    EdgeInsetsGeometry? margin,
+    EdgeInsetsGeometry? padding,
+    double? width,
+    ShapeBorder? shape,
+    HitTestBehavior? hitTestBehavior,
+    SnackBarBehavior? behavior,
+    SnackBarAction? action,
+    double? actionOverflowThreshold,
+    bool? showCloseIcon,
+    Color? closeIconColor,
+    Duration duration = const Duration(milliseconds: 2500),
+    bool? persist,
+    Animation<double>? animation,
+    VoidCallback? onVisible,
+    DismissDirection? dismissDirection,
+    Clip clipBehavior = Clip.hardEdge,
+    NotifyType type = NotifyType.info,
+    VoidCallback? onAction,
+    String actionLabel = 'Label',
+  }) {
+    if (!mounted) return;
+
+    assert(elevation == null || elevation >= 0.0);
+    assert(
+      width == null || margin == null,
+      'Width and margin can not be used together',
+    );
+    assert(
+      actionOverflowThreshold == null ||
+          (actionOverflowThreshold >= 0 && actionOverflowThreshold <= 1),
+      'Action overflow threshold must be between 0 and 1 inclusive',
+    );
+    assert(
+      content != null || message != null,
+      'Either content or message must be provided',
+    );
+
+    // Falls back to an empty body (rather than a null-check crash) if a
+    // release build ever hits the "neither content nor message" case that
+    // the assert above only catches in debug mode.
+    final snackBar = SnackBar(
+      content:
+          content ??
+          (message != null
+              ? Row(
+                  children: [
+                    Icon(type.icon, color: type.color),
+                    const Gap(10),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: type.color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ).expanded,
+                  ],
+                )
+              : const SizedBox.shrink()),
+      backgroundColor: bgColor ?? type.bgColor,
+      elevation: elevation,
+      margin: margin,
+      padding:
+          padding ??
+          const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+      width: width,
+      shape: shape,
+      hitTestBehavior: hitTestBehavior,
+      behavior: behavior,
+      action:
+          action ??
+          (onAction != null
+              ? SnackBarAction(
+                  label: actionLabel,
+                  onPressed: () => onAction.call(),
+                  textColor: type.color,
+                )
+              : null),
+      actionOverflowThreshold: actionOverflowThreshold,
+      showCloseIcon: showCloseIcon,
+      closeIconColor: closeIconColor ?? type.color,
+      duration: duration,
+      persist: persist ?? action != null,
+      animation: animation,
+      onVisible: onVisible,
+      dismissDirection: dismissDirection,
+      clipBehavior: clipBehavior,
+    );
+
+    ScaffoldMessenger.of(this)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
+  /// Hides the currently visible [SnackBar] on this [BuildContext]'s
+  /// [ScaffoldMessenger] — whether it was shown via [showSnackBar] or
+  /// directly through [ScaffoldMessengerState.showSnackBar].
+  ///
+  /// Does nothing if this [BuildContext] is no longer [mounted].
+  void hideSnackBar() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(this).hideCurrentSnackBar();
+  }
+
+  /// Shows a Material 3 [MaterialBanner] anchored to this [BuildContext]'s
+  /// [ScaffoldMessenger], with [type]-driven default icon/colors.
+  ///
+  /// Unlike [showSnackBar]'s transient toast, a [MaterialBanner] is meant
+  /// for persistent, non-urgent messages that stay on screen until the user
+  /// resolves them via [actions] — e.g. "Your session will expire soon"
+  /// with a "Stay signed in" button.
+  ///
+  /// Any banner currently visible on this [BuildContext]'s
+  /// [ScaffoldMessenger] is hidden first (via
+  /// [ScaffoldMessengerState.hideCurrentMaterialBanner]) — same as
+  /// [showSnackBar] — so repeated calls replace rather than queue up behind
+  /// one another. [ScaffoldMessengerState.hideCurrentMaterialBanner] is a
+  /// documented no-op when nothing is currently shown, so there's no need to
+  /// check for a visible banner before calling it.
+  ///
+  /// Provide **either** [content] (a fully custom widget) **or** [message]
+  /// (plain text rendered with a [type]-derived icon) — passing neither
+  /// trips an assertion in debug mode and silently shows a blank body in
+  /// release mode.
+  ///
+  /// Key parameters:
+  ///
+  /// - [type] — semantic category; defaults to [NotifyType.info]. Drives the
+  ///   default icon, text color, and background when [content] /
+  ///   [backgroundColor] are omitted.
+  /// - [content] — custom widget override; when provided, [message] is
+  ///   ignored entirely.
+  /// - [message] — plain-text body used to build the default [content].
+  /// - [actions] — required. Material Banners don't auto-dismiss, so this
+  ///   must give the user a way to resolve/close the banner.
+  ///
+  /// The remaining parameters ([contentTextStyle], [elevation], [leading],
+  /// [surfaceTintColor], [shadowColor], [dividerColor], [padding], [margin],
+  /// [leadingPadding], [forceActionsBelow], [overflowAlignment], [animation],
+  /// [onVisible], [minActionBarHeight]) map 1:1 to [MaterialBanner]'s
+  /// constructor — see there for full documentation.
+  ///
+  /// Does nothing if this [BuildContext] is no longer [mounted].
+  ///
+  /// Example:
+  /// ```dart
+  /// context.showM3Banner(
+  ///   message: 'Your session will expire soon.',
+  ///   type: NotifyType.warning,
+  ///   actions: [
+  ///     TextButton(
+  ///       onPressed: staySignedIn,
+  ///       child: const Text('Stay signed in'),
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  void showM3Banner({
+    Widget? content,
+    String? message,
+    TextStyle? contentTextStyle,
+    required List<Widget> actions,
+    double? elevation,
+    Widget? leading,
+    Color? backgroundColor,
+    Color? surfaceTintColor,
+    Color? shadowColor,
+    Color? dividerColor,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    EdgeInsetsGeometry? leadingPadding,
+    bool forceActionsBelow = false,
+    OverflowBarAlignment overflowAlignment = OverflowBarAlignment.end,
+    Animation<double>? animation,
+    VoidCallback? onVisible,
+    double minActionBarHeight = 52.0,
+    NotifyType type = NotifyType.info,
+  }) {
+    if (!mounted) return;
+
+    assert(elevation == null || elevation >= 0.0);
+
+    assert(
+      content != null || message != null,
+      'Either content or message must be provided',
+    );
+    final m3Banner = MaterialBanner(
+      content:
+          content ??
+          (message != null
+              ? Row(
+                  children: [
+                    Icon(type.icon, color: type.color),
+                    const Gap(10),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: type.color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ).expanded,
+                  ],
+                )
+              : const SizedBox.shrink()),
+      contentTextStyle: contentTextStyle,
+      actions: actions,
+      elevation: elevation,
+      leading: leading,
+      backgroundColor: backgroundColor ?? type.bgColor,
+      surfaceTintColor: surfaceTintColor,
+      shadowColor: shadowColor,
+      dividerColor: dividerColor,
+      padding: padding,
+      margin: margin,
+      leadingPadding: leadingPadding,
+      forceActionsBelow: forceActionsBelow,
+      overflowAlignment: overflowAlignment,
+      animation: animation,
+      onVisible: onVisible,
+      minActionBarHeight: minActionBarHeight,
+    );
+
+    ScaffoldMessenger.of(this)
+      ..hideCurrentMaterialBanner()
+      ..showMaterialBanner(m3Banner);
+  }
+
+  /// Hides the currently visible [MaterialBanner] on this [BuildContext]'s
+  /// [ScaffoldMessenger] — whether it was shown via [showM3Banner] or
+  /// directly through [ScaffoldMessengerState.showMaterialBanner].
+  ///
+  /// Does nothing if this [BuildContext] is no longer [mounted].
+  void hideM3Banner() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(this).hideCurrentMaterialBanner();
+  }
 }

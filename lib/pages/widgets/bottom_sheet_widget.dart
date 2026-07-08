@@ -4,38 +4,110 @@ const double _kDefaultScrollControlDisabledMaxHeightRatio = 9.0 / 16.0;
 
 enum _SheetType { unableScroll, scroll }
 
+/// A [Page] that presents its content as a modal bottom sheet, for use as a
+/// GoRoute's `pageBuilder` return value.
+///
+/// Two named constructors cover the two [showModalBottomSheet] usage modes:
+/// [BottomSheetWidget.scroll] for a [DraggableScrollableSheet]-backed sheet,
+/// and [BottomSheetWidget.unScroll] for a plain, non-draggable sheet built
+/// directly from [builder].
 class BottomSheetWidget<T> extends Page<T> {
+  /// Builds the sheet's content.
+  ///
+  /// For [BottomSheetWidget.scroll], use [scrollableBuilder] instead — this
+  /// is only invoked directly by [BottomSheetWidget.unScroll].
   final WidgetBuilder builder;
+
+  /// Forwarded to [ModalBottomSheetRoute.capturedThemes].
   final CapturedThemes? capturedThemes;
+
+  /// Forwarded to [ModalBottomSheetRoute.barrierLabel].
   final String? barrierLabel;
+
+  /// Forwarded to [ModalBottomSheetRoute.barrierOnTapHint].
   final String? barrierOnTapHint;
+
+  /// Forwarded to [ModalBottomSheetRoute.backgroundColor]. Defaults to
+  /// [Colors.white] if omitted.
   final Color? backgroundColor;
+
+  /// Forwarded to [ModalBottomSheetRoute.elevation].
   final double? elevation;
+
+  /// Forwarded to [ModalBottomSheetRoute.shape].
   final ShapeBorder? shape;
+
+  /// Forwarded to [ModalBottomSheetRoute.clipBehavior].
   final Clip? clipBehavior;
+
+  /// Forwarded to [ModalBottomSheetRoute.constraints].
   final BoxConstraints? constraints;
+
+  /// Forwarded to [ModalBottomSheetRoute.modalBarrierColor]. Defaults to
+  /// black at 50% opacity if omitted.
   final Color? modalBarrierColor;
+
+  /// Forwarded to [ModalBottomSheetRoute.isDismissible].
   final bool isDismissible;
+
+  /// Forwarded to [ModalBottomSheetRoute.enableDrag].
   final bool enableDrag;
+
+  /// Forwarded to [ModalBottomSheetRoute.showDragHandle].
   final bool? showDragHandle;
+
+  /// Forwarded to [ModalBottomSheetRoute.isScrollControlled].
   final bool isScrollControlled;
+
+  /// Forwarded to [ModalBottomSheetRoute.scrollControlDisabledMaxHeightRatio].
   final double scrollControlDisabledMaxHeightRatio;
+
+  /// Forwarded to [ModalBottomSheetRoute.transitionAnimationController].
   final AnimationController? transitionAnimationController;
+
+  /// Forwarded to [ModalBottomSheetRoute.anchorPoint].
   final Offset? anchorPoint;
+
+  /// Forwarded to [ModalBottomSheetRoute.useSafeArea].
   final bool useSafeArea;
+
+  /// Forwarded to [ModalBottomSheetRoute.sheetAnimationStyle].
   final AnimationStyle? sheetAnimationStyle;
+
   // For DraggableScrollableSheet
+  /// Builds the sheet's content for [BottomSheetWidget.scroll], wrapped in a
+  /// [DraggableScrollableSheet]. Required for that constructor.
   final ScrollableWidgetBuilder? scrollableBuilder;
+
+  /// Forwarded to [DraggableScrollableSheet.initialChildSize].
   final double? initialChildSize;
+
+  /// Forwarded to [DraggableScrollableSheet.maxChildSize].
   final double? maxChildSize;
+
+  /// Forwarded to [DraggableScrollableSheet.minChildSize].
   final double? minChildSize;
+
+  /// Forwarded to [DraggableScrollableSheet.expand].
   final bool? expand;
+
+  /// Forwarded to [DraggableScrollableSheet.snap].
   final bool? snap;
+
+  /// Forwarded to [DraggableScrollableSheet.snapSizes].
   final List<double>? snapSizes;
+
+  /// Forwarded to [DraggableScrollableSheet.snapAnimationDuration].
   final Duration? snapAnimationDuration;
+
+  /// Forwarded to [DraggableScrollableSheet.controller].
   final DraggableScrollableController? controller;
+
+  /// Forwarded to [DraggableScrollableSheet.shouldCloseOnMinExtent].
   final bool? shouldCloseOnMinExtent;
 
+  /// Creates a [BottomSheetWidget] whose content is a draggable,
+  /// [DraggableScrollableSheet]-backed sheet built via [scrollableBuilder].
   const BottomSheetWidget.scroll({
     required this.builder,
     this.capturedThemes,
@@ -73,6 +145,8 @@ class BottomSheetWidget<T> extends Page<T> {
   })  : _sheetType = _SheetType.scroll,
         assert(scrollableBuilder != null, 'scrollableBuilder is required for BottomSheetWidget.scroll');
 
+  /// Creates a [BottomSheetWidget] whose content is a plain, non-draggable
+  /// sheet built directly from [builder].
   const BottomSheetWidget.unScroll({
     required this.builder,
     this.capturedThemes,

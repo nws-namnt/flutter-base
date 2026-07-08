@@ -29,13 +29,17 @@ import 'models.dart';
 /// )
 /// ```
 class SettingsList extends StatelessWidget {
+  /// Creates a scrollable settings list from [sections].
   const SettingsList({
     super.key,
     required this.sections,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
   });
 
+  /// The sections rendered in order, separated by vertical spacing.
   final List<SettingsSection> sections;
+
+  /// Padding applied around the whole list.
   final EdgeInsetsGeometry padding;
 
   @override

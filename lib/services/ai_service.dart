@@ -184,11 +184,19 @@ Your role:
 ///
 /// Kept in this file to avoid a separate model file for such a small data class.
 class AiChatMessage {
+  /// Unique identifier for this message.
   final String id;
+
+  /// The message text. Mutated via [copyWith] as streaming chunks arrive.
   final String content;
+
+  /// Whether this message was authored by the user (`true`) or the AI model (`false`).
   final bool isUser;
+
+  /// When this message was created.
   final DateTime createdAt;
 
+  /// Creates an [AiChatMessage].
   const AiChatMessage({
     required this.id,
     required this.content,

@@ -122,6 +122,7 @@ lib/
 | Animations         | `animations` (page transitions), `lottie`                                                                                         |
 | UI helpers         | `another_flushbar`, `gap`                                                                                                         |
 | Device/app info    | `device_info_plus`, `package_info_plus`                                                                                           |
+| Image              | `cached_network_image`, `flutter_cache_manager`, `cached_network_image_platform_interface` — see `CachedImageWidget`              |
 | Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup                                                                    |
 | Permissions        | `permission_handler`                                                                                                              |
 | Logging            | `logger`                                                                                                                          |

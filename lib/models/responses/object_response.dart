@@ -22,6 +22,7 @@ class ObjectResponse<T> extends Equatable {
   /// The single object returned by the server.
   final T? data;
 
+  /// Creates an [ObjectResponse] with the given fields.
   const ObjectResponse({this.message, this.status, this.data});
 
   /// Returns a copy of this instance with the given fields replaced.
@@ -61,6 +62,7 @@ class ObjectResponse<T> extends Equatable {
     'data': data != null ? toJsonT(data as T) : null,
   };
 
+  /// Properties compared by [Equatable] for value equality.
   @override
   List<Object?> get props => [message, status, data];
 }

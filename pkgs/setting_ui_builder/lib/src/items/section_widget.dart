@@ -6,8 +6,10 @@ import 'tile_widget.dart';
 /// Renders a [SettingsSection]: an optional title label above a rounded card
 /// containing the tiles separated by hairline dividers.
 class SettingsSectionWidget extends StatelessWidget {
+  /// Creates a widget that renders [section].
   const SettingsSectionWidget({super.key, required this.section});
 
+  /// The section data (title and tiles) to render.
   final SettingsSection section;
 
   @override

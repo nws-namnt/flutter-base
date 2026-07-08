@@ -62,6 +62,8 @@ import 'package:dio/dio.dart';
 /// }
 /// ```
 class ApiInterceptors extends InterceptorsWrapper {
+  /// Called before each request is sent. Attach auth headers or other
+  /// request-level logic here — see the class-level "Registration" example.
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -71,12 +73,16 @@ class ApiInterceptors extends InterceptorsWrapper {
     return super.onRequest(options, handler);
   }
 
+  /// Called when a response is received. Add response transformation or
+  /// analytics logic here.
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     // Add response transformation or analytics logic here.
     super.onResponse(response, handler);
   }
 
+  /// Called when a request fails. Add error-recovery logic here (e.g. token
+  /// refresh on 401) — see the class-level "Example" for a sample implementation.
   @override
   Future<void> onError(
     DioException err,

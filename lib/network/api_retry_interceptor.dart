@@ -32,10 +32,14 @@ import '../utils/app_logger.dart' as logger;
 /// );
 /// ```
 class ApiRetryInterceptor extends Interceptor {
+  /// Holds the queued request and replays it once connectivity returns.
   final DioConnectivityRequestRetries requestRetries;
 
+  /// Creates an [ApiRetryInterceptor] backed by [requestRetries].
   ApiRetryInterceptor({required this.requestRetries});
 
+  /// Schedules a retry via [requestRetries] when [err] is connectivity-related
+  /// (see [_shouldRetry]); otherwise forwards the error unchanged.
   @override
   Future<void> onError(
     DioException err,
@@ -66,10 +70,15 @@ class ApiRetryInterceptor extends Interceptor {
 /// forwarded via [ErrorInterceptorHandler.reject] so the caller always gets
 /// a result and the request is never left hanging.
 class DioConnectivityRequestRetries {
+  /// The [Dio] instance used to replay the queued request.
   final Dio dio;
 
+  /// Creates a [DioConnectivityRequestRetries] backed by [dio].
   DioConnectivityRequestRetries({required this.dio});
 
+  /// Waits for [NetworkService.connectStream] to report connectivity, then
+  /// replays [requestOptions] once via [dio] and resolves/rejects [handler]
+  /// with the outcome.
   Future<void> scheduleRequestRetry(
     RequestOptions requestOptions,
     ErrorInterceptorHandler handler,

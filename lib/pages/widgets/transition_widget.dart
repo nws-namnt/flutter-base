@@ -45,6 +45,19 @@ enum PageTransitionType {
 
   /// Material fade-through (uses the `animations` package).
   fadeThrough,
+
+  /// Material shared axis — horizontal (x-axis), for parent-child
+  /// navigation, e.g. drilling into a settings sub-page
+  /// (uses the `animations` package).
+  sharedAxisHorizontal,
+
+  /// Material shared axis — vertical (y-axis), e.g. a stepper
+  /// (uses the `animations` package).
+  sharedAxisVertical,
+
+  /// Material shared axis — scaled (z-axis), e.g. parent-child navigation
+  /// with a zoom emphasis (uses the `animations` package).
+  sharedAxisScaled,
 }
 
 /// Transition styles for full-screen dialogs.
@@ -153,6 +166,27 @@ extension PageTransitionExt on PageTransitionType {
               alignment: AlignmentGeometry.center,
               child: child
           ),
+        );
+      case PageTransitionType.sharedAxisHorizontal:
+        return SharedAxisTransition(
+          animation: primary,
+          secondaryAnimation: secondary,
+          transitionType: SharedAxisTransitionType.horizontal,
+          child: child,
+        );
+      case PageTransitionType.sharedAxisVertical:
+        return SharedAxisTransition(
+          animation: primary,
+          secondaryAnimation: secondary,
+          transitionType: SharedAxisTransitionType.vertical,
+          child: child,
+        );
+      case PageTransitionType.sharedAxisScaled:
+        return SharedAxisTransition(
+          animation: primary,
+          secondaryAnimation: secondary,
+          transitionType: SharedAxisTransitionType.scaled,
+          child: child,
         );
     }
   }

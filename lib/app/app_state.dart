@@ -27,6 +27,7 @@ class AppState extends Equatable {
         locale: locale ?? this.locale,
       );
 
+  /// Properties compared by [Equatable] for value equality.
   @override
   List<Object?> get props => [themeMode, locale];
 }

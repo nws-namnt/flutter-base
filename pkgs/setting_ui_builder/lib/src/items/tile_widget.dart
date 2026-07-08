@@ -7,8 +7,10 @@ import '../models.dart';
 /// Uses a Dart-3 switch expression to resolve [trailing] and [onTap]
 /// for each type, keeping [build] lean.
 class SettingsTileWidget extends StatelessWidget {
+  /// Creates a widget that renders [tile].
   const SettingsTileWidget({super.key, required this.tile});
 
+  /// The tile data (type, title, and behaviour) to render.
   final SettingsTile tile;
 
   // ── Resolve trailing widget + effective tap per type ────────────────────────

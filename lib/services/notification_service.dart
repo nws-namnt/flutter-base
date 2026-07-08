@@ -9,6 +9,10 @@ import 'package:timezone/timezone.dart';
 import '../common/app_constants.dart';
 import '../utils/app_logger.dart' show simpleLog;
 
+/// Callback invoked when the user taps a local notification.
+///
+/// [notificationResponse] is the tapped notification's payload string, or
+/// `null` if none was attached.
 typedef NotificationCallback = void Function(String? notificationResponse);
 
 /// Default Android notification channel — values sourced from [AppConstants].
@@ -23,13 +27,18 @@ const defaultChannel = AndroidNotificationChannel(
   playSound: true,
 );
 
+/// Singleton wrapper around [FlutterLocalNotificationsPlugin] for showing,
+/// scheduling, and cancelling local notifications on Android/iOS/macOS.
+///
+/// Also used by [FirebaseNotificationService] to render foreground FCM
+/// messages as local notifications (see [showFirebaseNotification]).
 class NotificationService {
   // Private constructor
   NotificationService._();
 
   static final NotificationService _instance = NotificationService._();
 
-  // Accessor to the singleton instance
+  /// The global singleton instance.
   static NotificationService get instance => _instance;
 
   // Define FlutterLocalNotificationsPlugin instance
@@ -136,6 +145,13 @@ class NotificationService {
     }
   }
 
+  /// Renders an incoming Firebase [message] as a local notification.
+  ///
+  /// Used for foreground FCM messages, which the OS does not display
+  /// automatically. Does nothing if [message] carries no `notification`
+  /// payload. The [message]'s data (if any) is JSON-encoded into the
+  /// notification's payload, and its `sentTime` is shown as the Android
+  /// sub-text (see [_getNotificationDetails]).
   Future<void> showFirebaseNotification(RemoteMessage message) async {
     try {
       final notification = message.notification;

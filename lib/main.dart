@@ -16,6 +16,7 @@ import 'services/firebase_notification_service.dart';
 import 'services/network_service.dart';
 import 'storage/app_preference.dart';
 import 'storage/app_storage.dart';
+import 'utils/extensions/file_extension.dart';
 
 /// Background FCM handler — must be a top-level function.
 /// Runs in a separate Dart isolate; initialize Firebase with the correct flavor
@@ -30,6 +31,14 @@ Future<void> _onBackgroundMessage(RemoteMessage message) async {
   // TODO: handle background push notification
 }
 
+/// Shared entry point invoked by [main_dev.main], [main_uat.main], and
+/// [main_prod.main].
+///
+/// Detects the active flavor from the bundle ID suffix, loads the matching
+/// `.env.<flavor>` config via [AppEnv.load], initializes Firebase, local
+/// notifications/FCM, local storage, and network monitoring, wires up
+/// Crashlytics error reporting, then runs [AppPage] inside a guarded zone
+/// so uncaught async errors are reported instead of crashing silently.
 Future<void> main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -71,6 +80,11 @@ Future<void> main() async {
     // Local storage.
     await AppStorage.init();
     await AppPreference.init();
+
+    // Sweep stale copies out of the temp `Files` directory (see
+    // file_extension.dart). Fire-and-forget: cleanup hygiene shouldn't delay
+    // app launch, and a failure here is non-fatal (logged internally).
+    unawaited(clearExpiredTmpFiles());
 
     // Network monitoring — must run before runApp so isConnected is valid
     // on the first frame.

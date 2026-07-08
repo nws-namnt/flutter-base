@@ -78,6 +78,8 @@ void simpleLog(dynamic message) {
 /// filter: AppFilter(),
 /// ```
 class AppFilter extends LogFilter {
+  /// Returns `true` only for [Level.warning] and [Level.error] events,
+  /// suppressing everything else (trace/debug/info/fatal).
   @override
   bool shouldLog(LogEvent event) {
     if(event.level == Level.error || event.level == Level.warning) {

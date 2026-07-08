@@ -20,6 +20,7 @@ class ErrorResponse extends Equatable {
   /// Short error identifier or detail provided by the server.
   final String? error;
 
+  /// Creates an [ErrorResponse] with the given fields.
   const ErrorResponse({this.status, this.message, this.error});
 
   /// Returns a copy of this instance with the given fields replaced.
@@ -47,6 +48,7 @@ class ErrorResponse extends Equatable {
     'error': error,
   };
 
+  /// Properties compared by [Equatable] for value equality.
   @override
   List<Object?> get props => [message, status, error];
 }

@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_base/utils/app_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Global getter — shorthand for [PermissionService.instance].
@@ -54,7 +55,12 @@ class PermissionService {
   ///
   /// Call this when a permission is [PermissionStatus.permanentlyDenied]
   /// or [PermissionStatus.restricted].
-  Future<void> openSettings() => openAppSettings();
+  Future<void> openSettings() async {
+    final canOpen = await openAppSettings();
+    if (!canOpen) {
+      showToast('Unable to open app setting');
+    }
+  }
 
   // COMMON PERMISSION WRAPPERS
   /// Requests camera access (front and back).
@@ -161,6 +167,51 @@ class PermissionService {
       final sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
       if (sdk >= 33) return PermissionStatus.granted;
       return requestPermission(Permission.storage);
+    }
+    return PermissionStatus.granted;
+  }
+
+  /// Requests write access to the public Downloads directory, for code that
+  /// writes there via a raw [Directory]/[File] path (e.g. [getAppDirectory]
+  /// on Android) rather than through `MediaStore`.
+  ///
+  /// **Scoped storage caveat — read before relying on this:**
+  ///
+  /// - Android below 10 (API < 29): legacy storage model. Requests
+  ///   `WRITE_EXTERNAL_STORAGE` via [Permission.storage]; once granted, raw
+  ///   path writes to Downloads work normally.
+  /// - Android 10 (API 29): scoped storage is opt-in. This only works if the
+  ///   app manifest sets `android:requestLegacyExternalStorage="true"` —
+  ///   without it, a granted [Permission.storage] does **not** guarantee a
+  ///   raw path write to Downloads will succeed.
+  /// - Android 11+ (API 30+): scoped storage is **enforced** regardless of
+  ///   that manifest flag. `WRITE_EXTERNAL_STORAGE` no longer grants access
+  ///   to public directories outside `MediaStore`. Reliable raw-path writes
+  ///   would require `MANAGE_EXTERNAL_STORAGE`, a sensitive "all files
+  ///   access" permission that Google Play restricts to apps whose core
+  ///   function is file management — this method deliberately does **not**
+  ///   request it, since granting it is a product/policy decision, not
+  ///   something to default to silently.
+  /// - iOS: not applicable — returns [PermissionStatus.granted].
+  ///
+  /// **Practical effect:** on API 30+ this will commonly report
+  /// [PermissionStatus.denied]/[PermissionStatus.permanentlyDenied] even
+  /// though [Permission.storage] itself is "granted" by the OS, because the
+  /// underlying capability isn't actually there. Callers should treat a
+  /// non-granted result as "raw Downloads writes aren't available on this
+  /// device" and fall back to an app-private directory (no permission
+  /// needed) or switch to a `MediaStore`-based plugin (e.g. `gal` /
+  /// `saver_gallery`) instead of adopting `MANAGE_EXTERNAL_STORAGE`.
+  Future<PermissionStatus> requestDownloadsWrite() async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final sdk = (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+      if (sdk < 29) {
+        return requestPermission(Permission.storage);
+      }
+      // Scoped storage (API 29+): don't prompt for a permission that can't
+      // actually deliver raw Downloads access — surface the current status
+      // so callers can decide to fall back instead.
+      return Permission.storage.status;
     }
     return PermissionStatus.granted;
   }

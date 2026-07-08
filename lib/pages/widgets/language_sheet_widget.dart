@@ -4,7 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../app/app.dart';
 import '../../common/app_enums.dart' show AppLanguage;
 
+/// Bottom sheet listing every [AppLanguage], with a checkmark on the option
+/// matching the current [AppState.locale].
+///
+/// Tapping an option calls [AppCubit.setLocale] and pops the sheet via the
+/// root navigator.
 class LanguageBottomSheet extends StatelessWidget {
+  /// Creates a [LanguageBottomSheet].
   const LanguageBottomSheet({super.key});
 
   @override

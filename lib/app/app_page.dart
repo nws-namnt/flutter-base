@@ -16,6 +16,7 @@ import 'app_state.dart';
 /// state are managed by the [AppRouter] singleton — see [appRouter] and
 /// [routerNotifier] for context-free navigation.
 class AppPage extends StatelessWidget {
+  /// Creates the root [AppPage] widget.
   const AppPage({super.key});
 
   static final _m3 = const M3Theme();
@@ -24,6 +25,7 @@ class AppPage extends StatelessWidget {
   static final _lightHighContrastTheme = _m3.lightHighContrast;
   static final _darkHighContrastTheme = _m3.darkHighContrast;
 
+  /// Builds the [MaterialApp.router], reacting to [AppCubit] theme/locale changes.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

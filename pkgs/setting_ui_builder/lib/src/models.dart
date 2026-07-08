@@ -52,7 +52,12 @@ class SettingsTile {
 
   /// Current state for [SettingsTileType.toggle].
   final bool? toggled;
+
+  /// Called with the new value when [SettingsTileType.toggle] is flipped.
   final ValueChanged<bool>? onToggle;
+
+  /// Called when the tile is tapped, for [SettingsTileType.navigation],
+  /// [SettingsTileType.value], and [SettingsTileType.custom].
   final VoidCallback? onTap;
 
   /// Free-form trailing for [SettingsTileType.custom].
@@ -61,6 +66,8 @@ class SettingsTile {
   /// Renders at 38 % opacity and ignores all interactions when false.
   final bool enabled;
 
+  /// Creates a tile that shows a chevron arrow (and optional trailing
+  /// [value] text) and calls [onTap] to navigate elsewhere.
   factory SettingsTile.navigation({
     Widget? leading,
     required String title,
@@ -79,6 +86,8 @@ class SettingsTile {
         enabled: enabled,
       );
 
+  /// Creates a tile with a [Switch] reflecting [value], calling [onToggle]
+  /// when its state changes (including a tap anywhere on the row).
   factory SettingsTile.toggle({
     Widget? leading,
     required String title,
@@ -97,6 +106,8 @@ class SettingsTile {
         enabled: enabled,
       );
 
+  /// Creates a tile showing read-only trailing [value] text, calling
+  /// [onTap] to let the user pick or change it via a dialog or sheet.
   factory SettingsTile.value({
     Widget? leading,
     required String title,
@@ -115,6 +126,7 @@ class SettingsTile {
         enabled: enabled,
       );
 
+  /// Creates a tile with a free-form [trailing] widget slot.
   factory SettingsTile.custom({
     Widget? leading,
     required String title,
@@ -138,11 +150,15 @@ class SettingsTile {
 
 /// Groups [tiles] under an optional [title] label.
 class SettingsSection {
+  /// Creates a section with an optional [title] and its [tiles].
   const SettingsSection({
     this.title,
     required this.tiles,
   });
 
+  /// Optional label rendered above the section's card.
   final String? title;
+
+  /// The tiles rendered inside the section's card, in order.
   final List<SettingsTile> tiles;
 }

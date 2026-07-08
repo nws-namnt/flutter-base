@@ -20,6 +20,7 @@ import 'widgets/chat_input_widget.dart';
 /// );
 /// ```
 class AiSupportPage extends StatefulWidget {
+  /// Creates an [AiSupportPage] for the given [screenName].
   const AiSupportPage({super.key, required this.screenName});
 
   /// The screen the user came from (e.g. 'Home', 'Settings').

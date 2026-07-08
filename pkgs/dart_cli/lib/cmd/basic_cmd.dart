@@ -225,6 +225,9 @@ class PigeonCommand extends Command {
 }
 
 /// Runs `build_runner` for code generation in build or watch mode.
+///
+/// Prompts for `build` or `watch` when called interactively, or reads the
+/// mode from the first positional argument when called directly.
 class GenCommand extends Command {
   @override
   String get description => MenuOption.gen.description;
@@ -258,6 +261,9 @@ class GenCommand extends Command {
 }
 
 /// Runs `flutter doctor -v` to check the environment and dependencies.
+///
+/// Shares stdio with the parent process so the full verbose report is
+/// printed directly to the terminal.
 class DoctorCommand extends Command {
   @override
   String get name => MenuOption.doctor.cliTitle;
@@ -293,6 +299,9 @@ class CleanCommand extends Command {
 }
 
 /// Lists all connected devices via `flutter devices`.
+///
+/// Shares stdio with the parent process so the device list is printed
+/// directly to the terminal.
 class DeviceCommand extends Command {
   @override
   String get name => MenuOption.device.cliTitle;
@@ -308,6 +317,9 @@ class DeviceCommand extends Command {
 }
 
 /// Lists available emulators and launches the one the user selects.
+///
+/// Parses `flutter emulators` output to build the selection list, then
+/// runs `flutter emulators --launch <id>` for the chosen emulator.
 class EmulatorCommand extends Command {
   @override
   String get name => MenuOption.emulator.cliTitle;

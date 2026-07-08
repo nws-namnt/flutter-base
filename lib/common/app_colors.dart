@@ -48,4 +48,30 @@ class AppColors {
 
   /// Rich, warm near-black (#100E09).
   static const Color premiumBlack = Color(0xFF100E09);
+
+  // ── Snackbar colors ────────────────────────────────────────────────────────
+
+  /// Success notification background (#E8F5E9).
+  static const cE8F5E9 = Color(0xFFE8F5E9); // success
+
+  /// Error notification background (#FFEBEE).
+  static const cFFEBEE = Color(0xFFFFEBEE); // error
+
+  /// Warning notification background (#FFF3E0).
+  static const cFFF3E0 = Color(0xFFFFF3E0); // warning
+
+  /// Info notification background (#E1F5FE).
+  static const cE1F5FE = Color(0xFFE1F5FE); // info
+
+  /// Success notification icon/text color (#2E7D32).
+  static const c2E7D32 = Color(0xFF2E7D32); // success (icon/text) colors
+
+  /// Error notification icon/text color (#C62828).
+  static const cC62828 = Color(0xFFC62828); // error (icon/text) colors
+
+  /// Warning notification icon/text color (#EF6C00).
+  static const cEF6C00 = Color(0xFFEF6C00); // warning (icon/text) colors
+
+  /// Info notification icon/text color (#0277BD).
+  static const c0277BD = Color(0xFF0277BD); // info (icon/text) colors
 }

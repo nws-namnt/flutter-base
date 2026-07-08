@@ -12,6 +12,7 @@ import 'ai_support_state.dart';
 /// - Sending user messages and streaming AI responses chunk by chunk.
 /// - Conversation history passed to [AiService] on each turn.
 class AiSupportCubit extends Cubit<AiSupportState> {
+  /// Creates [AiSupportCubit] with the default [AiSupportInitial] state.
   AiSupportCubit({required this.screenName}) : super(const AiSupportInitial());
 
   /// The screen the user navigated from — injected into the AI system prompt.

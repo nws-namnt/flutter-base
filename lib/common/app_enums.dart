@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../generated/l10n.dart';
+import 'app_colors.dart';
 
 /// Supported app locales.
 ///
@@ -15,10 +16,16 @@ enum AppLanguage {
   /// Japanese.
   ja(locale: Locale('ja'), label: '日本語', flag: '🇯🇵');
 
+  /// The [Locale] this language maps to.
   final Locale locale;
+
+  /// Human-readable display name.
   final String label;
+
+  /// Flag emoji representing this language.
   final String flag;
 
+  /// Creates an [AppLanguage] value with its [locale], [label], and [flag].
   const AppLanguage({
     required this.locale,
     required this.label,
@@ -34,8 +41,10 @@ enum AppStorageKey {
   /// Developer / QA test flag.
   kTest('kTest');
 
+  /// The raw storage key string.
   final String key;
 
+  /// Creates an [AppStorageKey] value with its raw [key] string.
   const AppStorageKey(this.key);
 }
 
@@ -47,8 +56,10 @@ enum AppPreferenceKey {
   /// Developer / QA test flag.
   kTest('kTest');
 
+  /// The raw preference key string.
   final String key;
 
+  /// Creates an [AppPreferenceKey] value with its raw [key] string.
   const AppPreferenceKey(this.key);
 }
 
@@ -71,6 +82,7 @@ enum ValidatorType {
   /// The regex pattern used to validate this field type.
   final String rawReg;
 
+  /// Creates a [ValidatorType] value with its [rawReg] regex pattern.
   const ValidatorType(this.rawReg);
 }
 
@@ -144,18 +156,42 @@ enum LaunchExternalType {
   /// The URI scheme string associated with this type.
   final String type;
 
+  /// Creates a [LaunchExternalType] value with its URI scheme [type].
   const LaunchExternalType(this.type);
 }
 
-enum AppNotifyType {
-  success(bgColor: Colors.green, icon: Icons.check_circle),
-  error(bgColor: Colors.red, icon: Icons.error),
-  warning(bgColor: Colors.yellow, icon: Icons.warning),
-  info(bgColor: Colors.blue, icon: Icons.info);
+/// Semantic notification category used by toast/snackbar/banner helpers
+/// (e.g. [showToast], [NotifyExtension.showSnackBar]).
+///
+/// Each value carries the default [color] (icon/text), [bgColor]
+/// (background), and [icon] used when the caller doesn't override them.
+enum NotifyType {
+  /// Success notification — green palette.
+  success(
+    color: AppColors.c2E7D32, // icon + text
+    bgColor: AppColors.cE8F5E9, // background
+    icon: Icons.done_outline_rounded,
+  ),
+  /// Error notification — red palette.
+  error(
+    color: AppColors.cC62828, // icon + text
+    bgColor: AppColors.cFFEBEE, // background
+    icon: Icons.error_outline_rounded,
+  ),
+  /// Warning notification — orange palette.
+  warning(
+    color: AppColors.cEF6C00, // icon + text
+    bgColor: AppColors.cFFF3E0, // background
+    icon: Icons.warning_outlined,
+  ),
+  /// Informational notification — blue palette.
+  info(
+    color: AppColors.c0277BD, // icon + text
+    bgColor: AppColors.cE1F5FE, // background
+    icon: Icons.info_outline_rounded,
+  );
 
-  final Color bgColor;
-  final IconData icon;
-
+  /// Default title text for this notification type, localized via [S].
   String get title => switch (this) {
     success => S.current.lb_flush_success,
     error => S.current.lb_flush_error,
@@ -163,6 +199,7 @@ enum AppNotifyType {
     info => S.current.lb_flush_info,
   };
 
+  /// Default message text for this notification type, localized via [S].
   String get message => switch (this) {
     success => S.current.lb_flush_success,
     error => S.current.lb_flush_error,
@@ -170,5 +207,15 @@ enum AppNotifyType {
     info => S.current.lb_flush_info,
   };
 
-  const AppNotifyType({required this.bgColor, required this.icon});
+  /// Icon and text color for this notification type.
+  final Color color;
+
+  /// Background color for this notification type.
+  final Color bgColor;
+
+  /// Default icon for this notification type.
+  final IconData icon;
+
+  /// Creates a [NotifyType] value with its [color], [bgColor], and [icon].
+  const NotifyType({required this.color, required this.bgColor, required this.icon});
 }

@@ -7,10 +7,19 @@ import 'package:image_picker/image_picker.dart';
 
 /// Content type inferred from the file extension.
 enum PickedFileType {
+  /// Image file (jpg, png, gif, webp, etc.).
   image,
+
+  /// Video file (mp4, mov, avi, etc.).
   video,
+
+  /// Audio file (mp3, wav, aac, etc.).
   audio,
+
+  /// Document file (pdf, doc, xls, etc.).
   document,
+
+  /// Unrecognized or missing extension.
   other;
 
   /// Infers the type from [extension] (without leading dot, case-insensitive).
@@ -71,6 +80,7 @@ class PickedFile extends Equatable {
   /// pre-loads them. Use [readBytes] to load on demand from [path].
   final Uint8List? bytes;
 
+  /// Creates a [PickedFile] with the given fields.
   const PickedFile({
     required this.name,
     this.path,
@@ -145,14 +155,23 @@ class PickedFile extends Equatable {
 
   // GETTERS
 
+  /// Whether [type] is [PickedFileType.image].
   bool get isImage => type == PickedFileType.image;
+
+  /// Whether [type] is [PickedFileType.video].
   bool get isVideo => type == PickedFileType.video;
+
+  /// Whether [type] is [PickedFileType.audio].
   bool get isAudio => type == PickedFileType.audio;
+
+  /// Whether [type] is [PickedFileType.document].
   bool get isDocument => type == PickedFileType.document;
 
+  /// Properties compared by [Equatable] for value equality.
   @override
   List<Object?> get props => [name, path, size, extension, type, bytes];
 
+  /// Returns a debug-friendly string representation of this [PickedFile].
   @override
   String toString() =>
       'PickedFile(name: $name, type: $type, size: $size, path: $path)';

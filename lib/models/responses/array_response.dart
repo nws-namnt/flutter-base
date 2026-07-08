@@ -38,6 +38,7 @@ class ArrayResponse<T> extends Equatable {
   /// Total number of pages.
   final int? totalPages;
 
+  /// Creates an [ArrayResponse] with the given fields.
   const ArrayResponse({
     this.message,
     this.status,
@@ -105,6 +106,7 @@ class ArrayResponse<T> extends Equatable {
     'totalPages': totalPages,
   };
 
+  /// Properties compared by [Equatable] for value equality.
   @override
   List<Object?> get props => [
     message,

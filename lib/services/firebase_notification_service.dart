@@ -24,22 +24,35 @@ import 'notification_service.dart';
 /// runApp(MyApp());
 class FirebaseNotificationService {
   FirebaseNotificationService._internal();
+
+  /// The global singleton instance.
   static final FirebaseNotificationService instance = FirebaseNotificationService._internal();
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   // Streams
   final StreamController<RemoteMessage> _onMessageController = StreamController.broadcast();
+
+  /// Emits each [RemoteMessage] received while the app is in the foreground.
   Stream<RemoteMessage> get onMessage => _onMessageController.stream;
 
   final StreamController<RemoteMessage> _onMessageOpenedController = StreamController.broadcast();
+
+  /// Emits the [RemoteMessage] whenever the user opens the app by tapping a
+  /// notification — covers both background-to-foreground taps and the
+  /// terminated-state launch message (see [initialMessage]).
   Stream<RemoteMessage> get onMessageOpenedApp => _onMessageOpenedController.stream;
 
   // Emits the payload (String?) when user taps a local notification created by NotificationService
   final StreamController<String?> _onNotificationTapController = StreamController.broadcast();
+
+  /// Emits the payload string when the user taps a local notification shown
+  /// via [NotificationService].
   Stream<String?> get onNotificationTap => _onNotificationTapController.stream;
 
   final StreamController<String> _tokenRefreshController = StreamController.broadcast();
+
+  /// Emits the new FCM token whenever it refreshes.
   Stream<String> get onTokenRefresh => _tokenRefreshController.stream;
 
   // FCM subscription handles — stored so they can be cancelled in dispose()
@@ -241,11 +254,21 @@ class FirebaseNotificationService {
     return null;
   }
 
+  /// Returns the current FCM registration token for this device.
   Future<String?> getToken() => _messaging.getToken();
+
+  /// Deletes the current FCM token, forcing a new one to be generated on
+  /// next request (e.g. after user logout, to invalidate the old token).
   Future<void> deleteToken() => _messaging.deleteToken();
+
+  /// Subscribes this device to the given FCM [topic].
   Future<void> subscribeToTopic(String topic) => _messaging.subscribeToTopic(topic);
+
+  /// Unsubscribes this device from the given FCM [topic].
   Future<void> unsubscribeFromTopic(String topic) => _messaging.unsubscribeFromTopic(topic);
 
+  /// Cancels all stream subscriptions and closes all stream controllers,
+  /// resetting internal flags so [initialize] can be run again from scratch.
   Future<void> dispose() async {
     await _onMessageSub?.cancel();
     await _onMessageOpenedSub?.cancel();

@@ -30,6 +30,8 @@ class M3Theme {
   ThemeData get darkHighContrast => darkHighContrastScheme.theme;
 
   // ── Light color schemes ───────────────────────────────────────────────────
+
+  /// Standard-contrast light [ColorScheme].
   static ColorScheme get lightScheme => const ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff000110),
@@ -78,6 +80,7 @@ class M3Theme {
     surfaceContainerHigh: Color(0xffeae7ec),
     surfaceContainerHighest: Color(0xffe4e1e6),
   );
+  /// Medium-contrast light [ColorScheme] (accessibility).
   static ColorScheme get lightMediumContrastScheme => const ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff000110),
@@ -126,6 +129,7 @@ class M3Theme {
     surfaceContainerHigh: Color(0xffdfdce0),
     surfaceContainerHighest: Color(0xffd3d1d5),
   );
+  /// High-contrast light [ColorScheme] (accessibility).
   static ColorScheme get lightHighContrastScheme => const ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff000110),
@@ -176,6 +180,8 @@ class M3Theme {
   );
 
   // Dark schemes
+
+  /// Standard-contrast dark [ColorScheme].
   static ColorScheme get darkScheme => const ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xffbdc3f9),
@@ -224,6 +230,7 @@ class M3Theme {
     surfaceContainerHigh: Color(0xff2a2a2d),
     surfaceContainerHighest: Color(0xff353438),
   );
+  /// Medium-contrast dark [ColorScheme] (accessibility).
   static ColorScheme get darkMediumContrastScheme => const ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xffd7daff),
@@ -272,6 +279,7 @@ class M3Theme {
     surfaceContainerHigh: Color(0xff323236),
     surfaceContainerHighest: Color(0xff3e3d41),
   );
+  /// High-contrast dark [ColorScheme] (accessibility).
   static ColorScheme get darkHighContrastScheme => const ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xffefeeff),

@@ -36,14 +36,19 @@ class CurlLoggerInterceptor extends Interceptor {
   /// becomes `-F "key=@filename;type=contentType"`.
   final bool convertFormData;
 
+  /// Creates a [CurlLoggerInterceptor] with the given [printOnSuccess] and
+  /// [convertFormData] options.
   CurlLoggerInterceptor({this.printOnSuccess, this.convertFormData = true});
 
+  /// Logs the cURL representation of a failed request, then forwards [err].
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     _renderCurlRepresentation(err.requestOptions);
     return handler.next(err);
   }
 
+  /// Logs the cURL representation of the request when [printOnSuccess] is
+  /// `true`, then forwards [response].
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (printOnSuccess == true) {

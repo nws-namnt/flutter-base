@@ -33,5 +33,7 @@ class DioLoggerInterceptor extends PrettyDioLogger {
   );
 
   static final DioLoggerInterceptor _instance = DioLoggerInterceptor._internal();
+
+  /// Returns the singleton [DioLoggerInterceptor] instance.
   factory DioLoggerInterceptor() => _instance;
 }

@@ -19,16 +19,26 @@ class AiSupportInitial extends AiSupportState {
 /// - [isStreaming] — true while the AI is generating a response.
 /// - [errorMessage] — set when the last request failed; does not wipe messages.
 class AiSupportReady extends AiSupportState {
+  /// Full conversation history, oldest first.
   final List<AiChatMessage> messages;
+
+  /// True while the AI is generating a response.
   final bool isStreaming;
+
+  /// Set when the last request failed; does not wipe [messages].
   final String? errorMessage;
 
+  /// Creates [AiSupportReady].
   const AiSupportReady({
     required this.messages,
     this.isStreaming = false,
     this.errorMessage,
   });
 
+  /// Returns a copy of this state with the given fields replaced.
+  ///
+  /// Pass `clearError: true` to reset [errorMessage] to null regardless of
+  /// the [errorMessage] argument.
   AiSupportReady copyWith({
     List<AiChatMessage>? messages,
     bool? isStreaming,
@@ -45,6 +55,9 @@ class AiSupportReady extends AiSupportState {
 
 /// Initialization failed (e.g. missing API key).
 class AiSupportError extends AiSupportState {
+  /// Description of the initialization failure.
   final String message;
+
+  /// Creates [AiSupportError] with the given failure [message].
   const AiSupportError(this.message);
 }

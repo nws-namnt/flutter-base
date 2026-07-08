@@ -41,6 +41,7 @@ class ApiUtil {
 
   static final ApiUtil _apiUtil = ApiUtil._internal();
 
+  /// Returns the singleton [ApiUtil] instance.
   factory ApiUtil() => _apiUtil;
 
   /// Returns the singleton [Dio] instance, creating and configuring it on

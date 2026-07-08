@@ -43,6 +43,8 @@ dependencies:
 
   # Path & permissions
   path_provider: ^2.1.5
+  external_path: ^2.2.0
+  path: ^1.9.1
   permission_handler: ^12.0.1
 
   # Browser
@@ -51,6 +53,8 @@ dependencies:
   # Local packages
   setting_ui_builder:
     path: pkgs/setting_ui_builder
+  animation_kit:
+    path: pkgs/animation_kit
 
   # UI components
   another_flushbar: ^2.2.4
@@ -95,6 +99,11 @@ dependencies:
   # Assets picker
   image_picker: ^1.2.2
   file_picker: ^10.3.8
+
+  # Image
+  cached_network_image: ^3.4.1
+  cached_network_image_platform_interface: ^4.1.1
+  flutter_cache_manager: ^3.4.1
 
 dev_dependencies:
   flutter_test:

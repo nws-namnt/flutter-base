@@ -92,13 +92,13 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
 GoRoute get _termRoute => GoRoute(
   name: Routers.terms.routerName,
   path: Routers.terms.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const TermsPage(), transitionType: PageTransitionType.slideFromRight),
+  pageBuilder: (context, state) => TransitionPage(child: const TermsPage(), transitionType: PageTransitionType.sharedAxisHorizontal),
 );
 
 GoRoute get _privacyRoute => GoRoute(
   name: Routers.privacy.routerName,
   path: Routers.privacy.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const PrivacyPage(), transitionType: PageTransitionType.slideFromRight),
+  pageBuilder: (context, state) => TransitionPage(child: const PrivacyPage(), transitionType: PageTransitionType.sharedAxisHorizontal),
 );
 
 

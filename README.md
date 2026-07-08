@@ -46,6 +46,9 @@ flutter run --flavor dev
 | [json_serializable](https://pub.dev/packages/json_serializable)   | JSON serialization code generation       |
 | [timezone](https://pub.dev/packages/timezone)                     | Timezone support                         |
 | [logger](https://pub.dev/packages/logger)                         | Structured console logging               |
+| [cached_network_image](https://pub.dev/packages/cached_network_image) | Cached network image widget (see `CachedImageWidget`) |
+| [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager) | File cache backing `cached_network_image` |
+| [cached_network_image_platform_interface](https://pub.dev/packages/cached_network_image_platform_interface) | Web render options for `cached_network_image` |
 | [build_runner](https://pub.dev/packages/build_runner)             | Code generation runner                   |
 | [flutter_lints](https://pub.dev/packages/flutter_lints)           | Lint rules                               |
 
