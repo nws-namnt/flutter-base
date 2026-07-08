@@ -216,6 +216,8 @@ class TransitionPage extends CustomTransitionPage<void> {
     required super.child,
     required PageTransitionType transitionType,
     Curve curve = Curves.easeOut,
+    super.barrierColor,
+    super.opaque,
   }) : super(
     key: key ?? ValueKey('$transitionType-${child.hashCode}'),
     transitionDuration: transitionDuration ?? const Duration(milliseconds: 350),

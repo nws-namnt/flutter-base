@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_base/pages/widgets/action_widget.dart';
 import 'package:flutter_base/pages/widgets/flow_fab_menu_widget.dart';
+import 'package:flutter_base/utils/app_utils.dart';
+import 'package:flutter_base/utils/extensions/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../generated/app_assets.dart';
 import '../../models/flow_fab_menu.dart';
-import '../../utils/extensions/context_extension.dart';
+import '../widgets/cached_image_widget.dart';
+import '../widgets/hero_image_widget.dart';
 import 'service_cubit.dart';
 import 'service_state.dart';
 
@@ -73,48 +76,53 @@ class _ServicePageState extends State<ServicePage> {
                 FlowFabMenu(
                   icon: Icons.info_outline,
                   tooltip: 'Info',
-                  onPressed: () => context.showSnackBar(message: 'Info tapped'),
+                  onPressed: () => showToast('Info tapped'),
                 ),
               ],
             ),
-            body: ListView(
+            body: Column(
               children: [
-                ActionWidget(
-                  style: ActionStyle.material,
-                  materialType: ActionMaterial.icon,
-                  iconVariant: ActionIconVariant.filledTonal,
-                  icon: Icons.message,
-                  onAction: () => context.showSnackBar(message: 'Message sent'),
-                ),
-                ActionWidget(
-                  style: ActionStyle.material,
-                  materialType: ActionMaterial.icon,
-                  iconVariant: ActionIconVariant.filledTonal,
-                  icon: Icons.charging_station,
-                  onAction: () => context.showNotify(),
-                ),
-                ActionWidget(
-                  style: ActionStyle.material,
-                  materialType: ActionMaterial.icon,
-                  iconVariant: ActionIconVariant.filledTonal,
-                  icon: Icons.chair,
-                  onAction: () => context.showM3Banner(
-                    message: 'Message sent',
-                    actions: [
-                      ActionWidget(
-                        style: ActionStyle.material,
-                        materialType: ActionMaterial.text,
-                        onAction: () => context.hideM3Banner(),
-                        label: 'Dismiss',
-                      ),
-                    ],
+                HeroImageWidget(
+                  heroTag: '1',
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: R.imagesIcArticleNotFound,
+                      image: 'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                    ),
                   ),
-                ),
-                FadeInImage.assetNetwork(
-                  placeholder: R.imagesIcArticleNotFound,
-                  image: 'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
-                )
+                ).equalExpand,
+                const Divider(),
+                HeroImageWidget(
+                  heroTag: '2',
+                  preview: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: CachedImageWidget(
+                      fit: BoxFit.contain,
+                      imageUrl: 'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                    ),
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: CachedImageWidget(
+                      fit: BoxFit.cover,
+                      width: 200,
+                      imageUrl: 'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                    ),
+                  ),
+                ).equalExpand,
+                const Divider(),
+                HeroImageWidget(
+                  heroTag: '3',
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: Image.asset(R.imagesIcArticleNotFound),
+                  ),
+                ).equalExpand,
               ],
+            ).symPad(
+              horizontal: 0,
+              vertical: 15.0,
             ),
           );
         },

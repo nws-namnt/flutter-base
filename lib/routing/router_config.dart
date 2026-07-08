@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_base/pages/widgets/bottom_sheet_widget.dart';
 import 'package:go_router/go_router.dart';
 
+import '../common/app_colors.dart';
 import '../pages/pages.dart';
 import 'routers.dart';
 
@@ -27,6 +28,7 @@ List<RouteBase> routes = [
   _shellRoute,
   _termRoute,
   _privacyRoute,
+  _imagePreviewRoute,
   _aiSupportRoute,
   _languageSheetRoute,
   _notFoundRoute,
@@ -36,7 +38,10 @@ List<RouteBase> routes = [
 GoRoute get _splashRoute => GoRoute(
   name: Routers.root.routerName,
   path: Routers.root.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const SplashPage(), transitionType: PageTransitionType.fade),
+  pageBuilder: (context, state) => TransitionPage(
+    child: const SplashPage(),
+    transitionType: PageTransitionType.fade,
+  ),
 );
 
 // Shell — home with bottom navigation bar
@@ -54,8 +59,10 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
         GoRoute(
           name: Routers.home.routerName,
           path: Routers.home.routerPath,
-          pageBuilder: (context, state) =>
-              TransitionPage(child: const HomePage(), transitionType: PageTransitionType.fade),
+          pageBuilder: (context, state) => TransitionPage(
+            child: const HomePage(),
+            transitionType: PageTransitionType.fade,
+          ),
         ),
       ],
     ),
@@ -67,8 +74,10 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
         GoRoute(
           name: Routers.service.routerName,
           path: Routers.service.routerPath,
-          pageBuilder: (context, state) =>
-              TransitionPage(child: const ServicePage(), transitionType: PageTransitionType.fade),
+          pageBuilder: (context, state) => TransitionPage(
+            child: const ServicePage(),
+            transitionType: PageTransitionType.fade,
+          ),
         ),
       ],
     ),
@@ -80,8 +89,10 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
         GoRoute(
           name: Routers.setting.routerName,
           path: Routers.setting.routerPath,
-          pageBuilder: (context, state) =>
-              TransitionPage(child: const SettingPage(), transitionType: PageTransitionType.fade),
+          pageBuilder: (context, state) => TransitionPage(
+            child: const SettingPage(),
+            transitionType: PageTransitionType.fade,
+          ),
         ),
       ],
     ),
@@ -92,15 +103,44 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
 GoRoute get _termRoute => GoRoute(
   name: Routers.terms.routerName,
   path: Routers.terms.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const TermsPage(), transitionType: PageTransitionType.sharedAxisHorizontal),
+  pageBuilder: (context, state) => TransitionPage(
+    child: const TermsPage(),
+    transitionType: PageTransitionType.sharedAxisHorizontal,
+  ),
 );
 
 GoRoute get _privacyRoute => GoRoute(
   name: Routers.privacy.routerName,
   path: Routers.privacy.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const PrivacyPage(), transitionType: PageTransitionType.sharedAxisHorizontal),
+  pageBuilder: (context, state) => TransitionPage(
+    child: const PrivacyPage(),
+    transitionType: PageTransitionType.sharedAxisHorizontal,
+  ),
 );
 
+GoRoute get _imagePreviewRoute => GoRoute(
+  name: Routers.imagePreview.routerName,
+  path: Routers.imagePreview.routerPath,
+  pageBuilder: (context, state) {
+    // Pushed via HeroImageWidget with extra: {'heroTag': String, 'child': Widget}
+    // — Widget can't be encoded in a URL, so it must travel through `extra`.
+    final extra = state.extra as Map<String, dynamic>?;
+    assert(
+      extra != null && extra['heroTag'] is String && extra['child'] is Widget,
+      'imagePreview route requires extra: {heroTag: String, child: Widget} — '
+      'push it via HeroImageWidget, not directly.',
+    );
+    return TransitionPage(
+      opaque: false,
+      barrierColor: AppColors.inkBlack,
+      child: ImagePreviewPage(
+        heroTag: extra!['heroTag'] as String,
+        child: extra['child'] as Widget,
+      ),
+      transitionType: PageTransitionType.fade,
+    );
+  },
+);
 
 // Bottom sheet
 GoRoute get _languageSheetRoute => GoRoute(
@@ -131,5 +171,8 @@ GoRoute get _aiSupportRoute => GoRoute(
 GoRoute get _notFoundRoute => GoRoute(
   name: Routers.pageNotFound.routerName,
   path: Routers.pageNotFound.routerPath,
-  pageBuilder: (context, state) => TransitionPage(child: const NotFoundPage(), transitionType: PageTransitionType.slideFromRight),
+  pageBuilder: (context, state) => TransitionPage(
+    child: const NotFoundPage(),
+    transitionType: PageTransitionType.slideFromRight,
+  ),
 );
