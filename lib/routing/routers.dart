@@ -17,6 +17,9 @@ enum Routers {
   /// Service tab inside the shell (`/service`).
   service('/service', 'service'),
 
+  /// Explore tab inside the shell (`/explore`).
+  explore('/explore', 'explore'),
+
   /// Settings tab inside the shell (`/setting`).
   setting('/setting', 'setting'),
 

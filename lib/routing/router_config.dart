@@ -18,6 +18,7 @@ final shellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: '_kShell');
 // Branch navigator keys — one per tab in [ShellPage].
 final _homeBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kHome');
 final _serviceBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kService');
+final _exploreBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kExplore');
 final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 
 /// Top-level route list consumed by [GoRouter].
@@ -93,7 +94,22 @@ StatefulShellRoute get _shellRoute => StatefulShellRoute(
       ],
     ),
 
-    // Branch 2 — Settings
+    // Branch 2 — Explore
+    StatefulShellBranch(
+      navigatorKey: _exploreBranchKey,
+      routes: [
+        GoRoute(
+          name: Routers.explore.routerName,
+          path: Routers.explore.routerPath,
+          pageBuilder: (context, state) => TransitionPage(
+            child: const ExplorePage(),
+            transitionType: PageTransitionType.fade,
+          ),
+        ),
+      ],
+    ),
+
+    // Branch 3 — Settings
     StatefulShellBranch(
       navigatorKey: _settingBranchKey,
       routes: [

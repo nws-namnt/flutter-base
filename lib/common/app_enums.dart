@@ -171,26 +171,26 @@ enum LaunchExternalType {
 enum NotifyType {
   /// Success notification — green palette.
   success(
-    color: AppColors.c2E7D32, // icon + text
-    bgColor: AppColors.cE8F5E9, // background
+    bgColor: AppColors.c2E7D32, // icon + text
+    color: AppColors.cE8F5E9, // background
     icon: Icons.done_outline_rounded,
   ),
   /// Error notification — red palette.
   error(
-    color: AppColors.cC62828, // icon + text
-    bgColor: AppColors.cFFEBEE, // background
+    bgColor: AppColors.cC62828, // icon + text
+    color: AppColors.cFFEBEE, // background
     icon: Icons.error_outline_rounded,
   ),
   /// Warning notification — orange palette.
   warning(
-    color: AppColors.cEF6C00, // icon + text
-    bgColor: AppColors.cFFF3E0, // background
+    bgColor: AppColors.cEF6C00, // icon + text
+    color: AppColors.cFFF3E0, // background
     icon: Icons.warning_outlined,
   ),
   /// Informational notification — blue palette.
   info(
-    color: AppColors.c0277BD, // icon + text
-    bgColor: AppColors.cE1F5FE, // background
+    bgColor: AppColors.c0277BD, // icon + text
+    color: AppColors.cE1F5FE, // background
     icon: Icons.info_outline_rounded,
   );
 

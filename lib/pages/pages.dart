@@ -6,6 +6,8 @@
 /// **Tab screens**
 /// - [HomePage] / [HomeCubit] / [HomeState]
 /// - [ServicePage] / [ServiceCubit] / [ServiceState]
+/// - [ExplorePage] / [ExploreCubit] / [ExploreState] — search/browse
+///   category placeholder
 /// - [SettingPage] / [SettingCubit] / [SettingState]
 ///
 /// **Standalone screens**
@@ -35,6 +37,7 @@ library pages;
 
 export '../models/intro_entity.dart';
 export 'ai_support/ai_support_page.dart';
+export 'explore/explore_page.dart';
 export 'home/home_page.dart';
 export 'home_detail/home_detail_page.dart';
 export 'image_preview/image_preview_page.dart';
