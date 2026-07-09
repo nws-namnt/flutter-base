@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter_base/base.dart';
 import 'package:flutter_base/pages/widgets/action_widget.dart';
 import 'package:flutter_base/utils/extensions/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,167 +128,179 @@ class _ExplorePageState extends State<ExplorePage>
               return Scaffold(
             appBar: AppBar(title: const Text('Explore')),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            body: Padding(
+            body: ListView(
               padding: const EdgeInsets.all(AppDimensions.padding),
-              child: Column(
-                children: [
-                  Autocomplete<String>(
-                    // Suggestions are always filtered from the full category
-                    // list (not state.filteredCategories) — that field is
-                    // already query-filtered for the grid below, filtering it
-                    // again here would just narrow the dropdown to whatever
-                    // is currently typed, hiding every other match.
-                    optionsBuilder: (textEditingValue) {
-                      if (textEditingValue.text.isEmpty) {
-                        return const Iterable<String>.empty();
-                      }
-                      final query = textEditingValue.text.toLowerCase();
-                      return state.categories.where(
-                        (category) => category.toLowerCase().contains(query),
-                      );
-                    },
-                    onSelected: _cubit.onSearchChanged,
-                    fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        onChanged: _cubit.onSearchChanged,
-                        decoration: const InputDecoration(
-                          hintText: 'Search categories',
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(),
-                        ),
-                      );
-                    },
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: context.heightPx / 3,
                   ),
-                  const SizedBox(height: AppDimensions.padding),
-                  SizedBox(
-                    height: context.heightPx / 3,
-                    child: state.filteredCategories.isEmpty
-                        ? const Center(child: Text('No categories found'))
-                        : GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: AppDimensions.padding,
-                                  crossAxisSpacing: AppDimensions.padding,
-                                ),
-                            itemCount: state.filteredCategories.length,
-                            itemBuilder: (context, index) {
-                              final category = state.filteredCategories[index];
-                              return Card(
-                                clipBehavior: Clip.antiAlias,
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: Center(
-                                    child: Text(
-                                      category,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium,
-                                    ),
+                  child: CarouselView.weightedBuilder(
+                    flexWeights: [2, 3, 2],
+                    itemSnapping: true,
+                    itemCount: state.carousels.length,
+                    itemBuilder: (context, index) => HeroImageWidget(
+                      heroTag: 'tag_$index',
+                      child: Image.asset(state.carousels[index]),
+                    ),
+                  ),
+                ),
+                Autocomplete<String>(
+                  // Suggestions are always filtered from the full category
+                  // list (not state.filteredCategories) — that field is
+                  // already query-filtered for the grid below, filtering it
+                  // again here would just narrow the dropdown to whatever
+                  // is currently typed, hiding every other match.
+                  optionsBuilder: (textEditingValue) {
+                    if (textEditingValue.text.isEmpty) {
+                      return const Iterable<String>.empty();
+                    }
+                    final query = textEditingValue.text.toLowerCase();
+                    return state.categories.where(
+                      (category) => category.toLowerCase().contains(query),
+                    );
+                  },
+                  onSelected: _cubit.onSearchChanged,
+                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      onChanged: _cubit.onSearchChanged,
+                      decoration: const InputDecoration(
+                        hintText: 'Search categories',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: AppDimensions.padding),
+                SizedBox(
+                  height: context.heightPx / 3,
+                  child: state.filteredCategories.isEmpty
+                      ? const Center(child: Text('No categories found'))
+                      : GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: AppDimensions.padding,
+                                crossAxisSpacing: AppDimensions.padding,
+                              ),
+                          itemCount: state.filteredCategories.length,
+                          itemBuilder: (context, index) {
+                            final category = state.filteredCategories[index];
+                            return Card(
+                              clipBehavior: Clip.antiAlias,
+                              child: InkWell(
+                                onTap: () {},
+                                child: Center(
+                                  child: Text(
+                                    category,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                  ),
-                  const Gap(AppDimensions.padding),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                  ),
-                  const Gap(AppDimensions.padding),
-                  Row(
-                    children: [
-                      BlocBuilder<ExploreCubit, ExploreState>(
-                        buildWhen: (pre, cur) =>
-                            pre.firstModalVisible != cur.firstModalVisible,
-                        builder: (context, state) {
-                          return Column(
-                            children: [
-                              Visibility(
-                                visible: state.firstModalVisible,
-                                child: AnimatedBuilder(
-                                  animation: Listenable.merge([
-                                    _sizeController,
-                                    _rotationController,
-                                  ]),
-                                  builder: (context, child) {
-                                    return Transform.rotate(
-                                      angle:
-                                      _rotationController.value * 2 * math.pi,
-                                      child: Container(
-                                        key: _k1,
-                                        height: _sizeAnimation.value,
-                                        width: 50 - _sizeAnimation.value,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+                const Gap(AppDimensions.padding),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                ),
+                const Gap(AppDimensions.padding),
+                Row(
+                  children: [
+                    BlocBuilder<ExploreCubit, ExploreState>(
+                      buildWhen: (pre, cur) =>
+                          pre.firstModalVisible != cur.firstModalVisible,
+                      builder: (context, state) {
+                        return Column(
+                          children: [
+                            Visibility(
+                              visible: state.firstModalVisible,
+                              child: AnimatedBuilder(
+                                animation: Listenable.merge([
+                                  _sizeController,
+                                  _rotationController,
+                                ]),
+                                builder: (context, child) {
+                                  return Transform.rotate(
+                                    angle:
+                                    _rotationController.value * 2 * math.pi,
+                                    child: Container(
+                                      key: _k1,
+                                      height: _sizeAnimation.value,
+                                      width: 50 - _sizeAnimation.value,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.blue,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                              ActionWidget(
-                                materialType: ActionMaterial.text,
-                                onAction: _onAction1,
-                                label: 'Action 1',
-                              ),
-                            ],
-                          );
-                        },
-                      ).equalExpand,
-                      BlocBuilder<ExploreCubit, ExploreState>(
-                        buildWhen: (pre, cur) =>
-                            pre.secondModalVisible != cur.secondModalVisible,
-                        builder: (context, state) {
-                          return Column(
-                            children: [
-                              Offstage(
-                                offstage: state.secondModalVisible,
-                                child: AnimatedBuilder(
-                                  animation: Listenable.merge([
-                                    _sizeController,
-                                    _rotationController,
-                                  ]),
-                                  builder: (context, child) {
-                                    return Transform.rotate(
-                                      angle:
-                                          _rotationController.value *
-                                          2 *
-                                          math.pi,
-                                      child: Container(
-                                        key: _k2,
-                                        height: _sizeAnimation.value,
-                                        width: 50 - _sizeAnimation.value,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
+                            ),
+                            ActionWidget(
+                              materialType: ActionMaterial.text,
+                              onAction: _onAction1,
+                              label: 'Action 1',
+                            ),
+                          ],
+                        );
+                      },
+                    ).equalExpand,
+                    BlocBuilder<ExploreCubit, ExploreState>(
+                      buildWhen: (pre, cur) =>
+                          pre.secondModalVisible != cur.secondModalVisible,
+                      builder: (context, state) {
+                        return Column(
+                          children: [
+                            Offstage(
+                              offstage: state.secondModalVisible,
+                              child: AnimatedBuilder(
+                                animation: Listenable.merge([
+                                  _sizeController,
+                                  _rotationController,
+                                ]),
+                                builder: (context, child) {
+                                  return Transform.rotate(
+                                    angle:
+                                        _rotationController.value *
+                                        2 *
+                                        math.pi,
+                                    child: Container(
+                                      key: _k2,
+                                      height: _sizeAnimation.value,
+                                      width: 50 - _sizeAnimation.value,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                              ActionWidget(
-                                materialType: ActionMaterial.text,
-                                onAction: _onAction2,
-                                label: 'Action 2',
-                              ),
-                            ],
-                          );
-                        },
-                      ).equalExpand,
-                    ],
-                  ),
-                ],
-              ),
+                            ),
+                            ActionWidget(
+                              materialType: ActionMaterial.text,
+                              onAction: _onAction2,
+                              label: 'Action 2',
+                            ),
+                          ],
+                        );
+                      },
+                    ).equalExpand,
+                  ],
+                ),
+              ],
             ),
           );
             },

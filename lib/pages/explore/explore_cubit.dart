@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../generated/app_assets.dart';
 import 'explore_state.dart';
 
 /// Cubit for the [ExplorePage].
@@ -20,6 +21,12 @@ class ExploreCubit extends Cubit<ExploreState> {
             'Art',
             'Fashion',
             'Gaming',
+          ],
+          carousels: [
+            R.imagesFox1,
+            R.imagesFox2,
+            R.imagesFox3,
+            R.imagesFox4,
           ],
         ),
       );

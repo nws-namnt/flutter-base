@@ -10,12 +10,15 @@ class ExploreState extends Equatable {
   /// Current search query, used to filter [categories].
   final String query;
 
+  final List<String> carousels;
+
   final bool firstModalVisible;
   final bool secondModalVisible;
 
   /// Creates [ExploreState] with the given [categories] and an empty [query].
   const ExploreState({
     required this.categories,
+    required this.carousels,
     this.query = '',
     this.firstModalVisible = true,
     this.secondModalVisible = false,
@@ -38,11 +41,12 @@ class ExploreState extends Equatable {
     bool? secondModalVisible,
   }) => ExploreState(
     categories: categories,
+    carousels: carousels,
     query: query ?? this.query,
     firstModalVisible: firstModalVisible ?? this.firstModalVisible,
     secondModalVisible: secondModalVisible ?? this.secondModalVisible,
   );
 
   @override
-  List<Object?> get props => [categories, query, firstModalVisible, secondModalVisible];
+  List<Object?> get props => [categories, carousels, query, firstModalVisible, secondModalVisible];
 }
