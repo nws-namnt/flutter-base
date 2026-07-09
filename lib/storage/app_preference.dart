@@ -79,4 +79,15 @@ class AppPreference {
 
   /// Removes [AppPreferenceKey.kTest] from storage.
   Future<void> removeTest() => removeKey(AppPreferenceKey.kTest);
+
+  /// Persists [value] under [AppPreferenceKey.kSeenIntro].
+  Future<void> setCompleteIntro(bool value) =>
+      _prefs.setBool(AppPreferenceKey.kCompletedIntro.key, value);
+
+  /// Returns whether onboarding has been completed or skipped before, or
+  /// `false` if not set (i.e. first launch).
+  bool isCompleteIntro() => _prefs.getBool(AppPreferenceKey.kCompletedIntro.key) ?? false;
+
+  /// Removes [AppPreferenceKey.kSeenIntro] from storage.
+  Future<void> removeCompleteIntro() => removeKey(AppPreferenceKey.kCompletedIntro);
 }

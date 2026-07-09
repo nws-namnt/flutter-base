@@ -10,6 +10,8 @@
 ///
 /// **Standalone screens**
 /// - [SplashPage] / [SplashCubit] / [SplashState]
+/// - [IntroPage] / [IntroCubit] / [IntroState] — onboarding carousel shown
+///   before the app shell, built from a list of [IntroEntity]
 /// - [HomeDetailPage] / [HomeDetailCubit] / [HomeDetailState] — opened from
 ///   [HomePage] via [OpenContainerWrapper]
 /// - [PrivacyPage] — Privacy Policy rendered from Markdown asset
@@ -31,10 +33,12 @@
 // ignore: unnecessary_library_name
 library pages;
 
+export '../models/intro_entity.dart';
 export 'ai_support/ai_support_page.dart';
 export 'home/home_page.dart';
 export 'home_detail/home_detail_page.dart';
 export 'image_preview/image_preview_page.dart';
+export 'intro/intro_page.dart';
 export 'privacy/privacy_page.dart';
 export 'service/service_page.dart';
 export 'setting/setting_page.dart';

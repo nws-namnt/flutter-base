@@ -25,6 +25,7 @@ final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 /// Order matters: GoRouter matches routes top-to-bottom.
 List<RouteBase> routes = [
   _splashRoute,
+  _introRoute,
   _shellRoute,
   _termRoute,
   _privacyRoute,
@@ -40,6 +41,16 @@ GoRoute get _splashRoute => GoRoute(
   path: Routers.root.routerPath,
   pageBuilder: (context, state) => TransitionPage(
     child: const SplashPage(),
+    transitionType: PageTransitionType.fade,
+  ),
+);
+
+// Onboarding
+GoRoute get _introRoute => GoRoute(
+  name: Routers.intro.routerName,
+  path: Routers.intro.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const IntroPage(),
     transitionType: PageTransitionType.fade,
   ),
 );

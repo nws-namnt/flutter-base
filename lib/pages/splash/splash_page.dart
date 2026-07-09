@@ -10,9 +10,10 @@ import 'splash_state.dart';
 
 /// Animated splash screen shown at app startup (`/`).
 ///
-/// Creates a [SplashCubit] and immediately calls [SplashCubit.runSequence].
-/// When the cubit emits [SplashStatus.done], the listener navigates to
-/// [Routers.home] via `context.go`.
+/// Creates a [SplashCubit] and immediately calls [SplashCubit.onInitialize].
+/// When the cubit emits [LoadStatus.success], the listener navigates to
+/// [Routers.intro] on first launch, or straight to [Routers.home] once
+/// onboarding has already been seen — see [SplashState.hasSeenIntro].
 ///
 /// Status-bar style is synced to the active [Brightness] via
 /// [AnnotatedRegion] so the system icons remain legible.
@@ -46,7 +47,9 @@ class _SplashPageState extends State<SplashPage> {
       value: _cubit,
       child: BlocConsumer<SplashCubit, SplashState>(
         listenWhen: (_, curr) => curr.status == LoadStatus.success,
-        listener: (context, _) => context.go(Routers.home.routerPath),
+        listener: (context, state) => context.go(
+          state.isCompletedIntro ? Routers.home.routerPath : Routers.intro.routerPath,
+        ),
         builder: (context, state) {
           final bgColor = Theme.of(context).colorScheme.surface;
           final isDark = Theme.of(context).brightness == Brightness.dark;

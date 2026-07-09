@@ -54,7 +54,10 @@ enum AppStorageKey {
 /// set / get / remove methods in [AppPreference].
 enum AppPreferenceKey {
   /// Developer / QA test flag.
-  kTest('kTest');
+  kTest('kTest'),
+
+  /// Whether the user has completed (or skipped) the onboarding intro.
+  kCompletedIntro('kCompletedIntro');
 
   /// The raw preference key string.
   final String key;
