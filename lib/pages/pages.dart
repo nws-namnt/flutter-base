@@ -14,6 +14,8 @@
 /// - [SplashPage] / [SplashCubit] / [SplashState]
 /// - [IntroPage] / [IntroCubit] / [IntroState] — onboarding carousel shown
 ///   before the app shell, built from a list of [IntroEntity]
+/// - [LoginPage] — Firebase UI Auth sign-in screen
+/// - [RegisterPage] — Firebase UI Auth registration screen
 /// - [HomeDetailPage] / [HomeDetailCubit] / [HomeDetailState] — opened from
 ///   [HomePage] via [OpenContainerWrapper]
 /// - [PrivacyPage] — Privacy Policy rendered from Markdown asset
@@ -37,15 +39,22 @@ library pages;
 
 export '../models/intro_entity.dart';
 export 'ai_support/ai_support_page.dart';
+export 'email_verification/email_verification_page.dart';
 export 'explore/explore_page.dart';
+export 'forgot_password/forgot_password_page.dart';
 export 'home/home_page.dart';
 export 'home_detail/home_detail_page.dart';
 export 'image_preview/image_preview_page.dart';
 export 'intro/intro_page.dart';
+export 'login/login_page.dart';
+export 'phone_input/phone_input_page.dart';
 export 'privacy/privacy_page.dart';
+export 'profile/profile_page.dart';
+export 'register/register_page.dart';
 export 'service/service_page.dart';
 export 'setting/setting_page.dart';
 export 'shell/shell_page.dart';
+export 'sms_code/sms_code_page.dart';
 export 'splash/splash_page.dart';
 export 'terms/terms_page.dart';
 export 'widgets/animated_bottom_navigation_widget.dart';

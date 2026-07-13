@@ -1,26 +1,34 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 /// A [ChangeNotifier] used as [GoRouter.refreshListenable].
 ///
-/// Call [attachAuthStateChange] after a successful login (or any event that
-/// should trigger a route re-evaluation), and [detachAuthStateChange] on
-/// logout. [GoRouter] subscribes to this notifier and re-runs its `redirect`
-/// callback whenever it fires.
+/// Subscribes to [FirebaseAuth.authStateChanges] and calls [notifyListeners]
+/// on every auth event so [GoRouter] re-evaluates its redirect and any
+/// [ListenableBuilder] watching this notifier (e.g. the drawer header) rebuilds
+/// immediately without needing a [StreamBuilder] or [setState] in the page.
 class RouterNotifier extends ChangeNotifier {
-  bool _authCompleted = false;
-
-  /// Whether the user has completed authentication.
-  bool get authCompleted => _authCompleted;
-
-  /// Marks auth as completed and notifies [GoRouter] to re-evaluate redirects.
-  void attachAuthStateChange() {
-    _authCompleted = true;
-    notifyListeners();
+  RouterNotifier() {
+    _currentUser = FirebaseAuth.instance.currentUser;
+    _authSub = FirebaseAuth.instance.authStateChanges().listen((user) {
+      _currentUser = user;
+      notifyListeners();
+    });
   }
 
-  /// Clears auth state and notifies [GoRouter] to re-evaluate redirects.
-  void detachAuthStateChange() {
-    _authCompleted = false;
-    notifyListeners();
+  User? _currentUser;
+
+  /// The currently signed-in user, or `null` if not authenticated.
+  /// Always in sync with [FirebaseAuth.instance.currentUser].
+  User? get currentUser => _currentUser;
+
+  late final StreamSubscription<User?> _authSub;
+
+  @override
+  void dispose() {
+    _authSub.cancel();
+    super.dispose();
   }
 }

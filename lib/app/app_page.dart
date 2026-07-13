@@ -1,3 +1,4 @@
+import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -45,6 +46,7 @@ class AppPage extends StatelessWidget {
             supportedLocales: const [Locale('en'), Locale('vi'), Locale('ja')],
             localizationsDelegates: const [
               S.delegate,
+              FirebaseUILocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,

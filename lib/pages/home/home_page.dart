@@ -5,6 +5,7 @@ import 'package:flutter_base/base.dart';
 import 'package:flutter_base/utils/app_utils.dart';
 import 'package:flutter_base/utils/extensions/widget_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../widgets/empty_widget.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final AnimationController _menuIconController;
   late final AnimationController _viewIconController;
   late final ScrollController _scrollController;
+
 
   @override
   void initState() {
@@ -241,12 +243,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   backgroundColor: Theme.of(context).colorScheme.surface,
                   child: Column(
                     children: [
-                      const UserAccountsDrawerHeader(
-                        currentAccountPicture: CircleAvatar(
-                          child: Icon(Icons.person),
-                        ),
-                        accountName: Text('Guest User'),
-                        accountEmail: Text('guest@example.com'),
+                      ListenableBuilder(
+                        listenable: routerNotifier,
+                        builder: (context, _) {
+                          final user = routerNotifier.currentUser;
+                          final isSignedIn = user != null;
+
+                          final header = UserAccountsDrawerHeader(
+                            currentAccountPicture: CircleAvatar(
+                              backgroundImage: user?.photoURL != null
+                                  ? NetworkImage(user!.photoURL!)
+                                  : null,
+                              child: user?.photoURL == null
+                                  ? const Icon(Icons.person)
+                                  : null,
+                            ),
+                            accountName: Text(user?.displayName ?? 'Guest'),
+                            accountEmail: Text(user?.email ?? 'Not signed in'),
+                            onDetailsPressed: isSignedIn ? null : () {
+                              _scaffoldKey.currentState?.closeDrawer();
+                              context.push(Routers.login.routerPath);
+                            },
+                          );
+
+                          if (!isSignedIn) return header;
+
+                          return GestureDetector(
+                            onTap: () {
+                              _scaffoldKey.currentState?.closeDrawer();
+                              context.push(Routers.profile.routerPath);
+                            },
+                            child: header,
+                          );
+                        },
                       ),
                       const Spacer(),
                       ListTile(

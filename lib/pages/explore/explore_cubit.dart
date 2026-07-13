@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../generated/app_assets.dart';
+import '../../models/carousel_entity.dart';
 import 'explore_state.dart';
 
 /// Cubit for the [ExplorePage].
@@ -11,8 +11,8 @@ class ExploreCubit extends Cubit<ExploreState> {
   /// Creates [ExploreCubit] seeded with a placeholder list of categories.
   ExploreCubit()
     : super(
-        const ExploreState(
-          categories: [
+        ExploreState(
+          categories: const [
             'Music',
             'Sports',
             'Travel',
@@ -22,12 +22,7 @@ class ExploreCubit extends Cubit<ExploreState> {
             'Fashion',
             'Gaming',
           ],
-          carousels: [
-            R.imagesFox1,
-            R.imagesFox2,
-            R.imagesFox3,
-            R.imagesFox4,
-          ],
+          carousels: CarouselEntity.sample,
         ),
       );
 

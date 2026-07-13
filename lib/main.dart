@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_base/pages/widgets/render_error_widget.dart' show RenderErrorWidget;
 import 'package:flutter_base/utils/extensions/_extension.dart';
 import 'package:flutter_base/utils/extensions/string_extension.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'app/app_page.dart';
@@ -79,6 +82,15 @@ Future<void> main() async {
       // Dart's initializeApp() must NOT pass options — it only attaches to the
       // already-running native instance.
       await Firebase.initializeApp();
+
+      // Register auth providers globally — required by firebase_ui_auth before
+      // any SignInScreen / RegisterScreen / ProfileScreen is shown.
+      // dotenv is already loaded via AppEnv.load above, so GOOGLE_WEB_CLIENT_ID is available.
+      FirebaseUIAuth.configureProviders([
+        EmailAuthProvider(),
+        GoogleProvider(clientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'] ?? ''),
+        // PhoneAuthProvider(),
+      ]);
 
       // Register background handler BEFORE initialize() — FCM requirement.
       FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage);

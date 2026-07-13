@@ -1,3 +1,4 @@
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_base/pages/widgets/bottom_sheet_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +28,13 @@ final _settingBranchKey = GlobalKey<NavigatorState>(debugLabel: '_kSetting');
 List<RouteBase> routes = [
   _splashRoute,
   _introRoute,
+  _profileRoute,
+  _forgotPasswordRoute,
+  _emailVerificationRoute,
+  _phoneInputRoute,
+  _smsCodeRoute,
+  _loginRoute,
+  _registerRoute,
   _shellRoute,
   _termRoute,
   _privacyRoute,
@@ -52,6 +60,85 @@ GoRoute get _introRoute => GoRoute(
   path: Routers.intro.routerPath,
   pageBuilder: (context, state) => TransitionPage(
     child: const IntroPage(),
+    transitionType: PageTransitionType.fade,
+  ),
+);
+
+// Profile
+GoRoute get _profileRoute => GoRoute(
+  name: Routers.profile.routerName,
+  path: Routers.profile.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const ProfilePage(),
+    transitionType: PageTransitionType.sharedAxisHorizontal,
+  ),
+);
+
+// Forgot password
+GoRoute get _forgotPasswordRoute => GoRoute(
+  name: Routers.forgotPassword.routerName,
+  path: Routers.forgotPassword.routerPath,
+  pageBuilder: (context, state) {
+    final email = state.extra as String?;
+    return TransitionPage(
+      child: ForgotPasswordPage(email: email),
+      transitionType: PageTransitionType.sharedAxisHorizontal,
+    );
+  },
+);
+
+// Email verification — shown after registration
+GoRoute get _emailVerificationRoute => GoRoute(
+  name: Routers.emailVerification.routerName,
+  path: Routers.emailVerification.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const EmailVerificationPage(),
+    transitionType: PageTransitionType.fade,
+  ),
+);
+
+// Phone number input — entry point for phone auth
+GoRoute get _phoneInputRoute => GoRoute(
+  name: Routers.phoneInput.routerName,
+  path: Routers.phoneInput.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const PhoneInputPage(),
+    transitionType: PageTransitionType.sharedAxisHorizontal,
+  ),
+);
+
+// SMS code input — pushed from PhoneInputPage via SMSCodeRequestedAction
+GoRoute get _smsCodeRoute => GoRoute(
+  name: Routers.smsCode.routerName,
+  path: Routers.smsCode.routerPath,
+  pageBuilder: (context, state) {
+    final extra = state.extra as Map<String, dynamic>;
+    return TransitionPage(
+      child: SmsCodePage(
+        flowKey: extra['flowKey'] as Object,
+        action: extra['action'] as AuthAction?,
+      ),
+      transitionType: PageTransitionType.sharedAxisHorizontal,
+    );
+  },
+);
+
+// Login
+GoRoute get _loginRoute => GoRoute(
+  name: Routers.login.routerName,
+  path: Routers.login.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const LoginPage(),
+    transitionType: PageTransitionType.fade,
+  ),
+);
+
+// Register
+GoRoute get _registerRoute => GoRoute(
+  name: Routers.register.routerName,
+  path: Routers.register.routerPath,
+  pageBuilder: (context, state) => TransitionPage(
+    child: const RegisterPage(),
     transitionType: PageTransitionType.fade,
   ),
 );

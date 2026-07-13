@@ -34,11 +34,18 @@ class RenderErrorWidget extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         alignment: Alignment.center,
         color: colorScheme.errorContainer,
-        child: Icon(Icons.error_outline, color: colorScheme.onErrorContainer, size: 24),
+        child: Icon(
+          Icons.error_outline,
+          color: colorScheme.onErrorContainer,
+          size: 24,
+        ),
       );
     }
 
-    final textStyle = TextStyle(color: colorScheme.onErrorContainer, fontSize: 12);
+    final textStyle = TextStyle(
+      color: colorScheme.onErrorContainer,
+      fontSize: 12,
+    );
     final stack = details.stack?.toString();
 
     // ExpansionTile's header relies on InkWell, which needs a Material
@@ -59,7 +66,11 @@ class RenderErrorWidget extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.error_outline, color: colorScheme.onErrorContainer, size: 18),
+                  Icon(
+                    Icons.error_outline,
+                    color: colorScheme.onErrorContainer,
+                    size: 18,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -80,13 +91,18 @@ class RenderErrorWidget extends StatelessWidget {
               if (stack != null) ...[
                 const SizedBox(height: 4),
                 Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
                     tilePadding: EdgeInsets.zero,
                     iconColor: colorScheme.onErrorContainer,
                     collapsedIconColor: colorScheme.onErrorContainer,
                     splashColor: Colors.transparent,
-                    title: Text('Stack trace', style: textStyle.copyWith(fontStyle: FontStyle.italic)),
+                    title: Text(
+                      'Stack trace',
+                      style: textStyle.copyWith(fontStyle: FontStyle.italic),
+                    ),
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,

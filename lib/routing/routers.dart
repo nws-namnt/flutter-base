@@ -39,6 +39,27 @@ enum Routers {
   /// Accepts `extra: {'screenName': 'Home'}` to inject context into the AI.
   aiSupport('/aiSupport', 'aiSupport'),
 
+  /// User profile page (`/profile`).
+  profile('/profile', 'profile'),
+
+  /// Forgot password page (`/forgotPassword`).
+  forgotPassword('/forgotPassword', 'forgotPassword'),
+
+  /// Email verification page (`/emailVerification`).
+  emailVerification('/emailVerification', 'emailVerification'),
+
+  /// Phone number input page for phone auth (`/phoneInput`).
+  phoneInput('/phoneInput', 'phoneInput'),
+
+  /// SMS code input page — reached from [phoneInput] (`/smsCode`).
+  smsCode('/smsCode', 'smsCode'),
+
+  /// Login page (`/login`).
+  login('/login', 'login'),
+
+  /// Register page (`/register`).
+  register('/register', 'register'),
+
   /// 404 fallback page (`/pageNotFound`).
   pageNotFound('/pageNotFound', 'pageNotFound');
 

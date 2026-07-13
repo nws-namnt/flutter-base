@@ -90,7 +90,6 @@ class AppRouter {
     refreshListenable: notifier,
     errorBuilder: (context, state) => const NotFoundPage(),
     redirect: (context, state) {
-      // Always use routerPath (not routerName) for redirect return values.
       if (state.matchedLocation == Routers.pageNotFound.routerPath) {
         return Routers.home.routerPath;
       }

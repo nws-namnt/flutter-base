@@ -1,2 +1,4 @@
 #include "Release.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER=com.fox.base.flutter
+FLAVOR=prod
+REVERSED_CLIENT_ID=com.googleusercontent.apps.820924187413-sjda87bhs6p1bel8acmpcp0qdcs27hg5

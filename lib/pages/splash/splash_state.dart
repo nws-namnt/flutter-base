@@ -17,7 +17,7 @@ class SplashState extends Equatable {
     this.isCompletedIntro = false,
   });
 
-  /// Returns a copy of this state with [status] and/or [hasSeenIntro] replaced.
+  /// Returns a copy of this state with any provided fields replaced.
   SplashState copyWith({LoadStatus? status, bool? isCompletedIntro}) => SplashState(
     status: status ?? this.status,
     isCompletedIntro: isCompletedIntro ?? this.isCompletedIntro,

@@ -92,6 +92,11 @@ dependencies:
   firebase_messaging: ^16.3.0
   firebase_remote_config: ^6.5.2
   firebase_crashlytics: ^5.2.4
+  firebase_auth: ^6.1.1
+  firebase_ui_auth: ^3.0.1
+  firebase_ui_localizations: ^2.0.1
+  firebase_ui_oauth: ^2.0.1
+  firebase_ui_oauth_google: ^2.0.1
 
   # Native method channel
   pigeon: ^27.1.0
@@ -104,6 +109,12 @@ dependencies:
   cached_network_image: ^3.4.1
   cached_network_image_platform_interface: ^4.1.1
   flutter_cache_manager: ^3.4.1
+
+dependency_overrides:
+  # firebase_ui_auth requires email_validator ^2.x while genkit (via json_schema_builder)
+  # requires ^3.x. Override to the newer version — the API surface used by firebase_ui_auth
+  # (EmailValidator.validate) is unchanged in 3.0.0.
+  email_validator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -132,6 +143,11 @@ flutter:
     - assets/env/.env.uat
     - assets/env/.env.prod
     - pubspec.yaml
+
+  fonts:
+    - family: SocialIcons
+      fonts:
+        - asset: packages/firebase_ui_auth/fonts/SocialIcons.ttf
 
 flutter_intl:
   enabled: true

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_base/models/carousel_entity.dart';
 
 /// Immutable state for [ExplorePage], managed by [ExploreCubit].
 ///
@@ -10,7 +11,7 @@ class ExploreState extends Equatable {
   /// Current search query, used to filter [categories].
   final String query;
 
-  final List<String> carousels;
+  final List<CarouselEntity> carousels;
 
   final bool firstModalVisible;
   final bool secondModalVisible;

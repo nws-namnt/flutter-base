@@ -62,6 +62,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '320355629095',
     projectId: 'f-base-dev',
     storageBucket: 'f-base-dev.firebasestorage.app',
+    androidClientId: '320355629095-6lmpf7or1gjpbsqjnodkrace7ar195to.apps.googleusercontent.com',
+    iosClientId: '320355629095-4of9ccql8tl06h6g2b0sl0v7vh7663fc.apps.googleusercontent.com',
     iosBundleId: 'com.fox.base.flutter.dev',
   );
 }

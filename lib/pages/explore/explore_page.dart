@@ -30,6 +30,8 @@ class _ExplorePageState extends State<ExplorePage>
     with TickerProviderStateMixin {
   late final ExploreCubit _cubit;
 
+  late final CarouselController _carouselController;
+
   // Drives the size pulse — oscillates back and forth, so it needs
   // repeat(reverse: true).
   late final AnimationController _sizeController;
@@ -61,6 +63,8 @@ class _ExplorePageState extends State<ExplorePage>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
+
+    _carouselController = CarouselController(initialItem: 1);
 
     _cubit = ExploreCubit();
   }
@@ -126,183 +130,241 @@ class _ExplorePageState extends State<ExplorePage>
           child: BlocBuilder<ExploreCubit, ExploreState>(
             builder: (context, state) {
               return Scaffold(
-            appBar: AppBar(title: const Text('Explore')),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            body: ListView(
-              padding: const EdgeInsets.all(AppDimensions.padding),
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: context.heightPx / 3,
-                  ),
-                  child: CarouselView.weightedBuilder(
-                    flexWeights: [2, 3, 2],
-                    itemSnapping: true,
-                    itemCount: state.carousels.length,
-                    itemBuilder: (context, index) => HeroImageWidget(
-                      heroTag: 'tag_$index',
-                      child: Image.asset(state.carousels[index]),
-                    ),
-                  ),
-                ),
-                Autocomplete<String>(
-                  // Suggestions are always filtered from the full category
-                  // list (not state.filteredCategories) — that field is
-                  // already query-filtered for the grid below, filtering it
-                  // again here would just narrow the dropdown to whatever
-                  // is currently typed, hiding every other match.
-                  optionsBuilder: (textEditingValue) {
-                    if (textEditingValue.text.isEmpty) {
-                      return const Iterable<String>.empty();
-                    }
-                    final query = textEditingValue.text.toLowerCase();
-                    return state.categories.where(
-                      (category) => category.toLowerCase().contains(query),
-                    );
-                  },
-                  onSelected: _cubit.onSearchChanged,
-                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                    return TextField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      onChanged: _cubit.onSearchChanged,
-                      decoration: const InputDecoration(
-                        hintText: 'Search categories',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                appBar: AppBar(title: const Text('Explore')),
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                body: ListView(
+                  primary: true,
+                  padding: const EdgeInsets.all(AppDimensions.padding),
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: context.heightPx / 3,
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(height: AppDimensions.padding),
-                SizedBox(
-                  height: context.heightPx / 3,
-                  child: state.filteredCategories.isEmpty
-                      ? const Center(child: Text('No categories found'))
-                      : GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: AppDimensions.padding,
-                                crossAxisSpacing: AppDimensions.padding,
-                              ),
-                          itemCount: state.filteredCategories.length,
-                          itemBuilder: (context, index) {
-                            final category = state.filteredCategories[index];
-                            return Card(
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () {},
-                                child: Center(
-                                  child: Text(
-                                    category,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleMedium,
+                      child: CarouselView.weightedBuilder(
+                        controller: _carouselController,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing,
+                        ),
+                        flexWeights: const [1, 7, 1],
+                        itemSnapping: true,
+                        infinite: true,
+                        itemCount: state.carousels.length,
+                        itemBuilder: (context, index) {
+                          final constraintWidth = context.widthPx * 7 / 8;
+                          final constraintHeight = context.heightPx / 3;
+
+                          final carousel = state.carousels[index];
+
+                          return Stack(
+                            alignment: .bottomStart,
+                            children: <Widget>[
+                              ClipRect(
+                                child: OverflowBox(
+                                  maxWidth: constraintWidth,
+                                  minWidth: constraintWidth,
+                                  maxHeight: constraintHeight,
+                                  minHeight: constraintHeight,
+                                  child: HeroImageWidget(
+                                    heroTag: 'tag_$index',
+                                    child: Image.asset(
+                                      carousel.imagePath,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
+                              Padding(
+                                padding: const .all(18.0),
+                                child: Column(
+                                  crossAxisAlignment: .start,
+                                  mainAxisSize: .min,
+                                  children: <Widget>[
+                                    Text(
+                                      carousel.title,
+                                      overflow: .clip,
+                                      softWrap: false,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.headlineMedium,
+                                    ),
+                                    const Gap(10),
+                                    Text(
+                                      carousel.description,
+                                      overflow: .clip,
+                                      softWrap: false,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                    const Gap(10),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Autocomplete<String>(
+                      // Suggestions are always filtered from the full category
+                      // list (not state.filteredCategories) — that field is
+                      // already query-filtered for the grid below, filtering it
+                      // again here would just narrow the dropdown to whatever
+                      // is currently typed, hiding every other match.
+                      optionsBuilder: (textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<String>.empty();
+                        }
+                        final query = textEditingValue.text.toLowerCase();
+                        return state.categories.where(
+                          (category) => category.toLowerCase().contains(query),
+                        );
+                      },
+                      onSelected: _cubit.onSearchChanged,
+                      fieldViewBuilder:
+                          (context, controller, focusNode, onFieldSubmitted) {
+                            return TextField(
+                              controller: controller,
+                              focusNode: focusNode,
+                              onChanged: _cubit.onSearchChanged,
+                              decoration: const InputDecoration(
+                                hintText: 'Search categories',
+                                prefixIcon: Icon(Icons.search),
+                                border: OutlineInputBorder(),
+                              ),
                             );
                           },
-                        ),
-                ),
-                const Gap(AppDimensions.padding),
-                const Divider(
-                  height: 1,
-                  thickness: 1,
-                ),
-                const Gap(AppDimensions.padding),
-                Row(
-                  children: [
-                    BlocBuilder<ExploreCubit, ExploreState>(
-                      buildWhen: (pre, cur) =>
-                          pre.firstModalVisible != cur.firstModalVisible,
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            Visibility(
-                              visible: state.firstModalVisible,
-                              child: AnimatedBuilder(
-                                animation: Listenable.merge([
-                                  _sizeController,
-                                  _rotationController,
-                                ]),
-                                builder: (context, child) {
-                                  return Transform.rotate(
-                                    angle:
-                                    _rotationController.value * 2 * math.pi,
-                                    child: Container(
-                                      key: _k1,
-                                      height: _sizeAnimation.value,
-                                      width: 50 - _sizeAnimation.value,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.blue,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
-                                        ),
+                    ),
+                    const SizedBox(height: AppDimensions.padding),
+                    SizedBox(
+                      height: context.heightPx / 3,
+                      child: state.filteredCategories.isEmpty
+                          ? const Center(child: Text('No categories found'))
+                          : GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: AppDimensions.padding,
+                                    crossAxisSpacing: AppDimensions.padding,
+                                  ),
+                              primary: false,
+                              itemCount: state.filteredCategories.length,
+                              itemBuilder: (context, index) {
+                                final category =
+                                    state.filteredCategories[index];
+                                return Card(
+                                  clipBehavior: Clip.antiAlias,
+                                  child: InkWell(
+                                    onTap: () {},
+                                    child: Center(
+                                      child: Text(
+                                        category,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                            ActionWidget(
-                              materialType: ActionMaterial.text,
-                              onAction: _onAction1,
-                              label: 'Action 1',
-                            ),
-                          ],
-                        );
-                      },
-                    ).equalExpand,
-                    BlocBuilder<ExploreCubit, ExploreState>(
-                      buildWhen: (pre, cur) =>
-                          pre.secondModalVisible != cur.secondModalVisible,
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            Offstage(
-                              offstage: state.secondModalVisible,
-                              child: AnimatedBuilder(
-                                animation: Listenable.merge([
-                                  _sizeController,
-                                  _rotationController,
-                                ]),
-                                builder: (context, child) {
-                                  return Transform.rotate(
-                                    angle:
-                                        _rotationController.value *
-                                        2 *
-                                        math.pi,
-                                    child: Container(
-                                      key: _k2,
-                                      height: _sizeAnimation.value,
-                                      width: 50 - _sizeAnimation.value,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
+                    ),
+                    const Gap(AppDimensions.padding),
+                    const Divider(height: 1, thickness: 1),
+                    const Gap(AppDimensions.padding),
+                    Row(
+                      children: [
+                        BlocBuilder<ExploreCubit, ExploreState>(
+                          buildWhen: (pre, cur) =>
+                              pre.firstModalVisible != cur.firstModalVisible,
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                Visibility(
+                                  visible: state.firstModalVisible,
+                                  child: AnimatedBuilder(
+                                    animation: Listenable.merge([
+                                      _sizeController,
+                                      _rotationController,
+                                    ]),
+                                    builder: (context, child) {
+                                      return Transform.rotate(
+                                        angle:
+                                            _rotationController.value *
+                                            2 *
+                                            math.pi,
+                                        child: Container(
+                                          key: _k1,
+                                          height: _sizeAnimation.value,
+                                          width: 50 - _sizeAnimation.value,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.blue,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            ActionWidget(
-                              materialType: ActionMaterial.text,
-                              onAction: _onAction2,
-                              label: 'Action 2',
-                            ),
-                          ],
-                        );
-                      },
-                    ).equalExpand,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                ActionWidget(
+                                  materialType: ActionMaterial.text,
+                                  onAction: _onAction1,
+                                  label: 'Action 1',
+                                ),
+                              ],
+                            );
+                          },
+                        ).equalExpand,
+                        BlocBuilder<ExploreCubit, ExploreState>(
+                          buildWhen: (pre, cur) =>
+                              pre.secondModalVisible != cur.secondModalVisible,
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                Offstage(
+                                  offstage: state.secondModalVisible,
+                                  child: AnimatedBuilder(
+                                    animation: Listenable.merge([
+                                      _sizeController,
+                                      _rotationController,
+                                    ]),
+                                    builder: (context, child) {
+                                      return Transform.rotate(
+                                        angle:
+                                            _rotationController.value *
+                                            2 *
+                                            math.pi,
+                                        child: Container(
+                                          key: _k2,
+                                          height: _sizeAnimation.value,
+                                          width: 50 - _sizeAnimation.value,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                ActionWidget(
+                                  materialType: ActionMaterial.text,
+                                  onAction: _onAction2,
+                                  label: 'Action 2',
+                                ),
+                              ],
+                            );
+                          },
+                        ).equalExpand,
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          );
+              );
             },
           ),
         ),
