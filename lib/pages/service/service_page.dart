@@ -26,6 +26,10 @@ class ServicePage extends StatefulWidget {
 class _ServicePageState extends State<ServicePage> {
   late final ServiceCubit _cubit;
 
+  // Drives the red color-filter opacity applied to the third hero image via
+  // the Slider below.
+  final _colorFilter = ValueNotifier<double>(0.5);
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +38,7 @@ class _ServicePageState extends State<ServicePage> {
 
   @override
   void dispose() {
+    _colorFilter.dispose();
     _cubit.close();
     super.dispose();
   }
@@ -116,9 +121,31 @@ class _ServicePageState extends State<ServicePage> {
                   heroTag: '3',
                   child: AspectRatio(
                     aspectRatio: 1 / 1,
-                    child: Image.asset(R.imagesIcArticleNotFound),
+                    child: ValueListenableBuilder(
+                      valueListenable: _colorFilter,
+                      builder: (context, opacity, child) {
+                        return ColorFiltered(
+                          colorFilter: ColorFilter.mode(Colors.red.withValues(alpha: opacity), BlendMode.srcIn),
+                          child: Image.asset(R.imagesIcArticleNotFound),
+                        );
+                      }
+                    ),
                   ),
                 ).equalExpand,
+                const Divider(),
+                ValueListenableBuilder(
+                  valueListenable: _colorFilter,
+                  builder: (context, opacity, child) {
+                    return Slider(
+                      value: opacity,
+                      onChanged: (value) {
+                        _colorFilter.value = value;
+                      },
+                      min: 0.0,
+                      max: 1.0,
+                    );
+                  }
+                )
               ],
             ).symPad(
               horizontal: 0,

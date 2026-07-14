@@ -69,6 +69,17 @@ void simpleLog(dynamic message) {
   }
 }
 
+/// Adds a one-line [log] shortcut to any value, printed via `dart:developer`.
+extension LogExtension on Object? {
+  /// Logs `toString()` of this value (or a highlighted `NULL` marker when
+  /// this is `null`), prefixed with a fox emoji.
+  ///
+  /// ```dart
+  /// 'fetched user'.log();
+  /// ```
+  void log() => developer.log('🦊 - ${this?.toString() ?? '\x1b[101m\x1b[30mNULL\x1b[0m'}');
+}
+
 /// A [LogFilter] that passes only [Level.warning] and [Level.error] events.
 ///
 /// Swap in place of `null` in the [Logger] constructor to suppress verbose

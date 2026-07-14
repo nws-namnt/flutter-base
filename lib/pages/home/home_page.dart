@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_base/base.dart';
 import 'package:flutter_base/utils/app_utils.dart';
 import 'package:flutter_base/utils/extensions/widget_extension.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../utils/extensions/enum_extension.dart';
 import '../widgets/empty_widget.dart';
 import 'home_cubit.dart';
 import 'home_state.dart';
@@ -31,11 +33,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final AnimationController _viewIconController;
   late final ScrollController _scrollController;
 
+  late final ValueNotifier<ContentSensitivity> sensitive;
 
   @override
   void initState() {
     super.initState();
     _cubit = HomeCubit()..initialize();
+
     _menuIconController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -54,6 +58,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         _cubit.moveFab(isTop: false);
       }
     });
+
+    sensitive = ValueNotifier<ContentSensitivity>(ContentSensitivity.notSensitive);
   }
 
   @override
@@ -62,6 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _menuIconController.dispose();
     _viewIconController.dispose();
     _scrollController.dispose();
+    sensitive.dispose();
     super.dispose();
   }
 
@@ -88,6 +95,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void _toggleViewType() {
     _cubit.toggleViewType();
+  }
+
+  // Toggles the SensitiveContent wrapper below between sensitive and
+  // notSensitive so it can be exercised manually from the UI.
+  void _changeSensitiveContent() {
+    final currentSensitive = sensitive.value;
+
+    if (currentSensitive != ContentSensitivity.sensitive) {
+      sensitive.value = ContentSensitivity.sensitive;
+    } else {
+      sensitive.value = ContentSensitivity.notSensitive;
+    }
   }
 
   // When the FAB has moved to endTop (list scrolled to the bottom), pressing
@@ -230,6 +249,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                   title: const Text('Home'),
                   actions: [
+                    ValueListenableBuilder(
+                      valueListenable: sensitive,
+                      builder: (context, s, child) {
+                        return ElevatedButton.icon(
+                          onPressed: _changeSensitiveContent,
+                          icon: Icon(Icons.sensors_outlined),
+                          label: Text(s.value),
+                        );
+                      }
+                    ),
                     IconButton(
                       icon: AnimatedIcon(
                         icon: AnimatedIcons.list_view,
@@ -306,9 +335,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               child: child,
                             );
                           },
-                      child: isGridView
-                          ? _buildGrid(data)
-                          : _buildReorderableList(data),
+                      child: ValueListenableBuilder(
+                        valueListenable: sensitive,
+                        builder: (context, s, child) {
+                          return SensitiveContent(
+                            sensitivity: s,
+                            child: isGridView
+                                ? _buildGrid(data)
+                                : _buildReorderableList(data),
+                          );
+                        }
+                      ),
                     ),
                   HomeError(:final errMess) => Text(
                     errMess ?? 'Something went wrong',
