@@ -1,11 +1,11 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_base/pages/auth/auth_mixin.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../routing/routers.dart';
-import '../widgets/auth_header_builder.dart';
+import '../../../routing/routers.dart';
 
-class EmailVerificationPage extends StatelessWidget {
+class EmailVerificationPage extends StatelessWidget with AuthMixin {
   const EmailVerificationPage({super.key});
 
   @override
@@ -14,7 +14,7 @@ class EmailVerificationPage extends StatelessWidget {
       data: authTheme(context),
       child: EmailVerificationScreen(
         headerBuilder: authHeaderBuilder,
-        headerMaxExtent: kAuthHeaderMaxExtent,
+        headerMaxExtent: AuthMixin.kAuthHeaderMaxExtent,
         actions: [
           EmailVerifiedAction(() => context.go(Routers.home.routerPath)),
           AuthCancelledAction((context) {

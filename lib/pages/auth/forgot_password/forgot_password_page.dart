@@ -1,9 +1,8 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_base/pages/auth/auth_mixin.dart';
 
-import '../widgets/auth_header_builder.dart';
-
-class ForgotPasswordPage extends StatelessWidget {
+class ForgotPasswordPage extends StatelessWidget with AuthMixin {
   const ForgotPasswordPage({super.key, this.email});
 
   /// Pre-fills the email field when navigated from [LoginPage].
@@ -16,7 +15,7 @@ class ForgotPasswordPage extends StatelessWidget {
       child: ForgotPasswordScreen(
         email: email,
         headerBuilder: authHeaderBuilder,
-        headerMaxExtent: kAuthHeaderMaxExtent,
+        headerMaxExtent: AuthMixin.kAuthHeaderMaxExtent,
         subtitleBuilder: (context) => const Padding(
           padding: EdgeInsets.only(bottom: 8),
           child: Text("Enter your email and we'll send you a reset link."),

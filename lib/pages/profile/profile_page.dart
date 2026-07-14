@@ -1,11 +1,11 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_base/pages/auth/auth_mixin.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../routing/routers.dart';
-import '../widgets/auth_header_builder.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatelessWidget with AuthMixin {
   const ProfilePage({super.key});
 
   @override
