@@ -205,35 +205,50 @@ class _ExplorePageState extends State<ExplorePage>
                         },
                       ),
                     ),
-                    Autocomplete<String>(
+                    SearchAnchor.bar(
+                      barHintText: 'Search categories',
+                      barLeading: const Icon(Icons.search),
+                      // Approximates the old TextField's OutlineInputBorder —
+                      // SearchBar is shaped via barShape/barSide (a Material
+                      // OutlinedBorder), not an InputDecoration border, so it
+                      // can't be reused as-is.
+                      barShape: const WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                      ),
+                      barSide: WidgetStatePropertyAll(
+                        BorderSide(color: Theme.of(context).colorScheme.outline),
+                      ),
+                      // Same action as before: every keystroke still updates
+                      // the grid below via the cubit, independent of the
+                      // suggestions dropdown.
+                      onChanged: _cubit.onSearchChanged,
                       // Suggestions are always filtered from the full category
                       // list (not state.filteredCategories) — that field is
                       // already query-filtered for the grid below, filtering it
                       // again here would just narrow the dropdown to whatever
                       // is currently typed, hiding every other match.
-                      optionsBuilder: (textEditingValue) {
-                        if (textEditingValue.text.isEmpty) {
-                          return const Iterable<String>.empty();
-                        }
-                        final query = textEditingValue.text.toLowerCase();
-                        return state.categories.where(
-                          (category) => category.toLowerCase().contains(query),
-                        );
-                      },
-                      onSelected: _cubit.onSearchChanged,
-                      fieldViewBuilder:
-                          (context, controller, focusNode, onFieldSubmitted) {
-                            return TextField(
-                              controller: controller,
-                              focusNode: focusNode,
-                              onChanged: _cubit.onSearchChanged,
-                              decoration: const InputDecoration(
-                                hintText: 'Search categories',
-                                prefixIcon: Icon(Icons.search),
-                                border: OutlineInputBorder(),
+                      suggestionsBuilder: (context, controller) {
+                        // if (controller.text.isEmpty) {
+                        //   return const Iterable<Widget>.();
+                        // }
+                        final query = controller.text.toLowerCase();
+                        return state.categories
+                            .where(
+                              (category) =>
+                                  category.toLowerCase().contains(query),
+                            )
+                            .map(
+                              (category) => ListTile(
+                                title: Text(category),
+                                onTap: () {
+                                  controller.closeView(category);
+                                  _cubit.onSearchChanged(category);
+                                },
                               ),
                             );
-                          },
+                      },
                     ),
                     const SizedBox(height: AppDimensions.padding),
                     SizedBox(
