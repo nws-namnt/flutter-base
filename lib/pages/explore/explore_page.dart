@@ -28,9 +28,13 @@ class ExplorePage extends StatefulWidget {
 
 class _ExplorePageState extends State<ExplorePage>
     with TickerProviderStateMixin {
+  final LayerLink _carouselLink = LayerLink();
+
   late final ExploreCubit _cubit;
 
   late final CarouselController _carouselController;
+
+  late final OverlayPortalController _overlayPortalController;
 
   // Drives the size pulse — oscillates back and forth, so it needs
   // repeat(reverse: true).
@@ -44,8 +48,9 @@ class _ExplorePageState extends State<ExplorePage>
   late final AnimationController _rotationController;
 
   final GlobalKey _k1 = GlobalKey(debugLabel: 'firstModal');
-
   final GlobalKey _k2 = GlobalKey(debugLabel: 'secondModal');
+
+  final _isOverlayVisible = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -65,6 +70,8 @@ class _ExplorePageState extends State<ExplorePage>
     )..repeat();
 
     _carouselController = CarouselController(initialItem: 1);
+
+    _overlayPortalController = OverlayPortalController();
 
     _cubit = ExploreCubit();
   }
@@ -110,6 +117,11 @@ class _ExplorePageState extends State<ExplorePage>
     _cubit.toggleSecondModal();
   }
 
+  void _onToggleOverlayPortal() {
+    _isOverlayVisible.value = !_isOverlayVisible.value;
+    _overlayPortalController.toggle();
+  }
+
   @override
   Widget build(BuildContext context) {
     // CallbackShortcuts only fires while focus is somewhere inside its
@@ -130,79 +142,122 @@ class _ExplorePageState extends State<ExplorePage>
           child: BlocBuilder<ExploreCubit, ExploreState>(
             builder: (context, state) {
               return Scaffold(
-                appBar: AppBar(title: const Text('Explore')),
+                appBar: AppBar(
+                  title: const Text('Explore'),
+                  actions: [
+                    ValueListenableBuilder(
+                      valueListenable: _isOverlayVisible,
+                      builder: (context, isOverlayVisible, child) {
+                        return IconButton(
+                          isSelected: isOverlayVisible,
+                          onPressed: _onToggleOverlayPortal,
+                          icon: const Icon(Icons.toggle_off),
+                          selectedIcon: Icon(
+                            Icons.toggle_on,
+                            color: isOverlayVisible ? Colors.blue : Colors.transparent,
+                          ),
+                        );
+                      }
+                    ),
+                  ],
+                ),
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 body: ListView(
                   primary: true,
                   padding: const EdgeInsets.all(AppDimensions.padding),
                   children: [
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: context.heightPx / 3,
-                      ),
-                      child: CarouselView.weightedBuilder(
-                        controller: _carouselController,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.spacing,
+                    OverlayPortal(
+                      controller: _overlayPortalController,
+                      overlayLocation: OverlayChildLocation.nearestOverlay,
+                      overlayChildBuilder: (context) => CompositedTransformFollower(
+                        link: _carouselLink,
+                        targetAnchor: Alignment.center,
+                        followerAnchor: Alignment.center,
+                        offset: const Offset(-40, 0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(width: .5),
+                            ),
+                            child: Text('I am FOX!'),
+                          ),
                         ),
-                        flexWeights: const [1, 7, 1],
-                        itemSnapping: true,
-                        infinite: true,
-                        itemCount: state.carousels.length,
-                        itemBuilder: (context, index) {
-                          final constraintWidth = context.widthPx * 7 / 8;
-                          final constraintHeight = context.heightPx / 3;
+                      ),
+                      child: CompositedTransformTarget(
+                        link: _carouselLink,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: context.heightPx / 3,
+                          ),
+                          child: CarouselView.weightedBuilder(
+                            controller: _carouselController,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppDimensions.spacing,
+                            ),
+                            flexWeights: const [1, 7, 1],
+                            itemSnapping: true,
+                            infinite: true,
+                            itemCount: state.carousels.length,
+                            itemBuilder: (context, index) {
+                              final constraintWidth = context.widthPx * 7 / 8;
+                              final constraintHeight = context.heightPx / 3;
 
-                          final carousel = state.carousels[index];
+                              final carousel = state.carousels[index];
 
-                          return Stack(
-                            alignment: .bottomStart,
-                            children: <Widget>[
-                              ClipRect(
-                                child: OverflowBox(
-                                  maxWidth: constraintWidth,
-                                  minWidth: constraintWidth,
-                                  maxHeight: constraintHeight,
-                                  minHeight: constraintHeight,
-                                  child: HeroImageWidget(
-                                    heroTag: 'tag_$index',
-                                    child: Image.asset(
-                                      carousel.imagePath,
-                                      fit: BoxFit.cover,
+                              return Stack(
+                                alignment: .bottomStart,
+                                children: <Widget>[
+                                  ClipRect(
+                                    child: OverflowBox(
+                                      maxWidth: constraintWidth,
+                                      minWidth: constraintWidth,
+                                      maxHeight: constraintHeight,
+                                      minHeight: constraintHeight,
+                                      child: HeroImageWidget(
+                                        heroTag: 'tag_$index',
+                                        child: Image.asset(
+                                          carousel.imagePath,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const .all(18.0),
-                                child: Column(
-                                  crossAxisAlignment: .start,
-                                  mainAxisSize: .min,
-                                  children: <Widget>[
-                                    Text(
-                                      carousel.title,
-                                      overflow: .clip,
-                                      softWrap: false,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.headlineMedium,
+                                  Padding(
+                                    padding: const .all(18.0),
+                                    child: Column(
+                                      crossAxisAlignment: .start,
+                                      mainAxisSize: .min,
+                                      children: <Widget>[
+                                        Text(
+                                          carousel.title,
+                                          overflow: .clip,
+                                          softWrap: false,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.headlineMedium,
+                                        ),
+                                        const Gap(10),
+                                        Text(
+                                          carousel.description,
+                                          overflow: .clip,
+                                          softWrap: false,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                        ),
+                                        const Gap(10),
+                                      ],
                                     ),
-                                    const Gap(10),
-                                    Text(
-                                      carousel.description,
-                                      overflow: .clip,
-                                      softWrap: false,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                    const Gap(10),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     ),
                     SearchAnchor.bar(

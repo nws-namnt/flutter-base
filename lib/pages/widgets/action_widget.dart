@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/extensions/string_extension.dart';
+import '../../utils/extensions/string_extension.dart' show NullableStringExtension;
 
 /// Selects which design language [ActionWidget] renders with.
 enum ActionStyle {

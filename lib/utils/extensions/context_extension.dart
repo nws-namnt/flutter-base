@@ -8,11 +8,132 @@ import '../../common/app_enums.dart' show NotifyType;
 
 /// Extension helpers for deriving Material 3 styling from a [BuildContext].
 extension ContextExtension on BuildContext {
+  /// Shorthand for `Directionality.of(this)`.
+  ///
+  /// Usage: read this instead of looking up [Directionality] manually when
+  /// a widget needs to know text/layout direction (LTR vs RTL).
+  ///
+  /// Example:
+  /// ```dart
+  /// final dir = context.directionality;
+  /// ```
+  TextDirection get directionality => Directionality.of(this);
+
+  /// Shorthand for `MediaQuery.of(this).orientation`.
+  ///
+  /// Usage: prefer [isLandscape] / [isPortrait] when you only need a
+  /// boolean check; use this getter when the actual [Orientation] value is
+  /// needed (e.g. in a `switch`).
+  ///
+  /// Example:
+  /// ```dart
+  /// final orientation = context.orientation;
+  /// ```
+  Orientation get orientation => MediaQuery.of(this).orientation;
+
+  /// Shorthand for `MediaQuery.of(this).size`.
+  ///
+  /// Usage: read this for the current screen/viewport size instead of
+  /// calling `MediaQuery.of(context).size` directly.
+  ///
+  /// Example:
+  /// ```dart
+  /// final screenWidth = context.size.width;
+  /// ```
+  ///
+  /// Note: rebuilds whatever widget reads it whenever the [MediaQuery]
+  /// size changes (rotation, window resize) — same caveat as calling
+  /// `MediaQuery.of` directly.
+  Size get size => MediaQuery.of(this).size;
+
+  /// Shorthand for `Theme.of(this).brightness`.
+  ///
+  /// Usage: prefer [isDarkMode] for a plain boolean check; use this getter
+  /// when the actual [Brightness] value is needed.
+  ///
+  /// Example:
+  /// ```dart
+  /// final brightness = context.brightness;
+  /// ```
+  Brightness get brightness => Theme.of(this).brightness;
+
+  /// Shorthand for `Theme.of(this)`.
+  ///
+  /// Usage: read this instead of calling `Theme.of(context)` at every call
+  /// site that needs the current [ThemeData].
+  ///
+  /// Example:
+  /// ```dart
+  /// final theme = context.theme;
+  /// ```
+  ThemeData get theme => Theme.of(this);
+
+  /// Shorthand for `theme.colorScheme` (`Theme.of(this).colorScheme`).
+  ///
+  /// Usage: use this instead of hardcoding colors in widgets — per this
+  /// project's theming convention, colors should always come from
+  /// [ColorScheme] rather than literal [Color] values.
+  ///
+  /// Example:
+  /// ```dart
+  /// Container(color: context.colorScheme.primaryContainer);
+  /// ```
+  ColorScheme get colorScheme => theme.colorScheme;
+
+  /// Shorthand for `theme.textTheme` (`Theme.of(this).textTheme`).
+  ///
+  /// Usage: read this for M3 text styles (`bodyMedium`, `titleLarge`, ...)
+  /// instead of hardcoding [TextStyle]s.
+  ///
+  /// Example:
+  /// ```dart
+  /// Text('Hello', style: context.textTheme.bodyMedium);
+  /// ```
+  TextTheme get textTheme => theme.textTheme;
+
+  /// `true` when the current [ThemeData.brightness] is [Brightness.dark].
+  ///
+  /// Usage: use for simple light/dark branching in `build` methods.
+  ///
+  /// Example:
+  /// ```dart
+  /// final icon = context.isDarkMode ? Icons.dark_mode : Icons.light_mode;
+  /// ```
+  bool get isDarkMode => brightness == .dark;
+
+  /// `true` when the device/window is currently in [Orientation.landscape].
+  ///
+  /// Usage: use for simple orientation branching in `build` methods; use
+  /// [orientation] directly when a `switch` over both values reads better.
+  ///
+  /// Example:
+  /// ```dart
+  /// final crossAxisCount = context.isLandscape ? 4 : 2;
+  /// ```
+  bool get isLandscape => orientation == .landscape;
+
+  /// `true` when the device/window is currently in [Orientation.portrait].
+  ///
+  /// Usage: use for simple orientation branching in `build` methods; use
+  /// [orientation] directly when a `switch` over both values reads better.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (context.isPortrait) return const _PortraitLayout();
+  /// ```
+  bool get isPortrait => orientation == .portrait;
+
   /// Builds a [MarkdownStyleSheet] derived from the current M3 [ColorScheme]
   /// and [TextTheme].
   ///
-  /// Call this inside a widget's `build` method (not cached in `initState`)
-  /// so the returned style stays in sync with light/dark theme changes.
+  /// Usage: call this inside a widget's `build` method (not cached in
+  /// `initState`) so the returned style stays in sync with light/dark theme
+  /// changes.
+  ///
+  /// Example:
+  /// ```dart
+  /// Markdown(data: content, styleSheet: context.m3MarkdownStyle);
+  /// ```
   MarkdownStyleSheet get m3MarkdownStyle {
     final scheme = Theme.of(this).colorScheme;
     final text = Theme.of(this).textTheme;
@@ -137,8 +258,19 @@ extension NotifyExtension on BuildContext {
   /// - [flushbarPosition] — [FlushbarPosition.BOTTOM] by default.
   /// - [isDismissible] — whether the user can swipe to dismiss; `true` by default.
   ///
+  /// Example:
+  /// ```dart
+  /// context.showNotify(type: NotifyType.success, messageText: 'Saved!');
+  /// ```
+  ///
   /// Returns the [Future] from [Flushbar.show], which completes when the bar
   /// is fully dismissed.
+  ///
+  /// Note: unlike [showSnackBar] / [showM3Banner], this does not assert or
+  /// require [messageText]/[message] — [type] alone already supplies a
+  /// default title/message, so calling it with no arguments still shows a
+  /// generic info bar. Does nothing if this [BuildContext] is no longer
+  /// [mounted].
   Future<void> showNotify({
     final NotifyType type = NotifyType.info,
 
@@ -404,7 +536,15 @@ extension NotifyExtension on BuildContext {
   /// [ScaffoldMessenger] — whether it was shown via [showSnackBar] or
   /// directly through [ScaffoldMessengerState.showSnackBar].
   ///
-  /// Does nothing if this [BuildContext] is no longer [mounted].
+  /// Usage: call when navigating away from a screen or on an explicit
+  /// "dismiss" action, so a lingering snack bar doesn't outlive its context.
+  ///
+  /// Example:
+  /// ```dart
+  /// context.hideSnackBar();
+  /// ```
+  ///
+  /// Note: does nothing if this [BuildContext] is no longer [mounted].
   void hideSnackBar() {
     if (!mounted) return;
     ScaffoldMessenger.of(this).hideCurrentSnackBar();
@@ -537,7 +677,16 @@ extension NotifyExtension on BuildContext {
   /// [ScaffoldMessenger] — whether it was shown via [showM3Banner] or
   /// directly through [ScaffoldMessengerState.showMaterialBanner].
   ///
-  /// Does nothing if this [BuildContext] is no longer [mounted].
+  /// Usage: call once the user resolves whatever [showM3Banner] was
+  /// prompting them about, e.g. after a "Stay signed in" button handler
+  /// finishes running.
+  ///
+  /// Example:
+  /// ```dart
+  /// context.hideM3Banner();
+  /// ```
+  ///
+  /// Note: does nothing if this [BuildContext] is no longer [mounted].
   void hideM3Banner() {
     if (!mounted) return;
     ScaffoldMessenger.of(this).hideCurrentMaterialBanner();

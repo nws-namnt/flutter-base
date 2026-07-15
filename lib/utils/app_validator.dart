@@ -1,6 +1,6 @@
 import '../common/app_enums.dart' show ValidatorType;
 import '../generated/l10n.dart';
-import 'extensions/string_extension.dart' show StringExtension;
+import 'extensions/string_extension.dart' show NullableStringExtension;
 
 /// Validates [value] against the regex pattern defined by [type].
 ///
