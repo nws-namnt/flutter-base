@@ -15,42 +15,42 @@ flutter run --flavor dev
 
 ## Pub packages
 
-| Package                                                           | Usage                                    |
-|-------------------------------------------------------------------|------------------------------------------|
-| [intl](https://pub.dev/packages/intl)                             | Multi language*                          |
-| [intl_utils](https://pub.dev/packages/intl_utils)                 | Multi language utils*                    |
-| [bloc](https://pub.dev/packages/bloc)                             | State management*                        |
-| [flutter_bloc](https://pub.dev/packages/flutter_bloc)             | State management*                        |
-| [equatable](https://pub.dev/packages/equatable)                   | Value equality for Cubit states*         |
-| [go_router](https://pub.dev/packages/go_router)                   | Declarative navigation                   |
-| [hive](https://pub.dev/packages/hive)                             | Platform-independent local storage       |
-| [shared_preferences](https://pub.dev/packages/shared_preferences) | Key-value persistent storage             |
-| [get_storage](https://pub.dev/packages/get_storage)               | Fast key-value storage                   |
-| [connectivity_plus](https://pub.dev/packages/connectivity_plus)   | Network connectivity status              |
-| [dio](https://pub.dev/packages/dio)                               | HTTP client                              |
-| [retrofit](https://pub.dev/packages/retrofit)                     | Type-safe REST API client                |
-| [retrofit_generator](https://pub.dev/packages/retrofit_generator) | Retrofit code generation                 |
-| [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger)   | Dio request/response logging             |
-| [google_fonts](https://pub.dev/packages/google_fonts)             | Google Fonts (Lato)                      |
-| [path_provider](https://pub.dev/packages/path_provider)           | File system paths                        |
-| [permission_handler](https://pub.dev/packages/permission_handler) | Runtime permission management            |
-| [url_launcher](https://pub.dev/packages/url_launcher)             | Open URLs in browser                     |
-| [another_flushbar](https://pub.dev/packages/another_flushbar)     | In-app notification bar                  |
-| [gap](https://pub.dev/packages/gap)                               | Spacing widget                           |
-| [animations](https://pub.dev/packages/animations)                 | Pre-built page transitions               |
-| [lottie](https://pub.dev/packages/lottie)                         | Lottie animation player                  |
-| [device_info_plus](https://pub.dev/packages/device_info_plus)     | Device information                       |
-| [package_info_plus](https://pub.dev/packages/package_info_plus)   | App version and build info               |
-| [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)         | Load `.env` config per flavor at runtime |
-| [json_annotation](https://pub.dev/packages/json_annotation)       | JSON serialization annotations           |
-| [json_serializable](https://pub.dev/packages/json_serializable)   | JSON serialization code generation       |
-| [timezone](https://pub.dev/packages/timezone)                     | Timezone support                         |
-| [logger](https://pub.dev/packages/logger)                         | Structured console logging               |
-| [cached_network_image](https://pub.dev/packages/cached_network_image) | Cached network image widget (see `CachedImageWidget`) |
-| [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager) | File cache backing `cached_network_image` |
-| [cached_network_image_platform_interface](https://pub.dev/packages/cached_network_image_platform_interface) | Web render options for `cached_network_image` |
-| [build_runner](https://pub.dev/packages/build_runner)             | Code generation runner                   |
-| [flutter_lints](https://pub.dev/packages/flutter_lints)           | Lint rules                               |
+| Package                                                                                                     | Usage                                                 |
+|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| [intl](https://pub.dev/packages/intl)                                                                       | Multi language*                                       |
+| [intl_utils](https://pub.dev/packages/intl_utils)                                                           | Multi language utils*                                 |
+| [bloc](https://pub.dev/packages/bloc)                                                                       | State management*                                     |
+| [flutter_bloc](https://pub.dev/packages/flutter_bloc)                                                       | State management*                                     |
+| [equatable](https://pub.dev/packages/equatable)                                                             | Value equality for Cubit states*                      |
+| [go_router](https://pub.dev/packages/go_router)                                                             | Declarative navigation                                |
+| [hive](https://pub.dev/packages/hive)                                                                       | Platform-independent local storage                    |
+| [shared_preferences](https://pub.dev/packages/shared_preferences)                                           | Key-value persistent storage                          |
+| [get_storage](https://pub.dev/packages/get_storage)                                                         | Fast key-value storage                                |
+| [connectivity_plus](https://pub.dev/packages/connectivity_plus)                                             | Network connectivity status                           |
+| [dio](https://pub.dev/packages/dio)                                                                         | HTTP client                                           |
+| [retrofit](https://pub.dev/packages/retrofit)                                                               | Type-safe REST API client                             |
+| [retrofit_generator](https://pub.dev/packages/retrofit_generator)                                           | Retrofit code generation                              |
+| [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger)                                             | Dio request/response logging                          |
+| [google_fonts](https://pub.dev/packages/google_fonts)                                                       | Google Fonts (Lato)                                   |
+| [path_provider](https://pub.dev/packages/path_provider)                                                     | File system paths                                     |
+| [permission_handler](https://pub.dev/packages/permission_handler)                                           | Runtime permission management                         |
+| [url_launcher](https://pub.dev/packages/url_launcher)                                                       | Open URLs in browser                                  |
+| [another_flushbar](https://pub.dev/packages/another_flushbar)                                               | In-app notification bar                               |
+| [gap](https://pub.dev/packages/gap)                                                                         | Spacing widget                                        |
+| [animations](https://pub.dev/packages/animations)                                                           | Pre-built page transitions                            |
+| [lottie](https://pub.dev/packages/lottie)                                                                   | Lottie animation player                               |
+| [device_info_plus](https://pub.dev/packages/device_info_plus)                                               | Device information                                    |
+| [package_info_plus](https://pub.dev/packages/package_info_plus)                                             | App version and build info                            |
+| [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)                                                   | Load `.env` config per flavor at runtime              |
+| [json_annotation](https://pub.dev/packages/json_annotation)                                                 | JSON serialization annotations                        |
+| [json_serializable](https://pub.dev/packages/json_serializable)                                             | JSON serialization code generation                    |
+| [timezone](https://pub.dev/packages/timezone)                                                               | Timezone support                                      |
+| [logger](https://pub.dev/packages/logger)                                                                   | Structured console logging                            |
+| [cached_network_image](https://pub.dev/packages/cached_network_image)                                       | Cached network image widget (see `CachedImageWidget`) |
+| [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager)                                     | File cache backing `cached_network_image`             |
+| [cached_network_image_platform_interface](https://pub.dev/packages/cached_network_image_platform_interface) | Web render options for `cached_network_image`         |
+| [build_runner](https://pub.dev/packages/build_runner)                                                       | Code generation runner                                |
+| [flutter_lints](https://pub.dev/packages/flutter_lints)                                                     | Lint rules                                            |
 
 > \* Recommended to keep regardless of project
 
@@ -71,6 +71,29 @@ The app supports three build flavors: `dev`, `uat`, `prod`. Always pass `--flavo
 flutter run --flavor dev
 flutter build apk --flavor prod --release
 ```
+
+## Theme
+
+Material 3 type scale used by `TextTheme` (baseline 2021). `fontStyle` is `normal` for all
+styles; `lineHeight` is in dp (Flutter's `TextStyle.height` = lineHeight / fontSize).
+
+| Style          | fontSize | fontWeight | letterSpacing | lineHeight (dp) |
+|----------------|----------|------------|---------------|-----------------|
+| displayLarge   | 57       | w400       | -0.25         | 64              |
+| displayMedium  | 45       | w400       | 0             | 52              |
+| displaySmall   | 36       | w400       | 0             | 44              |
+| headlineLarge  | 32       | w400       | 0             | 40              |
+| headlineMedium | 28       | w400       | 0             | 36              |
+| headlineSmall  | 24       | w400       | 0             | 32              |
+| titleLarge     | 22       | w400       | 0             | 28              |
+| titleMedium    | 16       | w500       | 0.15          | 24              |
+| titleSmall     | 14       | w500       | 0.1           | 20              |
+| bodyLarge      | 16       | w400       | 0.5           | 24              |
+| bodyMedium     | 14       | w400       | 0.25          | 20              |
+| bodySmall      | 12       | w400       | 0.4           | 16              |
+| labelLarge     | 14       | w500       | 0.1           | 20              |
+| labelMedium    | 12       | w500       | 0.5           | 16              |
+| labelSmall     | 11       | w500       | 0.5           | 16              |
 
 ## Firebase setup
 
