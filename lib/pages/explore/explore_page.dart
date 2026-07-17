@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_base/base.dart';
+import 'package:flutter_base/common/app_extension.dart';
 import 'package:flutter_base/pages/widgets/action_widget.dart';
 import 'package:flutter_base/utils/extensions/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,6 +47,7 @@ class _ExplorePageState extends State<ExplorePage>
   // A plain repeat() restarts at 0 every time it hits 1 turn, which looks
   // seamless since 1 full turn is visually identical to 0.
   late final AnimationController _rotationController;
+  late final AnimationController _refreshIconController;
 
   final GlobalKey _k1 = GlobalKey(debugLabel: 'firstModal');
   final GlobalKey _k2 = GlobalKey(debugLabel: 'secondModal');
@@ -70,6 +72,11 @@ class _ExplorePageState extends State<ExplorePage>
     )..repeat();
 
     _carouselController = CarouselController(initialItem: 1);
+
+    _refreshIconController = AnimationController(
+      vsync: this,
+      duration: 1200.milliseconds,
+    )..repeat();
 
     _overlayPortalController = OverlayPortalController();
 
@@ -145,6 +152,7 @@ class _ExplorePageState extends State<ExplorePage>
                 appBar: AppBar(
                   title: const Text('Explore'),
                   actions: [
+                    RotationRefresh(listenable: _refreshIconController),
                     ValueListenableBuilder(
                       valueListenable: _isOverlayVisible,
                       builder: (context, isOverlayVisible, child) {
@@ -177,13 +185,13 @@ class _ExplorePageState extends State<ExplorePage>
                         child: Align(
                           alignment: Alignment.center,
                           child: Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               color: Colors.yellow,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(width: .5),
                             ),
-                            child: Text('I am FOX!'),
+                            child: const Text('I am FOX!'),
                           ),
                         ),
                       ),
@@ -439,6 +447,23 @@ class _ExplorePageState extends State<ExplorePage>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// A refresh icon that continuously rotates, driven by the [listenable]
+/// animation (expected to be a 0→1 [Animation] on a repeating controller).
+class RotationRefresh extends AnimatedWidget {
+  /// Creates a [RotationRefresh] bound to [listenable].
+  const RotationRefresh({super.key, required super.listenable});
+
+  Animation<double> get _turn => listenable as Animation<double>;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: _turn.value * 2 * math.pi,
+      child: const Icon(Icons.refresh_rounded),
     );
   }
 }

@@ -17,6 +17,7 @@ class HeroImageWidget extends StatelessWidget {
     this.preview,
     this.borderRadius,
     this.enabled = true,
+    this.isEnableHero = true,
   });
 
   /// Unique [Hero] tag — must be unique per route (e.g. include an item id
@@ -46,9 +47,16 @@ class HeroImageWidget extends StatelessWidget {
   /// wrapping [child], with no gesture handling.
   final bool enabled;
 
+  /// Set to `false` to disable the [Hero] animation entirely while keeping
+  /// the [child] visible.
+  final bool isEnableHero;
+
   @override
   Widget build(BuildContext context) {
-    final Widget hero = Hero(tag: heroTag, child: child);
+    final Widget hero = HeroMode(
+      enabled: isEnableHero,
+      child: Hero(tag: heroTag, child: child),
+    );
 
     final Widget clipped = borderRadius != null
         ? ClipRRect(borderRadius: borderRadius!, child: hero)

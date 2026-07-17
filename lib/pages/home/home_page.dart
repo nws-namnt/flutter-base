@@ -6,10 +6,14 @@ import 'package:flutter_base/base.dart';
 import 'package:flutter_base/utils/app_utils.dart';
 import 'package:flutter_base/utils/extensions/widget_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../common/app_enums.dart' show DismissSwipeAction;
+import '../../utils/completer_util.dart';
 import '../../utils/extensions/enum_extension.dart';
+import '../widgets/badge_widget.dart';
 import '../widgets/empty_widget.dart';
 import 'home_cubit.dart';
 import 'home_state.dart';
@@ -31,14 +35,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final HomeCubit _cubit;
   late final AnimationController _menuIconController;
   late final AnimationController _viewIconController;
-  late final ScrollController _scrollController;
+
+  late final ScrollController _listScrollController;
+  late final ScrollController _gridScrollController;
 
   late final ValueNotifier<ContentSensitivity> sensitive;
+
+  late ThemeData _theme;
 
   @override
   void initState() {
     super.initState();
     _cubit = HomeCubit()..initialize();
+
+    // Runs once the first successful load finishes; surfaces load failures.
+    _cubit.whenReady
+        .then((_) {
+          if (!mounted) return;
+          // Hook post-load actions here (e.g. deep-link handling, analytics).
+        })
+        .catchError((Object e) {
+          if (!mounted) return;
+          showToast('Load failed: $e');
+        });
 
     _menuIconController = AnimationController(
       vsync: this,
@@ -49,17 +68,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
     );
 
-    _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.atEdge &&
-          _scrollController.position.pixels != 0.0) {
-        _cubit.moveFab();
-      } else {
-        _cubit.moveFab(isTop: false);
-      }
-    });
+    _listScrollController = ScrollController();
+    _listScrollController.addListener(() => _handleScroll(_listScrollController));
+
+    _gridScrollController = ScrollController();
+    _gridScrollController.addListener(() => _handleScroll(_gridScrollController));
 
     sensitive = ValueNotifier<ContentSensitivity>(ContentSensitivity.notSensitive);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _theme = Theme.of(context);
   }
 
   @override
@@ -67,9 +88,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _cubit.close();
     _menuIconController.dispose();
     _viewIconController.dispose();
-    _scrollController.dispose();
+    _listScrollController.dispose();
+    _gridScrollController.dispose();
     sensitive.dispose();
     super.dispose();
+  }
+
+  // Docks the FAB to the top when the active scroll view reaches its bottom
+  // edge, otherwise back to floating. Shared by both list and grid controllers.
+  void _handleScroll(ScrollController c) {
+    _cubit.moveFab(isTop: c.position.atEdge && c.position.pixels != 0.0);
   }
 
   // Opens/closes the drawer via the Scaffold key. A GlobalKey is required
@@ -85,6 +113,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  // Drives the menu/home AnimatedIcon in sync with the drawer open state.
   void _onDrawerChanged(bool isOpened) {
     if (isOpened) {
       _menuIconController.forward();
@@ -93,6 +122,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  // Switches the body between grid and reorderable-list layouts.
   void _toggleViewType() {
     _cubit.toggleViewType();
   }
@@ -113,11 +143,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // it scrolls back to the top. Otherwise it runs the default add action.
   void _onFabPressed(HomeState state) {
     if (state is HomeSuccess && state.isTop) {
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOut,
-      );
+      if (state.isGridView) {
+        _gridScrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      } else {
+        _listScrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      }
     }
 
     _cubit.addItem();
@@ -222,8 +260,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             _viewIconController.reverse();
           }
         },
-        child: BlocSelector<HomeCubit, HomeState, HomeState>(
-          selector: (state) => state,
+        // Rebuilds the whole screen on every HomeState change.
+        child: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             return SafeArea(
               child: Scaffold(
@@ -239,7 +277,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     : FloatingActionButtonLocation.endFloat,
                 floatingActionButtonAnimator: FabAnimator(),
                 appBar: AppBar(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: _theme.colorScheme.surface,
                   leading: IconButton(
                     icon: AnimatedIcon(
                       icon: AnimatedIcons.menu_home,
@@ -247,14 +285,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     onPressed: _toggleDrawer,
                   ),
-                  title: const Text('Home'),
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Home'),
+                      const Gap(8),
+                      BadgeWidget.shake(
+                        badgeCount: state is HomeSuccess ? state.archived.length : 0,
+                      ),
+                    ],
+                  ),
                   actions: [
                     ValueListenableBuilder(
                       valueListenable: sensitive,
                       builder: (context, s, child) {
                         return ElevatedButton.icon(
                           onPressed: _changeSensitiveContent,
-                          icon: Icon(Icons.sensors_outlined),
+                          icon: const Icon(Icons.sensors_outlined),
                           label: Text(s.value),
                         );
                       }
@@ -269,7 +316,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ],
                 ),
                 drawer: Drawer(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: _theme.colorScheme.surface,
                   child: Column(
                     children: [
                       ListenableBuilder(
@@ -359,42 +406,92 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  // Builds the reorderable list with swipe-to-archive (right) and
+  // swipe-to-delete (left) actions per item.
   Widget _buildReorderableList(List<String> data) {
     return RefreshIndicator(
       onRefresh: () => _cubit.initialize(),
       child: ReorderableListView.builder(
         key: const ValueKey('home_list_view'),
-        scrollController: _scrollController,
+        scrollController: _listScrollController,
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         physics: const BouncingScrollPhysics(),
         buildDefaultDragHandles: false,
         itemCount: data.length,
         itemBuilder: (context, index) {
           final item = data[index];
-          return Padding(
+          // startToEnd (swipe right) archives, endToStart (swipe left) deletes.
+          // Both confirm first; onDismissed then moves the item out of [data]
+          // so the dismissed widget leaves the tree in sync (avoids a crash).
+          return Dismissible(
             key: ValueKey(item),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: OpenContainerWrapper<void>(
-              tappable: false,
-              closedElevation: 1,
-              closedShape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+            onDismissed: (direction) {
+              if (direction == DismissDirection.startToEnd) {
+                _cubit.archiveItem(item);
+                showToast('Archived item $item');
+              } else {
+                _cubit.removeItem(item);
+                showToast('Deleted item $item');
+              }
+            },
+            direction: DismissDirection.horizontal,
+            background: const _DismissibleItem(),
+            secondaryBackground: const _DismissibleItem.secondary(),
+            confirmDismiss: (direction) async {
+              final result = SafeCompleter<bool>();
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text('${direction == .startToEnd ? 'Archive' : 'Delete'} item $item?'),
+                  actions: [
+                    TextButton.icon(
+                      onPressed: () {
+                        result.complete(false);
+                        ctx.backDialog;
+                      },
+                      label: const Text('Cancel'),
+                      icon: const Icon(Icons.cancel_rounded),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        result.complete(true);
+                        ctx.backDialog;
+                      },
+                      label: Text(direction == .startToEnd ? 'Archive' : 'Delete'),
+                      icon: Icon(direction == .startToEnd
+                          ? Icons.archive_rounded
+                          : Icons.delete_rounded),
+                    ),
+                  ],
+                ),
+              ).whenComplete(() => result.complete(false));
+
+              return result.future;
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: OpenContainerWrapper<void>(
+                tappable: false,
+                closedElevation: 1,
+                closedShape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                closedColor: index.isOdd ? AppColors.oldLace : AppColors.darkRaisin,
+                closedBuilder: (context, openContainer) {
+                  return ListTile(
+                    onTap: openContainer,
+                    textColor: index.isOdd
+                        ? AppColors.darkRaisin
+                        : AppColors.oldLace,
+                    title: Text('Item $item'),
+                    trailing: ReorderableDragStartListener(
+                      index: index,
+                      child: const Icon(Icons.drag_handle),
+                    ),
+                  );
+                },
+                openBuilder: (context, _) => HomeDetailPage(item: item),
               ),
-              closedColor: index.isOdd ? AppColors.oldLace : AppColors.darkRaisin,
-              closedBuilder: (context, openContainer) {
-                return ListTile(
-                  onTap: openContainer,
-                  textColor: index.isOdd
-                      ? AppColors.darkRaisin
-                      : AppColors.oldLace,
-                  title: Text('Item $item'),
-                  trailing: ReorderableDragStartListener(
-                    index: index,
-                    child: const Icon(Icons.drag_handle),
-                  ),
-                );
-              },
-              openBuilder: (context, _) => HomeDetailPage(item: item),
             ),
           );
         },
@@ -405,10 +502,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  // Builds the two-column grid layout (no swipe actions).
   Widget _buildGrid(List<String> data) {
     return GridView.builder(
       key: const ValueKey('home_grid_view'),
-      controller: _scrollController,
+      controller: _gridScrollController,
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -437,6 +535,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           openBuilder: (context, _) => HomeDetailPage(item: item),
         );
       },
+    );
+  }
+}
+
+/// Colored background revealed behind a home item while it is being swiped.
+///
+/// Default constructor is the archive affordance (aligned left);
+/// [_DismissibleItem.secondary] is the delete affordance (aligned right).
+class _DismissibleItem extends StatelessWidget {
+  /// Archive background — shown when swiping start-to-end.
+  const _DismissibleItem() : swipeAction = .archive;
+
+  /// Delete background — shown when swiping end-to-start.
+  const _DismissibleItem.secondary() : swipeAction = .delete;
+
+  final DismissSwipeAction swipeAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final bool isArchive = swipeAction == .archive;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isArchive
+          ? theme.colorScheme.primaryContainer
+          : theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: isArchive ? Alignment.centerLeft : Alignment.centerRight,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Icon(
+        isArchive ? Icons.archive_rounded : Icons.delete_rounded,
+        color: isArchive
+          ? theme.colorScheme.onPrimaryContainer
+          : theme.colorScheme.onErrorContainer,
+      ),
     );
   }
 }

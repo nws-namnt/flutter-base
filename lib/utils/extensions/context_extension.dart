@@ -2,9 +2,11 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_base/utils/extensions/widget_extension.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 
 import '../../common/app_enums.dart' show NotifyType;
+import '../../common/app_themes.dart' show NotifyColorExtension;
 
 /// Extension helpers for deriving Material 3 styling from a [BuildContext].
 extension ContextExtension on BuildContext {
@@ -90,6 +92,14 @@ extension ContextExtension on BuildContext {
   /// Text('Hello', style: context.textTheme.bodyMedium);
   /// ```
   TextTheme get textTheme => theme.textTheme;
+
+  /// The app's custom [NotifyColorExtension] (success/error/warning/info
+  /// background + on-colors), resolved from the current theme.
+  ///
+  /// Throws if the extension isn't registered in [ThemeData.extensions]; it is
+  /// always registered by [M3Theme], so that only happens under a bare theme.
+  NotifyColorExtension get notifyColorScheme =>
+      Theme.of(this).extension<NotifyColorExtension>()!;
 
   /// `true` when the current [ThemeData.brightness] is [Brightness.dark].
   ///
@@ -242,6 +252,21 @@ extension ContextExtension on BuildContext {
 /// context.showSnackBar(message: 'Upload failed', type: NotifyType.error);
 /// ```
 extension NotifyExtension on BuildContext {
+  /// Maps a [NotifyType] to its themed color pair.
+  ///
+  /// Returns a positional record `(bg, onBg)` — so at call sites `bg` is the
+  /// background and `onBg` the content (icon/text) color. Both come from
+  /// [notifyColorScheme], so they adapt to light/dark automatically.
+  (Color bg, Color onBg) notifyConfiguration(NotifyType type) {
+    final n = notifyColorScheme;
+    return switch (type) {
+      NotifyType.success => (n.success, n.onSuccess),
+      NotifyType.error => (n.error, n.onError),
+      NotifyType.warning => (n.warning, n.onWarning),
+      NotifyType.info => (n.info, n.onInfo),
+    };
+  }
+
   /// Shows a [Flushbar] notification anchored to this [BuildContext].
   ///
   /// [type] controls the default icon, background colour, title, and message
@@ -329,11 +354,12 @@ extension NotifyExtension on BuildContext {
     final Offset? endOffset,
   }) {
     if (!mounted) return Future<void>.value();
+    final (bg, onBg) = notifyConfiguration(type);
 
     return Flushbar(
-      icon: icon ?? Icon(type.icon),
+      icon: icon ?? Icon(type.icon, color: onBg),
       maxWidth: maxWidth,
-      backgroundColor: backgroundColor ?? (type.bgColor),
+      backgroundColor: backgroundColor ?? bg,
       duration: duration,
       boxShadows: boxShadows,
       backgroundGradient: backgroundGradient,
@@ -341,12 +367,12 @@ extension NotifyExtension on BuildContext {
       onTap: onTap,
 
       title: titleText ?? (type.title),
-      titleColor: titleColor,
+      titleColor: titleColor ?? onBg,
       titleSize: titleSize,
       titleText: title,
 
       message: messageText ?? (type.message),
-      messageColor: messageColor,
+      messageColor: messageColor ?? onBg,
       messageSize: messageSize,
       messageText: message,
 
@@ -460,6 +486,7 @@ extension NotifyExtension on BuildContext {
     String actionLabel = 'Label',
   }) {
     if (!mounted) return;
+    final (bg, onBg) = notifyConfiguration(type);
 
     assert(elevation == null || elevation >= 0.0);
     assert(
@@ -485,19 +512,19 @@ extension NotifyExtension on BuildContext {
           (message != null
               ? Row(
                   children: [
-                    Icon(type.icon, color: type.color),
+                    Icon(type.icon, color: onBg),
                     const Gap(10),
                     Text(
                       message,
                       style: TextStyle(
-                        color: type.color,
+                        color: onBg,
                         fontWeight: FontWeight.w600,
                       ),
                     ).expanded,
                   ],
                 )
               : const SizedBox.shrink()),
-      backgroundColor: bgColor ?? type.bgColor,
+      backgroundColor: bgColor ?? bg,
       elevation: elevation,
       margin: margin,
       padding:
@@ -513,12 +540,12 @@ extension NotifyExtension on BuildContext {
               ? SnackBarAction(
                   label: actionLabel,
                   onPressed: () => onAction.call(),
-                  textColor: type.color,
+                  textColor: onBg,
                 )
               : null),
       actionOverflowThreshold: actionOverflowThreshold,
       showCloseIcon: showCloseIcon,
-      closeIconColor: closeIconColor ?? type.color,
+      closeIconColor: closeIconColor ?? onBg,
       duration: duration,
       persist: persist ?? action != null,
       animation: animation,
@@ -625,6 +652,7 @@ extension NotifyExtension on BuildContext {
     NotifyType type = NotifyType.info,
   }) {
     if (!mounted) return;
+    final (bg, onBg) = notifyConfiguration(type);
 
     assert(elevation == null || elevation >= 0.0);
 
@@ -638,12 +666,12 @@ extension NotifyExtension on BuildContext {
           (message != null
               ? Row(
                   children: [
-                    Icon(type.icon, color: type.color),
+                    Icon(type.icon, color: onBg),
                     const Gap(10),
                     Text(
                       message,
                       style: TextStyle(
-                        color: type.color,
+                        color: onBg,
                         fontWeight: FontWeight.w600,
                       ),
                     ).expanded,
@@ -654,7 +682,7 @@ extension NotifyExtension on BuildContext {
       actions: actions,
       elevation: elevation,
       leading: leading,
-      backgroundColor: backgroundColor ?? type.bgColor,
+      backgroundColor: backgroundColor ?? bg,
       surfaceTintColor: surfaceTintColor,
       shadowColor: shadowColor,
       dividerColor: dividerColor,
@@ -690,5 +718,52 @@ extension NotifyExtension on BuildContext {
   void hideM3Banner() {
     if (!mounted) return;
     ScaffoldMessenger.of(this).hideCurrentMaterialBanner();
+  }
+
+  /// Theme-aware toast rendered as a Flutter overlay via [FToast].
+  ///
+  /// Unlike the context-free top-level `showToast` (native platform toast),
+  /// this builds a real widget inside this context's [Overlay], so its colors
+  /// come from [notifyColorScheme] and adapt to light/dark consistently on
+  /// every platform. Use it from UI code that has a mounted [BuildContext];
+  /// use the top-level `showToast` from services/utilities that don't.
+  ///
+  /// [backgroundColor] / [textColor] override the [type]-derived colors.
+  /// Does nothing if this [BuildContext] is no longer [mounted].
+  void showToastWithContext(
+    String msg, {
+    NotifyType type = NotifyType.info,
+    Toast toastLength = Toast.LENGTH_SHORT,
+    ToastGravity gravity = ToastGravity.BOTTOM,
+    Color? backgroundColor,
+    Color? textColor,
+    double fontSize = 16.0,
+  }) {
+    if (!mounted) return;
+    final (bg, onBg) = notifyConfiguration(type);
+    final fg = textColor ?? onBg;
+
+    FToast().init(this).showToast(
+          gravity: gravity,
+          // FToast takes a Duration; map the Toast length enum onto one.
+          toastDuration: toastLength == Toast.LENGTH_LONG
+              ? const Duration(seconds: 4)
+              : const Duration(seconds: 2),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: backgroundColor ?? bg,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(type.icon, color: fg),
+                const Gap(8),
+                Text(msg, style: TextStyle(color: fg, fontSize: fontSize)),
+              ],
+            ),
+          ),
+        );
   }
 }

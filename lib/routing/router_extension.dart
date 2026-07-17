@@ -10,6 +10,9 @@ extension RouterExtension on BuildContext {
   /// Forces [GoRouter] to re-evaluate its `redirect` callback.
   void get reset => GoRouter.of(this).refresh();
 
+  /// Pops the top-most route (e.g. a dialog) via the nearest [Navigator].
+  void get backDialog => Navigator.pop(this);
+
   /// Whether the current route can be popped.
   bool get canBack => GoRouter.of(this).canPop();
 

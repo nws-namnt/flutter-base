@@ -11,8 +11,8 @@ class ExploreCubit extends Cubit<ExploreState> {
   /// Creates [ExploreCubit] seeded with a placeholder list of categories.
   ExploreCubit()
     : super(
-        ExploreState(
-          categories: const [
+        const ExploreState(
+          categories: [
             'Music',
             'Sports',
             'Travel',

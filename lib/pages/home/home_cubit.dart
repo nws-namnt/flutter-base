@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show FloatingActionButtonLocation;
+import 'package:flutter_base/utils/completer_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_state.dart';
@@ -15,17 +16,31 @@ class HomeCubit extends Cubit<HomeState> {
     _logFirebaseFlavor();
   }
 
+  // Fires once the first successful load completes; awaitable via [whenReady].
+  final SafeCompleter<void> _ready = SafeCompleter<void>();
+
+  /// Completes once the first successful [initialize] finishes, or with an
+  /// error if that first load fails. Await it to run post-load actions.
+  Future<void> get whenReady => _ready.future;
+
   /// Loads the initial list of items.
   ///
   /// Emits [HomeLoading] then, after a simulated delay, [HomeSuccess] with
-  /// 20 generated placeholder items.
+  /// 20 generated placeholder items. Signals [whenReady] on success, or
+  /// forwards the error to it on failure.
   Future<void> initialize() async {
     emit(const HomeLoading());
-    final data = List.generate(20, (i) {
-      return 'Item ${i + 1}';
-    }).toList();
-    await Future.delayed(const Duration(seconds: 2));
-    emit(HomeSuccess(data: data));
+    try {
+      final data = List.generate(20, (i) {
+        return 'Item ${i + 1}';
+      }).toList();
+      await Future.delayed(const Duration(seconds: 2));
+      emit(HomeSuccess(data: data));
+      _ready.complete();
+    } catch (e, s) {
+      emit(HomeError(errMess: e.toString()));
+      _ready.completeError(e, s);
+    }
   }
 
   /// Appends a new placeholder item to the current [HomeSuccess.data].
@@ -52,6 +67,30 @@ class HomeCubit extends Cubit<HomeState> {
     data.insert(newIndex, item);
 
     emit(current.copyWith(data: data));
+  }
+
+  /// Removes [item] from [HomeSuccess.data].
+  ///
+  /// No-op if the current state is not [HomeSuccess].
+  void removeItem(String item) {
+    final current = state;
+    if (current is! HomeSuccess) return;
+
+    final data = List<String>.of(current.data)..remove(item);
+    emit(current.copyWith(data: data));
+  }
+
+  /// Moves [item] from [HomeSuccess.data] into [HomeSuccess.archived].
+  ///
+  /// No-op if the current state is not [HomeSuccess] or [item] is not present.
+  void archiveItem(String item) {
+    final current = state;
+    if (current is! HomeSuccess) return;
+    if (!current.data.contains(item)) return;
+
+    final data = List<String>.of(current.data)..remove(item);
+    final archived = List<String>.of(current.archived)..add(item);
+    emit(current.copyWith(data: data, archived: archived));
   }
 
   /// Toggles between grid and list layout for [HomeSuccess.isGridView].

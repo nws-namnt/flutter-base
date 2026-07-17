@@ -28,6 +28,9 @@ class HomeSuccess extends HomeState {
   /// The list of items currently shown, in display order.
   final List<String> data;
 
+  /// Items moved out of [data] via the archive swipe action.
+  final List<String> archived;
+
   /// Whether items are rendered as a grid (`true`) or a reorderable list
   /// (`false`).
   final bool isGridView;
@@ -41,6 +44,7 @@ class HomeSuccess extends HomeState {
   /// Creates [HomeSuccess].
   const HomeSuccess({
     this.data = const [],
+    this.archived = const [],
     this.isGridView = false,
     this.fabLocation = FloatingActionButtonLocation.endFloat,
     this.isTop = false,
@@ -49,12 +53,14 @@ class HomeSuccess extends HomeState {
   /// Returns a copy of this state with the given fields replaced.
   HomeSuccess copyWith({
     final List<String>? data,
+    final List<String>? archived,
     final bool? isGridView,
     final FloatingActionButtonLocation? fabLocation,
     final bool? isTop,
   }) {
     return HomeSuccess(
       data: data ?? this.data,
+      archived: archived ?? this.archived,
       isGridView: isGridView ?? this.isGridView,
       fabLocation: fabLocation ?? this.fabLocation,
       isTop: isTop ?? this.isTop,
@@ -62,7 +68,7 @@ class HomeSuccess extends HomeState {
   }
 
   @override
-  List<Object?> get props => [data, isGridView, fabLocation, isTop];
+  List<Object?> get props => [data, archived, isGridView, fabLocation, isTop];
 }
 
 /// Emitted when loading or updating the Home tab fails.

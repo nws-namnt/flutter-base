@@ -79,6 +79,7 @@ dependencies:
   # Utilities
   json_annotation: ^4.12.0
   timezone: ^0.11.0
+  collection: ^1.19.1
 
   # AI
   genkit: ^0.14.1

@@ -16,7 +16,6 @@ import '../models/picked_file.dart';
 import '../services/permission_service.dart';
 import 'app_logger.dart' show err;
 
-
 /// Resolves the directory the app should save generated files into, plus a
 /// ready-to-use unique file path inside it.
 ///
@@ -339,27 +338,25 @@ Future<List<PickedFile>> pickMultipleFiles({
 
 /// Shows a native toast using [Fluttertoast] — no [BuildContext] required.
 ///
-/// Wraps [Fluttertoast.showToast] with sensible defaults and optional
-/// [NotifyType]-based styling. Because this uses the platform's native
-/// toast API (Android) or Toastify-JS (web), it works outside the widget tree
-/// and is ideal for quick one-liner feedback from services or utilities.
+/// Wraps [Fluttertoast.showToast] with sensible defaults. Because it uses the
+/// platform's native toast API (Android) or Toastify-JS (web), it works
+/// outside the widget tree and is ideal for quick one-liner feedback from
+/// services or utilities. For a theme-aware toast that adapts to light/dark,
+/// use [BuildContext.showToastWithContext] instead.
 ///
-/// **Android 11+ note:** Only [msg] and [toastLength] are respected on
-/// Android 11 and above — all visual properties ([backgroundColor],
-/// [textColor], [fontSize]) are silently ignored by the OS. Use
-/// [BuildContext.showNotify] (flushbar-based) when full UI control is needed.
+/// **Android note:** the visual properties ([backgroundColor], [textColor],
+/// [fontSize]) render only when [backgroundColor] is non-null — the plugin
+/// then draws a custom view. With no [backgroundColor] a plain system toast is
+/// shown and those properties are ignored on Android 11+.
 ///
 /// Parameters mirror [Fluttertoast.showToast]:
 ///
 /// - [msg] — the message string to display (required).
-/// - [type] — when provided, [backgroundColor] and [textColor] default to
-///   [NotifyType.bgColor] and [Colors.white] respectively; pass explicit
-///   values to override.
 /// - [toastLength] — [Toast.LENGTH_SHORT] (default) or [Toast.LENGTH_LONG].
 /// - [gravity] — vertical position; [ToastGravity.BOTTOM] by default.
 /// - [timeInSecForIosWeb] — visible duration in seconds on iOS and web.
-/// - [backgroundColor] — overrides the [type]-derived background color.
-/// - [textColor] — text color; defaults to [Colors.white].
+/// - [backgroundColor] — toast background; `null` uses the platform default.
+/// - [textColor] — text color; `null` uses the platform default.
 /// - [fontSize] — text size in logical pixels.
 ///
 /// Returns a [Future] that resolves to `true` when the toast is shown,
@@ -367,24 +364,23 @@ Future<List<PickedFile>> pickMultipleFiles({
 ///
 /// Example:
 /// ```dart
-/// showToast('Profile saved!', type: NotifyType.success);
-/// showToast('Network error', type: NotifyType.error, toastLength: Toast.LENGTH_LONG);
+/// showToast('Profile saved!');
+/// showToast('Network error', toastLength: Toast.LENGTH_LONG);
 /// ```
 Future<bool?> showToast(
   String msg, {
-  NotifyType type = NotifyType.info,
   Toast toastLength = Toast.LENGTH_SHORT,
   ToastGravity gravity = ToastGravity.BOTTOM,
   int timeInSecForIosWeb = 1,
   Color? backgroundColor,
-  Color textColor = Colors.white,
+  Color? textColor,
   double fontSize = 16.0,
 }) => Fluttertoast.showToast(
   msg: msg,
   toastLength: toastLength,
   gravity: gravity,
   timeInSecForIosWeb: timeInSecForIosWeb,
-  backgroundColor: backgroundColor ?? type.bgColor,
+  backgroundColor: backgroundColor,
   textColor: textColor,
   fontSize: fontSize,
 );

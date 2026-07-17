@@ -330,6 +330,98 @@ class M3Theme {
   );
 }
 
+/// Theme-aware colors for notifications (success / error / warning / info),
+/// each with a background and a matching `on` content color.
+///
+/// Registered in [ThemeData.extensions] by [M3Theme]; read it via
+/// `BuildContext.notifyColorScheme` (or `notifyConfiguration` for a
+/// type-to-`(bg, onBg)` pair). Not part of [ColorScheme] because Material has
+/// no semantic role for these states.
+@immutable
+class NotifyColorExtension extends ThemeExtension<NotifyColorExtension> {
+  const NotifyColorExtension({
+    required this.success,
+    required this.onSuccess,
+    required this.error,
+    required this.onError,
+    required this.warning,
+    required this.onWarning,
+    required this.info,
+    required this.onInfo,
+  });
+
+  final Color success;
+  final Color onSuccess;
+
+  final Color error;
+  final Color onError;
+
+  final Color warning;
+  final Color onWarning;
+
+  final Color info;
+  final Color onInfo;
+
+  static const light = NotifyColorExtension(
+    success: Color(0xFFE8F5E9),
+    onSuccess: Color(0xFF2E7D32),
+    error: Color(0xFFFFEBEE),
+    onError: Color(0xFFC62828),
+    warning: Color(0xFFFFF3E0),
+    onWarning: Color(0xFFEF6C00),
+    info: Color(0xFFE1F5FE),
+    onInfo: Color(0xFF0277BD),
+  );
+
+  static const dark = NotifyColorExtension(
+    success: Color(0xFF1B5E20),
+    onSuccess: Color(0xFFA5D6A7),
+    error: Color(0xFF8C1D18),
+    onError: Color(0xFFFFB4AB),
+    warning: Color(0xFF5D3A00),
+    onWarning: Color(0xFFFFB877),
+    info: Color(0xFF01415C),
+    onInfo: Color(0xFF81D4FA),
+  );
+
+  @override
+  ThemeExtension<NotifyColorExtension> copyWith({
+    Color? success,
+    Color? onSuccess,
+    Color? error,
+    Color? onError,
+    Color? warning,
+    Color? onWarning,
+    Color? info,
+    Color? onInfo,
+  }) => NotifyColorExtension(
+    success: success ?? this.success,
+    onSuccess: onSuccess ?? this.onSuccess,
+    error: error ?? this.error,
+    onError: onError ?? this.onError,
+    warning: warning ?? this.warning,
+    onWarning: onWarning ?? this.onWarning,
+    info: info ?? this.info,
+    onInfo: onInfo ?? this.onInfo,
+  );
+
+  @override
+  NotifyColorExtension lerp(covariant ThemeExtension<NotifyColorExtension>? other, double t) {
+    if (other is! NotifyColorExtension) return this;
+    return NotifyColorExtension(
+      success: Color.lerp(success, other.success, t)!,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
+      error: Color.lerp(error, other.error, t)!,
+      onError: Color.lerp(onError, other.onError, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      onInfo: Color.lerp(onInfo, other.onInfo, t)!,
+    );
+  }
+
+}
+
 /// Convenience extension that converts a [ColorScheme] into a full [ThemeData].
 ///
 /// Used internally by [M3Theme] getters — not part of the public API.
@@ -339,6 +431,9 @@ extension _AppThemeExtension on ColorScheme {
   /// - Text colors are derived from [onSurface] so they adapt to dark/light.
   /// - [InkSparkle] is used as the splash factory for a modern ripple effect.
   ThemeData get theme => ThemeData(
+    extensions: [
+      brightness == .dark ? NotifyColorExtension.dark : NotifyColorExtension.light,
+    ],
     useMaterial3: true,
     colorScheme: this,
     textTheme: textTheme.apply(bodyColor: onSurface, displayColor: onSurface),

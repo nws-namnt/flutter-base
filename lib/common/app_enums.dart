@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../generated/l10n.dart';
-import 'app_colors.dart';
 
 /// Supported app locales.
 ///
@@ -166,33 +165,21 @@ enum LaunchExternalType {
 /// Semantic notification category used by toast/snackbar/banner helpers
 /// (e.g. [showToast], [NotifyExtension.showSnackBar]).
 ///
-/// Each value carries the default [color] (icon/text), [bgColor]
-/// (background), and [icon] used when the caller doesn't override them.
+/// Each value carries the default [icon], [title], and [message]. Colors are
+/// resolved from the theme via `BuildContext.notifyConfiguration`, not stored
+/// on the enum.
 enum NotifyType {
   /// Success notification — green palette.
-  success(
-    bgColor: AppColors.c2E7D32, // icon + text
-    color: AppColors.cE8F5E9, // background
-    icon: Icons.done_outline_rounded,
-  ),
+  success(icon: Icons.done_outline_rounded),
+
   /// Error notification — red palette.
-  error(
-    bgColor: AppColors.cC62828, // icon + text
-    color: AppColors.cFFEBEE, // background
-    icon: Icons.error_outline_rounded,
-  ),
+  error(icon: Icons.error_outline_rounded),
+
   /// Warning notification — orange palette.
-  warning(
-    bgColor: AppColors.cEF6C00, // icon + text
-    color: AppColors.cFFF3E0, // background
-    icon: Icons.warning_outlined,
-  ),
+  warning(icon: Icons.warning_outlined),
+
   /// Informational notification — blue palette.
-  info(
-    bgColor: AppColors.c0277BD, // icon + text
-    color: AppColors.cE1F5FE, // background
-    icon: Icons.info_outline_rounded,
-  );
+  info(icon: Icons.info_outline_rounded);
 
   /// Default title text for this notification type, localized via [S].
   String get title => switch (this) {
@@ -210,15 +197,18 @@ enum NotifyType {
     info => S.current.lb_flush_info,
   };
 
-  /// Icon and text color for this notification type.
-  final Color color;
-
-  /// Background color for this notification type.
-  final Color bgColor;
-
   /// Default icon for this notification type.
   final IconData icon;
 
-  /// Creates a [NotifyType] value with its [color], [bgColor], and [icon].
-  const NotifyType({required this.color, required this.bgColor, required this.icon});
+  /// Creates a [NotifyType] value with its default [icon].
+  const NotifyType({required this.icon});
+}
+
+/// Swipe direction intent for a dismissible list item.
+enum DismissSwipeAction {
+  /// Swipe start-to-end — move the item to the archived list.
+  archive,
+
+  /// Swipe end-to-start — remove the item permanently.
+  delete,
 }
