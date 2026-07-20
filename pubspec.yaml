@@ -140,6 +140,7 @@ flutter:
     - assets/lotties/
     - assets/icons/
     - assets/docs/
+    - assets/fonts/
     - assets/env/.env.dev
     - assets/env/.env.uat
     - assets/env/.env.prod
@@ -149,6 +150,11 @@ flutter:
     - family: SocialIcons
       fonts:
         - asset: packages/firebase_ui_auth/fonts/SocialIcons.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
+        - asset: assets/fonts/Montserrat-Italic-VariableFont_wght.ttf
+          style: italic
 
 flutter_intl:
   enabled: true

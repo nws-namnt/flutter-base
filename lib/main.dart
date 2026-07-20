@@ -126,6 +126,11 @@ Future<void> main() async {
         return true;
       };
 
+      LicenseRegistry.addLicense(() async* {
+        final String license = await rootBundle.loadString('assets/fonts/OFL.txt');
+        yield LicenseEntryWithLineBreaks(<String>['app_font'], license);
+      });
+
       runApp(const AppPage());
     },
     (error, stack) {

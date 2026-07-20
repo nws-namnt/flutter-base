@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'app_config.dart' show AppConfig;
 
@@ -442,7 +441,15 @@ extension _AppThemeExtension on ColorScheme {
     splashFactory: InkSparkle.splashFactory,
   );
 
-  /// Returns the Google Font text theme keyed by [AppConfig.kTextTheme].
-  TextTheme get textTheme => GoogleFonts.getTextTheme(AppConfig.kTextTheme);
+  /// Returns the base Material text theme with the local font family
+  /// [AppConfig.kTextTheme] applied, matched to this scheme's [brightness].
+  TextTheme get textTheme => (brightness == .dark
+          ? Typography.material2021().white
+          : Typography.material2021().black)
+      .apply(fontFamily: AppConfig.kTextTheme);
+
+  // In case using Google Font instead
+  // /// Returns the Google Font text theme keyed by [AppConfig.kTextTheme].
+  // TextTheme get textTheme => GoogleFonts.getTextTheme(AppConfig.kTextTheme);
 }
 
