@@ -196,51 +196,60 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> _onDeviceInfoTap(BuildContext context) async {
     _scaffoldKey.currentState?.closeDrawer();
 
-    final packageInfo = await PackageInfo.fromPlatform();
-    final devicePlugin = DeviceInfoPlugin();
-    final platformName = devicePlugin.platformName;
-    final osVersion = await devicePlugin.osVersion;
-    final deviceModel = await devicePlugin.deviceModel;
-    if (!context.mounted) return;
+    // final result = await context.showConfirmDialog(
+    //     title: 'Are you sure to open the device info?',
+    //     message: 'This will show you the device info.',
+    // );
 
-    showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 150),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return SafeArea(
-          child: AlertDialog(
-            title: const Text('Device info'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'App: ${packageInfo.appName} ${packageInfo.displayVersion}',
+    final result = await context.pushNamed(Routers.confirmDialog.routerName);
+
+    if (result != null) {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final devicePlugin = DeviceInfoPlugin();
+      final platformName = devicePlugin.platformName;
+      final osVersion = await devicePlugin.osVersion;
+      final deviceModel = await devicePlugin.deviceModel;
+      if (!context.mounted) return;
+
+      showGeneralDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black54,
+        transitionDuration: const Duration(milliseconds: 150),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return SafeArea(
+            child: AlertDialog(
+              title: const Text('Device info'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'App: ${packageInfo.appName} ${packageInfo.displayVersion}',
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Platform: $platformName'),
+                  const SizedBox(height: 8),
+                  Text('OS version: $osVersion'),
+                  const SizedBox(height: 8),
+                  Text('Device: $deviceModel'),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
                 ),
-                const SizedBox(height: 8),
-                Text('Platform: $platformName'),
-                const SizedBox(height: 8),
-                Text('OS version: $osVersion'),
-                const SizedBox(height: 8),
-                Text('Device: $deviceModel'),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
-              ),
-            ],
-          ),
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeWrapper(animation: animation, child: child);
-      },
-    );
+          );
+        },
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeWrapper(animation: animation, child: child);
+        },
+      );
+    }
   }
 
   @override

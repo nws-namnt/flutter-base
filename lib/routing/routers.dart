@@ -35,6 +35,9 @@ enum Routers {
   /// Bottom sheet
   languageSheet('/languageSheet', 'languageSheet'),
 
+  /// Dialog
+  confirmDialog('/confirmDialog', 'confirmDialog'),
+
   /// AI support chat page (`/aiSupport`).
   /// Accepts `extra: {'screenName': 'Home'}` to inject context into the AI.
   aiSupport('/aiSupport', 'aiSupport'),

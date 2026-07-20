@@ -1,12 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_base/base.dart' show NotifyColorExtension, RouterExtension;
 import 'package:flutter_base/utils/extensions/widget_extension.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 
 import '../../common/app_enums.dart' show NotifyType;
-import '../../common/app_themes.dart' show NotifyColorExtension;
+import '../../pages/widgets/transition_dialog_widget.dart';
 
 /// Extension helpers for deriving Material 3 styling from a [BuildContext].
 extension ContextExtension on BuildContext {
@@ -743,7 +744,9 @@ extension NotifyExtension on BuildContext {
     final (bg, onBg) = notifyConfiguration(type);
     final fg = textColor ?? onBg;
 
-    FToast().init(this).showToast(
+    FToast()
+        .init(this)
+        .showToast(
           gravity: gravity,
           // FToast takes a Duration; map the Toast length enum onto one.
           toastDuration: toastLength == Toast.LENGTH_LONG
@@ -760,10 +763,191 @@ extension NotifyExtension on BuildContext {
               children: [
                 Icon(type.icon, color: fg),
                 const Gap(8),
-                Text(msg, style: TextStyle(color: fg, fontSize: fontSize)),
+                Text(
+                  msg,
+                  style: TextStyle(color: fg, fontSize: fontSize),
+                ),
               ],
             ),
           ),
         );
+  }
+}
+
+/// Imperative dialog helpers anchored to this [BuildContext].
+///
+/// - [showAppDialog] — thin wrapper over [showDialog] for standard Material
+///   dialogs (auto-wrapped in a [Dialog]/[Material]).
+/// - [showConfirmDialog] — ready-made yes/no confirmation resolving to a [bool].
+/// - [showCustomDialog] — wrapper over [showGeneralDialog] with a
+///   [DialogTransitionType]-driven entry/exit animation (supports reverse
+///   type/curve; reverse duration requires [TransitionDialog]).
+///
+/// Every method is a no-op (resolves to `null`/`false`) when this
+/// [BuildContext] is no longer [mounted].
+extension DialogExtension on BuildContext {
+  /// Thin wrapper over [showDialog] with sensible defaults.
+  ///
+  /// [T] is the value passed to `Navigator.pop(context, value)` (or
+  /// [RouterExtension.backDialogWithResult]) inside [builder]; the returned
+  /// future completes with it, or `null` when the barrier is tapped.
+  ///
+  /// [barrierColor] defaults to `Colors.black54` when omitted. See [showDialog]
+  /// for the meaning of the remaining parameters.
+  ///
+  /// Example:
+  /// ```dart
+  /// final choice = await context.showAppDialog<bool>(
+  ///   builder: (_) => const MyDialog(),
+  /// );
+  /// ```
+  Future<T?> showAppDialog<T>({
+    required WidgetBuilder builder,
+    bool barrierDismissible = true,
+    Color? barrierColor,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool useRootNavigator = true,
+    RouteSettings? routeSettings,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+  }) {
+    if (!mounted) return Future<T?>.value();
+
+    return showDialog<T>(
+      context: this,
+      builder: builder,
+      barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor ?? Colors.black54,
+      barrierLabel: barrierLabel ?? MaterialLocalizations.of(this).modalBarrierDismissLabel,
+      useSafeArea: useSafeArea,
+      useRootNavigator: useRootNavigator,
+      routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+    );
+  }
+
+  /// Shows a standard [AlertDialog] with a cancel/confirm button pair and
+  /// resolves to the user's choice — `true` for confirm, `false` for cancel or
+  /// when the dialog is dismissed via the barrier.
+  ///
+  /// [title] and [message] are rendered with the current [textTheme]; the
+  /// button captions are overridable via [confirmLabel] / [cancelLabel].
+  ///
+  /// Example:
+  /// ```dart
+  /// if (await context.showConfirmDialog(
+  ///   title: 'Logout',
+  ///   message: 'Are you sure?',
+  /// )) {
+  ///   await _logout();
+  /// }
+  /// ```
+  Future<bool> showConfirmDialog({
+    required String title,
+    required String message,
+    String confirmLabel = 'Confirm',
+    String cancelLabel = 'Cancel',
+    bool barrierDismissible = true,
+    Color? barrierColor,
+    String? barrierLabel,
+  }) async {
+    final bool? result = await showAppDialog<bool>(
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title, style: context.textTheme.titleLarge),
+          content: Text(message, style: context.textTheme.bodyMedium),
+          actions: [
+            TextButton(
+              onPressed: () => context.backDialogWithResult(false),
+              child: Text(cancelLabel),
+            ),
+            FilledButton.tonal(
+              onPressed: () => context.backDialogWithResult(true),
+              child: Text(confirmLabel),
+            ),
+          ],
+        );
+      },
+      barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor,
+      barrierLabel: barrierLabel,
+    );
+
+    return result ?? false;
+  }
+
+  /// Wrapper over [showGeneralDialog] with a [DialogTransitionType]-driven
+  /// entry/exit animation, for dialogs that need a non-Material transition or a
+  /// custom barrier.
+  ///
+  /// [transitionType] / [curve] drive the open animation; [reverseTransitionType]
+  /// / [reverseCurve] drive the close and default to mirroring the open
+  /// ([reverseTransitionType] falls back to [transitionType]).
+  ///
+  /// Unlike [showAppDialog], the [builder] result is NOT wrapped in a
+  /// [Dialog]/[Material], so it must supply its own [Material] ancestor. Set
+  /// [useSafeArea] to inset the content away from notches/system bars.
+  ///
+  /// [barrierLabel] defaults to the localized "dismiss" label when omitted.
+  ///
+  /// NOTE: this path uses [showGeneralDialog] (a plain [RawDialogRoute]), which
+  /// applies [transitionDuration] to both directions — a distinct reverse
+  /// duration is only available through [TransitionDialog] / [RouteDialogWidget].
+  ///
+  /// Example:
+  /// ```dart
+  /// await context.showCustomDialog<void>(
+  ///   transitionType: DialogTransitionType.slideFromBottom,
+  ///   reverseTransitionType: DialogTransitionType.fade,
+  ///   builder: (_) => const MyDialog(),
+  /// );
+  /// ```
+  Future<T?> showCustomDialog<T>({
+    required WidgetBuilder builder,
+    DialogTransitionType transitionType = DialogTransitionType.fadeScale,
+    DialogTransitionType? reverseTransitionType,
+    Curve curve = Curves.easeOut,
+    Curve reverseCurve = Curves.easeIn,
+    bool barrierDismissible = true,
+    String? barrierLabel,
+    Color barrierColor = const Color(0x80000000),
+    Duration transitionDuration = const Duration(milliseconds: 200),
+    bool useRootNavigator = true,
+    bool fullscreenDialog = false,
+    bool useSafeArea = false,
+    RouteSettings? routeSettings,
+    Offset? anchorPoint,
+    bool? requestFocus,
+  }) {
+    if (!mounted) return Future<T?>.value();
+
+    return showGeneralDialog<T>(
+      context: this,
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          useSafeArea ? SafeArea(child: builder(context)) : builder(context),
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel ?? MaterialLocalizations.of(this).modalBarrierDismissLabel,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final isReverse = animation.status == .reverse;
+        final type = isReverse ? reverseTransitionType ?? transitionType : transitionType;
+
+        return type.transition(
+          animation,
+          child,
+          secondaryAnimation: secondaryAnimation,
+          curve: curve,
+          reverseCurve: reverseCurve,
+        );
+      },
+      useRootNavigator: useRootNavigator,
+      fullscreenDialog: fullscreenDialog,
+      routeSettings: routeSettings,
+      anchorPoint: anchorPoint,
+      requestFocus: requestFocus,
+    );
   }
 }

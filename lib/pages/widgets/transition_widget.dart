@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Route transition styles for [TransitionPage].
-///
-/// Pass a value to [TransitionPage]'s `transitionType` parameter to control
-/// how the page animates in. The animation is applied by [PageTransitionExt.transition].
 enum PageTransitionType {
   /// Cross-fade.
   fade,
@@ -57,135 +54,160 @@ enum PageTransitionType {
 
   /// Material shared axis — scaled (z-axis), e.g. parent-child navigation
   /// with a zoom emphasis (uses the `animations` package).
-  sharedAxisScaled,
+  sharedAxisScaled;
 }
 
-/// Transition styles for full-screen dialogs.
-enum DialogTransitionType {
-  /// Fade + scale (Material shared-axis equivalent).
-  fadeScale,
-
-  /// Slide in from the right edge.
-  slideFromRight,
-}
-
-/// Extension that converts a [PageTransitionType] into a concrete transition widget.
 extension PageTransitionExt on PageTransitionType {
   /// Wraps [child] with the appropriate transition widget.
   ///
   /// [animation] is the forward animation; [secondaryAnimation] is used by
   /// [PageTransitionType.fadeThrough] for the outgoing page. Falls back to
   /// [animation] when [secondaryAnimation] is null to avoid null-safety issues.
-  Widget transition(Animation<double> animation, Widget child, {Animation<double>? secondaryAnimation, Curve curve = Curves.easeOut}) {
+  Widget transition(
+      Animation<double> animation,
+      Widget child, {
+        Animation<double>? secondaryAnimation,
+        Curve curve = Curves.easeOut,
+        Curve reverseCurve = Curves.easeIn,
+      }) {
     // Wrap both animations in CurvedAnimation to apply the easing curve.
     // secondaryAnimation fallback prevents ANR from a null dereference.
-    final Animation<double> primary = CurvedAnimation(parent: animation, curve: curve);
-    final Animation<double> secondary = CurvedAnimation(parent: secondaryAnimation ?? animation, curve: Curves.easeIn);
+    final Animation<double> primary = CurvedAnimation(
+      parent: animation,
+      curve: curve,
+      reverseCurve: reverseCurve,
+    );
+    final Animation<double> secondary = CurvedAnimation(
+      parent: secondaryAnimation ?? animation,
+      curve: Curves.easeIn,
+      reverseCurve: Curves.easeOut,
+    );
 
-    switch(this) {
-      case PageTransitionType.fadeThrough:
-        return FadeThroughTransition(animation: primary, secondaryAnimation: secondary, child: child);
-      case PageTransitionType.fade:
-        return FadeTransition(opacity: Tween<double>(begin: 0, end: 1).animate(primary), child: child);
-      case PageTransitionType.slideFromTopFade:
-        return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
-              .animate(primary),
-          child: FadeTransition(
-            opacity: Tween<double>(begin: 0, end: 1).animate(primary),
-            child: child,
-          ),
+    switch (this) {
+      case .fadeThrough:
+        return FadeThroughTransition(
+          animation: primary,
+          secondaryAnimation: secondary,
+          child: child,
         );
-      case PageTransitionType.slideFromBottomFade:
+      case .fade:
+        return FadeTransition(
+          opacity: Tween<double>(begin: 0, end: 1).animate(primary),
+          child: child,
+        );
+      case .slideFromTopFade:
         return SlideTransition(
           position: Tween<Offset>(
-              begin: const Offset(0, 1),
-              end: Offset.zero
+            begin: const Offset(0, -1),
+            end: .zero,
           ).animate(primary),
           child: FadeTransition(
             opacity: Tween<double>(begin: 0, end: 1).animate(primary),
             child: child,
           ),
         );
-      case PageTransitionType.slideFromLeftFade:
+      case .slideFromBottomFade:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-              .animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: .zero,
+          ).animate(primary),
           child: FadeTransition(
             opacity: Tween<double>(begin: 0, end: 1).animate(primary),
             child: child,
           ),
         );
-      case PageTransitionType.slideFromRightFade:
+      case .slideFromLeftFade:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: .zero,
+          ).animate(primary),
           child: FadeTransition(
             opacity: Tween<double>(begin: 0, end: 1).animate(primary),
             child: child,
           ),
         );
-      case PageTransitionType.slideFromTop:
+      case .slideFromRightFade:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
-              .animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: .zero,
+          ).animate(primary),
+          child: FadeTransition(
+            opacity: Tween<double>(begin: 0, end: 1).animate(primary),
+            child: child,
+          ),
+        );
+      case .slideFromTop:
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, -1),
+            end: .zero,
+          ).animate(primary),
           child: child,
         );
-      case PageTransitionType.slideFromBottom:
+      case .slideFromBottom:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: .zero,
+          ).animate(primary),
           child: child,
         );
-      case PageTransitionType.slideFromLeft:
+      case .slideFromLeft:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-              .animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: .zero,
+          ).animate(primary),
           child: child,
         );
-      case PageTransitionType.slideFromRight:
+      case .slideFromRight:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(primary),
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: .zero,
+          ).animate(primary),
           child: child,
         );
-      case PageTransitionType.scale:
+      case .scale:
         return ScaleTransition(
           scale: Tween<double>(begin: 0, end: 1).animate(primary),
           child: child,
         );
-      case PageTransitionType.rotation:
+      case .rotation:
         return RotationTransition(
           turns: Tween<double>(begin: 0, end: 1).animate(primary),
           child: child,
         );
-      case PageTransitionType.size:
+      case .size:
         return Align(
           alignment: Alignment.center,
           child: SizeTransition(
-              sizeFactor: primary,
-              alignment: AlignmentGeometry.center,
-              child: child
+            sizeFactor: primary,
+            child: child,
           ),
         );
-      case PageTransitionType.sharedAxisHorizontal:
+      case .sharedAxisHorizontal:
         return SharedAxisTransition(
           animation: primary,
           secondaryAnimation: secondary,
-          transitionType: SharedAxisTransitionType.horizontal,
+          transitionType: .horizontal,
           child: child,
         );
-      case PageTransitionType.sharedAxisVertical:
+      case .sharedAxisVertical:
         return SharedAxisTransition(
           animation: primary,
           secondaryAnimation: secondary,
-          transitionType: SharedAxisTransitionType.vertical,
+          transitionType: .vertical,
           child: child,
         );
-      case PageTransitionType.sharedAxisScaled:
+      case .sharedAxisScaled:
         return SharedAxisTransition(
           animation: primary,
           secondaryAnimation: secondary,
-          transitionType: SharedAxisTransitionType.scaled,
+          transitionType: .scaled,
           child: child,
         );
     }
@@ -215,15 +237,28 @@ class TransitionPage extends CustomTransitionPage<void> {
     Duration? reverseTransitionDuration,
     required super.child,
     required PageTransitionType transitionType,
+    PageTransitionType? reverseTransitionType,
     Curve curve = Curves.easeOut,
+    Curve reverseCurve = Curves.easeIn,
     super.barrierColor,
     super.opaque,
   }) : super(
-    key: key ?? ValueKey('$transitionType-${child.hashCode}'),
-    transitionDuration: transitionDuration ?? const Duration(milliseconds: 350),
-    reverseTransitionDuration: reverseTransitionDuration ?? const Duration(milliseconds: 350),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return transitionType.transition(animation, child, secondaryAnimation: secondaryAnimation);
-    }
-  );
+         key: key ?? ValueKey('$transitionType-${child.hashCode}'),
+         transitionDuration:
+             transitionDuration ?? const Duration(milliseconds: 350),
+         reverseTransitionDuration:
+             reverseTransitionDuration ?? const Duration(milliseconds: 350),
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           final isReverse = animation.status == .reverse;
+           final type = isReverse ? reverseTransitionType ?? transitionType : transitionType;
+
+           return type.transition(
+             animation,
+             child,
+             secondaryAnimation: secondaryAnimation,
+             curve: curve,
+             reverseCurve: reverseCurve,
+           );
+         },
+       );
 }

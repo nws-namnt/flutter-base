@@ -13,6 +13,11 @@ extension RouterExtension on BuildContext {
   /// Pops the top-most route (e.g. a dialog) via the nearest [Navigator].
   void get backDialog => Navigator.pop(this);
 
+  /// Pops the top-most route (e.g. a dialog) via the nearest [Navigator],
+  /// returning [result] to whoever awaited the route (such as
+  /// `context.showAppDialog<T>()`).
+  void backDialogWithResult<T extends Object?>([T? result]) => Navigator.pop(this, result);
+
   /// Whether the current route can be popped.
   bool get canBack => GoRouter.of(this).canPop();
 

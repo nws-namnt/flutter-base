@@ -1,5 +1,5 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_base/pages/widgets/bottom_sheet_widget.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,6 +41,7 @@ List<RouteBase> routes = [
   _imagePreviewRoute,
   _aiSupportRoute,
   _languageSheetRoute,
+  ..._dialogRoutes,
   _notFoundRoute,
 ];
 
@@ -266,6 +267,19 @@ GoRoute get _languageSheetRoute => GoRoute(
     isDismissible: false,
   ),
 );
+
+List<GoRoute> get _dialogRoutes => [
+  GoRoute(
+    name: Routers.confirmDialog.routerName,
+    path: Routers.confirmDialog.routerPath,
+    pageBuilder: (context, state) => RouteDialogWidget<bool>(
+      builder: (context) => const ConfirmDialogWidget(
+        title: 'Are you sure to open the device info?',
+        message: 'This will show you the device info.',
+      ),
+    ),
+  ),
+];
 
 // AI Support chat
 GoRoute get _aiSupportRoute => GoRoute(
