@@ -1,0 +1,18 @@
+name: animation_text
+description: "Customizable animated text widgets for Flutter with physics-based effects (pure Dart/Flutter)."
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.3 <4.0.0"
+  flutter: ">=3.27.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  forge2d: ^0.14.2+1
+
+dev_dependencies:
+  flutter_lints: ^3.0.0
+
+flutter:

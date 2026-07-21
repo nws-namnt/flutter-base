@@ -4,14 +4,15 @@ import 'package:flutter_base/common/app_extension.dart';
 import 'package:flutter_base/pages/widgets/action_widget.dart';
 import 'package:flutter_base/pages/widgets/flow_fab_menu_widget.dart';
 import 'package:flutter_base/utils/app_utils.dart';
+import 'package:flutter_base/utils/data_generator_util.dart' hide R;
 import 'package:flutter_base/utils/extensions/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
-import '../../common/app_colors.dart';
 import '../../generated/app_assets.dart';
 import '../../models/flow_fab_menu.dart';
 import '../widgets/cached_image_widget.dart';
+import '../widgets/collapsible_text_widget.dart';
 import '../widgets/hero_image_widget.dart';
 import 'service_cubit.dart';
 import 'service_state.dart';
@@ -143,7 +144,7 @@ class _ServicePageState extends State<ServicePage>
                 children: [
                   const _FirstTab(),
                   const _SecondTab(),
-                  const Placeholder(),
+                  const _ThirdTab(),
                 ],
               ),
             },
@@ -173,6 +174,7 @@ class _FirstTabState extends State<_FirstTab> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
         HeroImageWidget(
@@ -182,7 +184,7 @@ class _FirstTabState extends State<_FirstTab> {
             child: FadeInImage.assetNetwork(
               placeholder: R.imagesIcArticleNotFound,
               image:
-              'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                  'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
             ),
           ),
         ).equalExpand,
@@ -194,7 +196,7 @@ class _FirstTabState extends State<_FirstTab> {
             child: CachedImageWidget(
               fit: BoxFit.contain,
               imageUrl:
-              'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                  'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
             ),
           ),
           child: AspectRatio(
@@ -203,7 +205,7 @@ class _FirstTabState extends State<_FirstTab> {
               fit: BoxFit.cover,
               width: 200,
               imageUrl:
-              'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
+                  'https://iawildlife.org/wp-content/uploads/2021/02/1-Winter-Fox.jpg',
             ),
           ),
         ).equalExpand,
@@ -223,14 +225,10 @@ class _FirstTabState extends State<_FirstTab> {
                           builder: (context, opacity, child) {
                             return ColorFiltered(
                               colorFilter: ColorFilter.mode(
-                                Colors.red.withValues(
-                                  alpha: opacity,
-                                ),
+                                cs.primary.withValues(alpha: opacity),
                                 BlendMode.srcIn,
                               ),
-                              child: Image.asset(
-                                R.imagesIcArticleNotFound,
-                              ),
+                              child: Image.asset(R.imagesIcArticleNotFound),
                             );
                           },
                         ),
@@ -241,11 +239,10 @@ class _FirstTabState extends State<_FirstTab> {
                       builder: (context, opacity, child) {
                         return AnimatedPhysicalModel(
                           onEnd: () {},
-                          color: Colors.red.withValues(
-                            alpha: opacity,
+                          color: cs.primary.withValues(alpha: opacity),
+                          shadowColor: cs.shadow.withValues(
+                            alpha: 1 - opacity,
                           ),
-                          shadowColor: AppColors.premiumBlack
-                              .withValues(alpha: 1 - opacity),
                           clipBehavior: .none,
                           elevation: 8,
                           borderRadius: .circular(50),
@@ -306,19 +303,18 @@ class _FirstTabState extends State<_FirstTab> {
                         horizontal: 4.0,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: cs.primaryContainer,
                         borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          color: AppColors.techBlack,
-                          width: .5,
-                        ),
+                        border: Border.all(color: cs.outline, width: .5),
                       ),
                       alignment: .center,
-                      child: Text('Item ${index + 1}'),
+                      child: Text(
+                        'Item ${index + 1}',
+                        style: TextStyle(color: cs.onPrimaryContainer),
+                      ),
                     ),
                     itemCount: 20,
-                    separatorBuilder: (context, index) =>
-                    const Gap(4.0),
+                    separatorBuilder: (context, index) => const Gap(4.0),
                   ),
                 ),
               ),
@@ -357,6 +353,7 @@ class __SecondTabState extends State<_SecondTab> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
         const Padding(
@@ -372,50 +369,50 @@ class __SecondTabState extends State<_SecondTab> {
             children: [
               _section('Transform'),
               _grid([
-                _Demo('fadeIn', _controlled(_box(Colors.indigo)).fadeIn()),
+                _Demo('fadeIn', _controlled(_box(cs.primary)).fadeIn()),
                 _Demo(
                   'fade .3',
-                  _controlled(_box(Colors.indigo.shade300)).fade(begin: .3),
+                  _controlled(_box(cs.primaryContainer)).fade(begin: .3),
                 ),
                 _Demo(
                   'scale',
                   _controlled(
-                    _box(Colors.teal),
+                    _box(cs.secondary),
                   ).scale(begin: const Offset(.5, .5)),
                 ),
                 _Demo(
                   'scaleX',
-                  _controlled(_box(Colors.teal.shade300)).scaleX(begin: 0),
+                  _controlled(_box(cs.secondaryContainer)).scaleX(begin: 0),
                 ),
                 _Demo(
                   'scaleY',
-                  _controlled(_box(Colors.teal.shade700)).scaleY(begin: 0),
+                  _controlled(_box(cs.secondary)).scaleY(begin: 0),
                 ),
-                _Demo('rotate', _controlled(_box(Colors.green)).rotate()),
-                _Demo('flip', _controlled(_box(Colors.blue)).flip()),
-                _Demo('flipH', _controlled(_box(Colors.blue.shade300)).flipH()),
-                _Demo('flipV', _controlled(_box(Colors.blue.shade700)).flipV()),
+                _Demo('rotate', _controlled(_box(cs.tertiary)).rotate()),
+                _Demo('flip', _controlled(_box(cs.primary)).flip()),
+                _Demo('flipH', _controlled(_box(cs.primaryContainer)).flipH()),
+                _Demo('flipV', _controlled(_box(cs.primary)).flipV()),
                 _Demo(
                   'move',
                   _controlled(
-                    _box(Colors.purple),
+                    _box(cs.secondary),
                   ).move(begin: const Offset(-40, -40)),
                 ),
                 _Demo(
                   'moveX',
-                  _controlled(_box(Colors.purple.shade300)).moveX(begin: -40),
+                  _controlled(_box(cs.secondaryContainer)).moveX(begin: -40),
                 ),
                 _Demo(
                   'moveY',
-                  _controlled(_box(Colors.purple.shade700)).moveY(begin: 40),
+                  _controlled(_box(cs.secondary)).moveY(begin: 40),
                 ),
                 _Demo(
                   'slideX',
-                  _controlled(_box(Colors.orange)).slideX(begin: -1),
+                  _controlled(_box(cs.tertiary)).slideX(begin: -1),
                 ),
                 _Demo(
                   'slideY',
-                  _controlled(_box(Colors.pink)).slideY(begin: 1),
+                  _controlled(_box(cs.tertiaryContainer)).slideY(begin: 1),
                 ),
               ]),
               _section('Filter / visual'),
@@ -423,71 +420,76 @@ class __SecondTabState extends State<_SecondTab> {
                 _Demo(
                   'blur',
                   _controlled(
-                    _box(Colors.brown),
+                    _box(cs.secondary),
                   ).blur(begin: const Offset(12, 12), end: Offset.zero),
                 ),
                 _Demo(
                   'blurXY',
-                  _controlled(_box(Colors.brown.shade300)).blurXY(begin: 12, end: 0),
+                  _controlled(
+                    _box(cs.secondaryContainer),
+                  ).blurXY(begin: 12, end: 0),
                 ),
                 _Demo(
                   'tint',
-                  _controlled(_box(Colors.grey)).tint(color: Colors.amber),
+                  _controlled(
+                    _box(cs.surfaceContainerHighest),
+                  ).tint(color: cs.tertiaryContainer),
                 ),
                 _Demo(
                   'untint',
-                  _controlled(_box(Colors.amber)).untint(color: Colors.amber),
+                  _controlled(
+                    _box(cs.tertiaryContainer),
+                  ).untint(color: cs.tertiaryContainer),
                 ),
                 _Demo(
                   'color',
-                  _controlled(_box(Colors.grey.shade400)).color(
-                    end: Colors.deepOrange,
-                    blendMode: BlendMode.srcATop,
-                  ),
+                  _controlled(
+                    _box(cs.surfaceContainerHigh),
+                  ).color(end: cs.tertiary, blendMode: BlendMode.srcATop),
                 ),
                 _Demo(
                   'saturate',
-                  _controlled(_box(Colors.cyan)).saturate(begin: 0, end: 1),
+                  _controlled(_box(cs.secondary)).saturate(begin: 0, end: 1),
                 ),
                 _Demo(
                   'desaturate',
                   _controlled(
-                    _box(Colors.cyan.shade700),
+                    _box(cs.secondary),
                   ).desaturate(begin: 0, end: 1),
                 ),
                 _Demo(
                   'boxShadow',
-                  _controlled(_box(Colors.blueGrey)).boxShadow(
-                    end: const BoxShadow(
-                      color: Colors.black45,
+                  _controlled(_box(cs.tertiary)).boxShadow(
+                    end: BoxShadow(
+                      color: cs.shadow,
                       blurRadius: 16,
-                      offset: Offset(0, 8),
+                      offset: const Offset(0, 8),
                     ),
                   ),
                 ),
                 _Demo(
                   'shimmer',
                   _controlled(
-                    _box(Colors.indigo.shade300),
-                  ).shimmer(color: Colors.white),
+                    _box(cs.primaryContainer),
+                  ).shimmer(color: cs.surfaceBright),
                 ),
-                _Demo('shake', _controlled(_box(Colors.red)).shake(hz: 4)),
+                _Demo('shake', _controlled(_box(cs.error)).shake(hz: 4)),
                 _Demo(
                   'shakeX',
-                  _controlled(_box(Colors.red.shade300)).shakeX(hz: 4),
+                  _controlled(_box(cs.errorContainer)).shakeX(hz: 4),
                 ),
                 _Demo(
                   'shakeY',
-                  _controlled(_box(Colors.red.shade700)).shakeY(hz: 4),
+                  _controlled(_box(cs.error)).shakeY(hz: 4),
                 ),
               ]),
               _section('Chained (.then)'),
               Center(
-                child: _controlled(_box(Colors.deepPurple, size: 80))
+                child: _controlled(_box(cs.primary, size: 80))
                     .fadeIn()
                     .scale()
                     .then(delay: 100.ms)
-                    .tint(color: Colors.pinkAccent),
+                    .tint(color: cs.tertiary),
               ),
               _section('Builders: custom / toggle / swap'),
               Row(
@@ -500,7 +502,7 @@ class __SecondTabState extends State<_SecondTab> {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: Color.lerp(Colors.red, Colors.blue, value),
+                          color: Color.lerp(cs.error, cs.primary, value),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -514,7 +516,7 @@ class __SecondTabState extends State<_SecondTab> {
                         width: 84,
                         height: 44,
                         alignment: Alignment.center,
-                        color: value ? Colors.green : Colors.grey,
+                        color: value ? cs.tertiary : cs.surfaceContainerHighest,
                         child: Text(value ? 'Before' : 'After'),
                       ),
                     ),
@@ -523,7 +525,7 @@ class __SecondTabState extends State<_SecondTab> {
                     'swap',
                     _controlled(const Text('Before')).swap(
                       duration: 900.ms,
-                      builder: (_, __) => const Text(
+                      builder: (c, w) => const Text(
                         'After',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -538,13 +540,13 @@ class __SecondTabState extends State<_SecondTab> {
                   _labeled(
                     'show',
                     _controlled(
-                      _box(Colors.green, size: 56),
+                      _box(cs.tertiary, size: 56),
                     ).show(delay: 500.ms, maintain: true),
                   ),
                   _labeled(
                     'hide',
                     _controlled(
-                      _box(Colors.red, size: 56),
+                      _box(cs.error, size: 56),
                     ).hide(delay: 500.ms, maintain: true),
                   ),
                 ],
@@ -557,22 +559,22 @@ class __SecondTabState extends State<_SecondTab> {
                           height: 44,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.indigo.shade300,
+                            color: cs.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Loading…',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: cs.onPrimaryContainer),
                           ),
                         )
                         .animate(onPlay: (c) => c.repeat())
-                        .shimmer(duration: 1200.ms, color: Colors.white70),
+                        .shimmer(duration: 1200.ms, color: cs.surfaceBright),
               ),
               _section('Toggle (target)'),
               Center(
                 child: GestureDetector(
                   onTap: () => setState(() => _toggled = !_toggled),
-                  child: _box(Colors.deepOrange, size: 80)
+                  child: _box(cs.tertiary, size: 80)
                       .animate(target: _toggled ? 1 : 0)
                       .scaleXY(end: 1.3, duration: 300.ms)
                       .rotate(end: .25),
@@ -586,7 +588,7 @@ class __SecondTabState extends State<_SecondTab> {
                 (i) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: ListTile(
-                    tileColor: Colors.indigo.shade50,
+                    tileColor: cs.secondaryContainer,
                     leading: CircleAvatar(child: Text('${i + 1}')),
                     title: Text('Item ${i + 1}'),
                   ),
@@ -682,4 +684,122 @@ class _Demo {
   final String label;
   final Widget child;
   const _Demo(this.label, this.child);
+}
+
+class Test {
+  final String id;
+  final String title;
+  final int score;
+  final double average;
+  final bool isPassed;
+
+  const Test({
+    required this.id,
+    required this.title,
+    required this.score,
+    required this.average,
+    required this.isPassed,
+  });
+}
+
+class _ThirdTab extends StatefulWidget {
+  const _ThirdTab();
+
+  @override
+  State<_ThirdTab> createState() => _ThirdTabState();
+}
+
+class _ThirdTabState extends State<_ThirdTab> {
+  late final ValueNotifier<List<Test>> testNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    testNotifier = ValueNotifier<List<Test>>([]);
+    testNotifier.value = randomList(
+      10,
+      (i) => Test(
+        id: 'test_$i',
+        title: DataGenerationType.string.generate(),
+        score: DataGenerationType.integer.generate(),
+        average: DataGenerationType.double.generate(),
+        isPassed: DataGenerationType.bool.generate(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    testNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const SliverToBoxAdapter(
+          child: CollapsibleTextWidget(
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset\'s Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.',
+            maxLines: 3,
+            readMoreText: 'Show more',
+            readLessText: 'Show less',
+          ),
+        ),
+        SliverList.separated(
+          itemBuilder: (context, index) => Text(DataGenerationType.values[index].generate().toString()),
+          separatorBuilder: (context, index) => const Gap(10),
+          itemCount: DataGenerationType.values.length,
+        ),
+        ValueListenableBuilder(
+          valueListenable: testNotifier,
+          builder: (context, tests, child) {
+            return SliverPadding(
+              padding: const EdgeInsets.all(10.0),
+              sliver: SliverReorderableList(
+                itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
+                  key: ValueKey(tests[index].id),
+                  index: index,
+                  child: Card(
+                    child: ListTile(
+                      title: Text(tests[index].title),
+                      subtitle: Text('Score: ${tests[index].score}'),
+                      isThreeLine: true,
+                      trailing: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle_rounded)),
+                      visualDensity: VisualDensity.adaptivePlatformDensity,
+                    ),
+                  ),
+                ),
+                itemCount: tests.length,
+                onReorderItem: (oldIndex, newIndex) {
+                  final list = [...tests];
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  list.insert(newIndex, list.removeAt(oldIndex));
+                  testNotifier.value = list;
+                },
+                proxyDecorator: (child, index, animation) {
+                  return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, _) {
+                      final t = Curves.easeInOut.transform(animation.value);
+                      return Transform.scale(
+                        scale: 1 + 0.03 * t, // 1.0 → 1.03
+                        child: Material(
+                          elevation: 8 * t, // 0 → 8
+                          color: Colors.transparent,
+                          shadowColor: Theme.of(context).colorScheme.shadow,
+                          borderRadius: BorderRadius.circular(12),
+                          child: child,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          }
+        ),
+      ],
+    );
+  }
 }

@@ -1,0 +1,27 @@
+/// animation_text
+///
+/// Customizable, physics-aware animated text widgets for Flutter.
+/// Import this file to access every public widget, config and enum.
+library;
+
+export 'src/animated_text_base.dart';
+/// Animated text controller
+export 'src/animated_text_controller.dart' show AnimatedTextController;
+export 'src/animation_config.dart';
+export 'src/effects/blur_text.dart';
+export 'src/effects/chime_bell_text.dart';
+export 'src/effects/gravity_text.dart';
+export 'src/effects/offset_text.dart';
+export 'src/effects/reveal_text.dart';
+export 'src/effects/rotate_text.dart';
+export 'src/effects/scale_text.dart';
+export 'src/effects/scramble_text.dart';
+export 'src/effects/slide_text.dart';
+export 'src/effects/spring_text.dart';
+/// Animation type enum for [letter, word] & modes [ forward, reverse, repeat ]
+export 'src/enums/animation_type.dart' show AnimationType, AnimationMode;
+/// Animation type enum for [RotateText] animation
+export 'src/enums/rotate_animation_type.dart' show RotateAnimationType;
+/// Animation type enum for [OffsetText] animation
+export 'src/enums/slide_animation_type.dart' show SlideAnimationType;
+export 'src/widgets/paragraph_text.dart';
