@@ -1,6 +1,7 @@
 import 'package:animation_text/src/animated_text_base.dart';
 import 'package:animation_text/src/animated_text_controller.dart';
 import 'package:animation_text/src/animation_config.dart';
+import 'package:animation_text/src/utils/wrap_alignment.dart';
 import 'package:animation_text/src/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 
@@ -68,11 +69,7 @@ class RevealText extends StatelessWidget {
                 (style?.fontSize ?? 16) * (style?.height ?? 1.2);
 
             return Wrap(
-              alignment: textAlign == TextAlign.center
-                  ? WrapAlignment.center
-                  : textAlign == TextAlign.end
-                      ? WrapAlignment.end
-                      : WrapAlignment.start,
+              alignment: textAlign.wrapAlignment,
               children: List.generate(segments.length, (index) {
                 final t = animations[index].value.clamp(0.0, 1.0);
                 final opacity =

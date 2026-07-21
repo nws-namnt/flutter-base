@@ -140,8 +140,12 @@ class _AnimatedTextBaseState extends State<AnimatedTextBase>
       // Recreate segment animations with new configuration
       _buildSegmentAnimations();
 
-      // Restart the animation
-      _textController.startInitialAnimation();
+      // Restart after this frame: startInitialAnimation() calls forward() +
+      // notifyListeners(), which must not run during the build/update phase
+      // (it would mark listening widgets dirty mid-build).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _textController.startInitialAnimation();
+      });
     }
   }
 

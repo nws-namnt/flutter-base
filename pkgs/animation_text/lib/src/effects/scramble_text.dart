@@ -1,6 +1,7 @@
 import 'package:animation_text/src/animated_text_base.dart';
 import 'package:animation_text/src/animated_text_controller.dart';
 import 'package:animation_text/src/animation_config.dart';
+import 'package:animation_text/src/utils/wrap_alignment.dart';
 import 'package:animation_text/src/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 
@@ -74,11 +75,7 @@ class _ScrambleTextState extends State<ScrambleText> {
       builder: (context, animations, segments) {
 
         return Wrap(
-          alignment: widget.textAlign == TextAlign.center
-              ? WrapAlignment.center
-              : widget.textAlign == TextAlign.end
-                  ? WrapAlignment.end
-                  : WrapAlignment.start,
+          alignment: widget.textAlign.wrapAlignment,
           children: List.generate(segments.length, (index) {
             final opacityAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(

@@ -32,6 +32,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  animation_text:
+    dependency: "direct main"
+    description:
+      path: "pkgs/animation_text"
+      relative: true
+    source: path
+    version: "1.0.0"
   animations:
     dependency: "direct main"
     description:
@@ -764,6 +771,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.1.0"
+  forge2d:
+    dependency: transitive
+    description:
+      name: forge2d
+      sha256: "0f63d177f2e137a5007b879fda4076d0b81de065fcd72056c6fc896c82758bb7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.2+1"
   gap:
     dependency: "direct main"
     description:

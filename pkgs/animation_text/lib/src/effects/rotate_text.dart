@@ -1,29 +1,14 @@
 import 'dart:math';
 
-import 'package:animation_text/animation_text.dart';
+import 'package:animation_text/src/animated_text_controller.dart';
+import 'package:animation_text/src/animation_config.dart';
+import 'package:animation_text/src/enums/rotate_animation_type.dart';
 import 'package:animation_text/src/utils/double_tween_by_rotate_type.dart';
+import 'package:animation_text/src/widgets/per_segment_text.dart';
 import 'package:flutter/material.dart';
 
-/// A widget that animates text with a rotation effect
+/// A widget that animates text with a rotation effect.
 class RotateText extends StatelessWidget {
-  /// The text to animate
-  final String text;
-
-  /// The style to apply to the text
-  final TextStyle? style;
-
-  /// The text alignment
-  final TextAlign textAlign;
-
-  /// The animation configuration
-  final AnimationConfig config;
-
-  /// The type of rotation animation to apply
-  final RotateAnimationType direction;
-
-  /// On controller created
-  final void Function(AnimatedTextController)? onControllerCreated;
-
   const RotateText({
     super.key,
     required this.text,
@@ -34,48 +19,33 @@ class RotateText extends StatelessWidget {
     this.onControllerCreated,
   });
 
+  final String text;
+  final TextStyle? style;
+  final TextAlign textAlign;
+  final AnimationConfig config;
+
+  /// The type of rotation animation to apply.
+  final RotateAnimationType direction;
+  final void Function(AnimatedTextController)? onControllerCreated;
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedTextBase(
+    return PerSegmentText(
       text: text,
       style: style,
       textAlign: textAlign,
       config: config,
       onControllerCreated: onControllerCreated,
-      builder: (context, animations, segments) {
-        return Wrap(
-          alignment: textAlign == TextAlign.center
-              ? WrapAlignment.center
-              : textAlign == TextAlign.end
-                  ? WrapAlignment.end
-                  : WrapAlignment.start,
-          children: List.generate(segments.length, (index) {
-            final rotateAnimation = doubleTweenByRotateType(direction).animate(
-              CurvedAnimation(
-                parent: animations[index],
-                curve: config.curve,
-              ),
-            );
-
-            return AnimatedBuilder(
-              animation: rotateAnimation,
-              builder: (context, child) {
-                return Transform(
-                  transform: Matrix4.identity()
-                    ..rotateZ(rotateAnimation.value * pi / 180),
-                  alignment: Alignment.center,
-                  child: Opacity(
-                    opacity: animations[index].value.clamp(0.0, 1.0),
-                    child: child,
-                  ),
-                );
-              },
-              child: ParagraphText(
-                segments[index],
-                style: style,
-              ),
-            );
-          }),
+      segmentBuilder: (context, index, progress, child) {
+        final t = config.curve.transform(progress.value.clamp(0.0, 1.0));
+        final degrees = doubleTweenByRotateType(direction).transform(t);
+        return Transform(
+          transform: Matrix4.identity()..rotateZ(degrees * pi / 180),
+          alignment: Alignment.center,
+          child: Opacity(
+            opacity: progress.value.clamp(0.0, 1.0),
+            child: child,
+          ),
         );
       },
     );

@@ -14,6 +14,7 @@ import '../../models/flow_fab_menu.dart';
 import '../widgets/cached_image_widget.dart';
 import '../widgets/collapsible_text_widget.dart';
 import '../widgets/hero_image_widget.dart';
+import 'animation_text_showcase.dart';
 import 'service_cubit.dart';
 import 'service_state.dart';
 
@@ -709,12 +710,19 @@ class _ThirdTab extends StatefulWidget {
   State<_ThirdTab> createState() => _ThirdTabState();
 }
 
-class _ThirdTabState extends State<_ThirdTab> {
+class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
+  late final TabController _tabController;
+  late final PageController _pageController;
+
   late final ValueNotifier<List<Test>> testNotifier;
 
   @override
   void initState() {
     super.initState();
+
+    _tabController = TabController(length: 3, vsync: this);
+    _pageController = PageController();
+
     testNotifier = ValueNotifier<List<Test>>([]);
     testNotifier.value = randomList(
       10,
@@ -730,76 +738,109 @@ class _ThirdTabState extends State<_ThirdTab> {
 
   @override
   void dispose() {
+    _tabController.dispose();
+    _pageController.dispose();
     testNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        const SliverToBoxAdapter(
-          child: CollapsibleTextWidget(
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset\'s Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.',
-            maxLines: 3,
-            readMoreText: 'Show more',
-            readLessText: 'Show less',
-          ),
-        ),
-        SliverList.separated(
-          itemBuilder: (context, index) => Text(DataGenerationType.values[index].generate().toString()),
-          separatorBuilder: (context, index) => const Gap(10),
-          itemCount: DataGenerationType.values.length,
-        ),
-        ValueListenableBuilder(
-          valueListenable: testNotifier,
-          builder: (context, tests, child) {
-            return SliverPadding(
-              padding: const EdgeInsets.all(10.0),
-              sliver: SliverReorderableList(
-                itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
-                  key: ValueKey(tests[index].id),
-                  index: index,
-                  child: Card(
-                    child: ListTile(
-                      title: Text(tests[index].title),
-                      subtitle: Text('Score: ${tests[index].score}'),
-                      isThreeLine: true,
-                      trailing: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle_rounded)),
-                      visualDensity: VisualDensity.adaptivePlatformDensity,
-                    ),
-                  ),
-                ),
-                itemCount: tests.length,
-                onReorderItem: (oldIndex, newIndex) {
-                  final list = [...tests];
-                  if (newIndex > oldIndex) newIndex -= 1;
-                  list.insert(newIndex, list.removeAt(oldIndex));
-                  testNotifier.value = list;
-                },
-                proxyDecorator: (child, index, animation) {
-                  return AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, _) {
-                      final t = Curves.easeInOut.transform(animation.value);
-                      return Transform.scale(
-                        scale: 1 + 0.03 * t, // 1.0 → 1.03
-                        child: Material(
-                          elevation: 8 * t, // 0 → 8
-                          color: Colors.transparent,
-                          shadowColor: Theme.of(context).colorScheme.shadow,
-                          borderRadius: BorderRadius.circular(12),
-                          child: child,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+    return Stack(
+      alignment: .bottomCenter,
+      children: [
+        PageView(
+          controller: _pageController,
+          children: [
+            _firstPageView,
+            _secondPageView,
+            _thirdPageView,
+          ],
+          onPageChanged: (index) {
+            _tabController.index = index;
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
             );
-          }
+          },
         ),
+        TabPageSelector(
+          controller: _tabController,
+          color: context.colorScheme.surface,
+          selectedColor: context.colorScheme.primary,
+        )
       ],
     );
   }
+
+  CustomScrollView get _firstPageView => CustomScrollView(
+    slivers: [
+      const SliverToBoxAdapter(
+        child: CollapsibleTextWidget(
+          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset\'s Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.',
+          maxLines: 3,
+          readMoreText: 'Show more',
+          readLessText: 'Show less',
+        ),
+      ),
+      SliverList.separated(
+        itemBuilder: (context, index) => Text(DataGenerationType.values[index].generate().toString()),
+        separatorBuilder: (context, index) => const Gap(10),
+        itemCount: DataGenerationType.values.length,
+      ),
+      ValueListenableBuilder(
+        valueListenable: testNotifier,
+        builder: (context, tests, child) {
+          return SliverPadding(
+            padding: const EdgeInsets.all(10.0),
+            sliver: SliverReorderableList(
+              itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
+                key: ValueKey(tests[index].id),
+                index: index,
+                child: Card(
+                  child: ListTile(
+                    title: Text(tests[index].title),
+                    subtitle: Text('Score: ${tests[index].score}'),
+                    isThreeLine: true,
+                    trailing: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle_rounded)),
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                  ),
+                ),
+              ),
+              itemCount: tests.length,
+              onReorderItem: (oldIndex, newIndex) {
+                final list = [...tests];
+                if (newIndex > oldIndex) newIndex -= 1;
+                list.insert(newIndex, list.removeAt(oldIndex));
+                testNotifier.value = list;
+              },
+              proxyDecorator: (child, index, animation) {
+                return AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, _) {
+                    final t = Curves.easeInOut.transform(animation.value);
+                    return Transform.scale(
+                      scale: 1 + 0.03 * t, // 1.0 → 1.03
+                      child: Material(
+                        elevation: 8 * t, // 0 → 8
+                        color: Colors.transparent,
+                        shadowColor: Theme.of(context).colorScheme.shadow,
+                        borderRadius: BorderRadius.circular(12),
+                        child: child,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        }
+      ),
+    ],
+  );
+
+  Widget get _secondPageView => const AnimationTextShowcase();
+
+  Widget get _thirdPageView => const Placeholder();
 }

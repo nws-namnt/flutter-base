@@ -55,6 +55,8 @@ dependencies:
     path: pkgs/setting_ui_builder
   animation_kit:
     path: pkgs/animation_kit
+  animation_text:
+    path: pkgs/animation_text
 
   # UI components
   another_flushbar: ^2.2.4
