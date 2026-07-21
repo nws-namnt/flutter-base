@@ -488,7 +488,7 @@ class _AnimationTextShowcaseState extends State<AnimationTextShowcase> {
                 Text('Tap', style: context.textTheme.labelMedium),
                 Switch(
                   value: _interactionEnabled,
-                  activeColor: cs.primary,
+                  activeThumbColor: cs.primary,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onChanged: (v) => _setState(() => _interactionEnabled = v),
                 ),

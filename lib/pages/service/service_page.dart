@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_base/common/app_extension.dart';
 import 'package:flutter_base/pages/widgets/action_widget.dart';
@@ -166,10 +167,12 @@ class _FirstTab extends StatefulWidget {
 class _FirstTabState extends State<_FirstTab> {
   // Drives the red color-filter opacity applied to the third hero image via
   final _colorFilter = ValueNotifier<double>(0.5);
+  final _chipNotifier = ValueNotifier<List<int>>([]);
 
   @override
   void dispose() {
     _colorFilter.dispose();
+    _chipNotifier.dispose();
     super.dispose();
   }
 
@@ -241,9 +244,7 @@ class _FirstTabState extends State<_FirstTab> {
                         return AnimatedPhysicalModel(
                           onEnd: () {},
                           color: cs.primary.withValues(alpha: opacity),
-                          shadowColor: cs.shadow.withValues(
-                            alpha: 1 - opacity,
-                          ),
+                          shadowColor: cs.shadow.withValues(alpha: 1 - opacity),
                           clipBehavior: .none,
                           elevation: 8,
                           borderRadius: .circular(50),
@@ -286,39 +287,54 @@ class _FirstTabState extends State<_FirstTab> {
             // scrollable so layout resolves before the semantics pass
             // (otherwise the new semantics engine asserts on dirty
             // parent data).
-            Positioned(
-              top: 0,
-              left: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: 30,
-                child: RotatedBox(
-                  quarterTurns: 1,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.only(bottom: 2.0),
-                    scrollDirection: .horizontal,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 2.0,
-                        horizontal: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: cs.primaryContainer,
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(color: cs.outline, width: .5),
-                      ),
-                      alignment: .center,
-                      child: Text(
-                        'Item ${index + 1}',
-                        style: TextStyle(color: cs.onPrimaryContainer),
+            ValueListenableBuilder(
+              valueListenable: _chipNotifier,
+              builder: (context, chipPos, child) {
+                return Positioned(
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: SizedBox(
+                    width: 30,
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: ListView.separated(
+                        scrollDirection: .horizontal,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => FilterChip.elevated(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+                          avatar: const Icon(Icons.android_rounded),
+                          deleteIcon: const Icon(Icons.delete_rounded),
+                          showCheckmark: true,
+                          label: Text(
+                            'Item ${index + 1}',
+                            style: TextStyle(color: cs.onPrimaryContainer),
+                          ),
+                          labelPadding: const EdgeInsets.symmetric(horizontal: 10),
+                          selected: chipPos.contains(index),
+                          onSelected: (selected) {
+                            // Copy to a new list so ValueNotifier detects the
+                            // change and rebuilds; mutating in place would not.
+                            final updated = List<int>.from(chipPos);
+                            if (updated.contains(index)) {
+                              updated.remove(index);
+                            } else {
+                              updated.add(index);
+                            }
+                            _chipNotifier.value = updated;
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide(color: cs.outline, width: .5),
+                          ),
+                        ),
+                        itemCount: 20,
+                        separatorBuilder: (context, index) => const Gap(4.0),
                       ),
                     ),
-                    itemCount: 20,
-                    separatorBuilder: (context, index) => const Gap(4.0),
                   ),
-                ),
-              ),
+                );
+              }
             ),
           ],
         ).equalExpand,
@@ -454,9 +470,7 @@ class __SecondTabState extends State<_SecondTab> {
                 ),
                 _Demo(
                   'desaturate',
-                  _controlled(
-                    _box(cs.secondary),
-                  ).desaturate(begin: 0, end: 1),
+                  _controlled(_box(cs.secondary)).desaturate(begin: 0, end: 1),
                 ),
                 _Demo(
                   'boxShadow',
@@ -479,18 +493,13 @@ class __SecondTabState extends State<_SecondTab> {
                   'shakeX',
                   _controlled(_box(cs.errorContainer)).shakeX(hz: 4),
                 ),
-                _Demo(
-                  'shakeY',
-                  _controlled(_box(cs.error)).shakeY(hz: 4),
-                ),
+                _Demo('shakeY', _controlled(_box(cs.error)).shakeY(hz: 4)),
               ]),
               _section('Chained (.then)'),
               Center(
-                child: _controlled(_box(cs.primary, size: 80))
-                    .fadeIn()
-                    .scale()
-                    .then(delay: 100.ms)
-                    .tint(color: cs.tertiary),
+                child: _controlled(
+                  _box(cs.primary, size: 80),
+                ).fadeIn().scale().then(delay: 100.ms).tint(color: cs.tertiary),
               ),
               _section('Builders: custom / toggle / swap'),
               Row(
@@ -716,6 +725,11 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
 
   late final ValueNotifier<List<Test>> testNotifier;
 
+  // Controller for the contextMenuBuilder demo (kept in state to avoid
+  // recreating it on every rebuild).
+  final _contextController =
+      TextEditingController(text: 'Select some of this text');
+
   @override
   void initState() {
     super.initState();
@@ -741,6 +755,7 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
     _tabController.dispose();
     _pageController.dispose();
     testNotifier.dispose();
+    _contextController.dispose();
     super.dispose();
   }
 
@@ -751,11 +766,7 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
       children: [
         PageView(
           controller: _pageController,
-          children: [
-            _firstPageView,
-            _secondPageView,
-            _thirdPageView,
-          ],
+          children: [_firstPageView, _secondPageView, _thirdPageView],
           onPageChanged: (index) {
             _tabController.index = index;
             _pageController.animateToPage(
@@ -769,7 +780,7 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
           controller: _tabController,
           color: context.colorScheme.surface,
           selectedColor: context.colorScheme.primary,
-        )
+        ),
       ],
     );
   }
@@ -785,7 +796,8 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
         ),
       ),
       SliverList.separated(
-        itemBuilder: (context, index) => Text(DataGenerationType.values[index].generate().toString()),
+        itemBuilder: (context, index) =>
+            Text(DataGenerationType.values[index].generate().toString()),
         separatorBuilder: (context, index) => const Gap(10),
         itemCount: DataGenerationType.values.length,
       ),
@@ -795,19 +807,23 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
           return SliverPadding(
             padding: const EdgeInsets.all(10.0),
             sliver: SliverReorderableList(
-              itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
-                key: ValueKey(tests[index].id),
-                index: index,
-                child: Card(
-                  child: ListTile(
-                    title: Text(tests[index].title),
-                    subtitle: Text('Score: ${tests[index].score}'),
-                    isThreeLine: true,
-                    trailing: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle_rounded)),
-                    visualDensity: VisualDensity.adaptivePlatformDensity,
+              itemBuilder: (context, index) =>
+                  ReorderableDelayedDragStartListener(
+                    key: ValueKey(tests[index].id),
+                    index: index,
+                    child: Card(
+                      child: ListTile(
+                        title: Text(tests[index].title),
+                        subtitle: Text('Score: ${tests[index].score}'),
+                        isThreeLine: true,
+                        trailing: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(Icons.drag_handle_rounded),
+                        ),
+                        visualDensity: VisualDensity.adaptivePlatformDensity,
+                      ),
+                    ),
                   ),
-                ),
-              ),
               itemCount: tests.length,
               onReorderItem: (oldIndex, newIndex) {
                 final list = [...tests];
@@ -835,12 +851,261 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
               },
             ),
           );
-        }
+        },
       ),
     ],
   );
 
   Widget get _secondPageView => const AnimationTextShowcase();
 
-  Widget get _thirdPageView => const Placeholder();
+  // Demo of three menu families: PopupMenuButton, MenuAnchor/MenuBar and
+  // a TextField with a custom contextMenuBuilder.
+  Widget get _thirdPageView => ListView(
+    padding: const EdgeInsets.all(16.0),
+    children: [
+      _menuSectionTitle('1. PopupMenuButton'),
+      _popupMenuDemo,
+      const Gap(24),
+      _menuSectionTitle('2. MenuBar'),
+      _menuBarDemo,
+      const Gap(24),
+      _menuSectionTitle('3. MenuAnchor (+ submenu)'),
+      _menuAnchorDemo,
+      const Gap(24),
+      _menuSectionTitle('4. contextMenuBuilder (TextField)'),
+      _contextMenuDemo,
+      const Gap(24),
+      _menuSectionTitle('5. contextMenuBuilder (SelectionArea)'),
+      _selectionAreaMenuDemo,
+      const Gap(24),
+      _menuSectionTitle('6. Custom context menu (any widget)'),
+      _customContextMenuDemo,
+    ],
+  );
+
+  // PopupMenuButton: the classic "more options" menu.
+  Widget get _popupMenuDemo => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      const Text('Tap the icon on the right'),
+      PopupMenuButton<String>(
+        icon: const Icon(Icons.more_vert),
+        position: PopupMenuPosition.under,
+        onSelected: (value) => _showSelected(value),
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: 'edit',
+            child: ListTile(leading: Icon(Icons.edit), title: Text('Edit')),
+          ),
+          const PopupMenuItem(
+            value: 'share',
+            child: ListTile(leading: Icon(Icons.share), title: Text('Share')),
+          ),
+          const PopupMenuDivider(),
+          const CheckedPopupMenuItem(
+            value: 'favorite',
+            checked: true,
+            child: Text('Favorite'),
+          ),
+          const PopupMenuItem(
+            value: 'delete',
+            child: ListTile(
+              leading: Icon(Icons.delete_outline),
+              title: Text('Delete'),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  // MenuBar: a fixed horizontal desktop-style bar with keyboard shortcuts.
+  Widget get _menuBarDemo => Align(
+    alignment: Alignment.centerLeft,
+    child: MenuBar(
+      children: [
+        SubmenuButton(
+          menuChildren: [
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.add),
+              shortcut: const SingleActivator(
+                LogicalKeyboardKey.keyN,
+                control: true,
+              ),
+              onPressed: () => _showSelected('File > New'),
+              child: const Text('New'),
+            ),
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.folder_open),
+              onPressed: () => _showSelected('File > Open'),
+              child: const Text('Open'),
+            ),
+          ],
+          child: const Text('File'),
+        ),
+        SubmenuButton(
+          menuChildren: [
+            MenuItemButton(
+              onPressed: () => _showSelected('Edit > Copy'),
+              child: const Text('Copy'),
+            ),
+            MenuItemButton(
+              onPressed: () => _showSelected('Edit > Paste'),
+              child: const Text('Paste'),
+            ),
+          ],
+          child: const Text('Edit'),
+        ),
+      ],
+    ),
+  );
+
+  // MenuAnchor: attach a menu (with a nested submenu) to any trigger widget.
+  Widget get _menuAnchorDemo => MenuAnchor(
+    builder: (context, controller, child) => FilledButton.icon(
+      icon: const Icon(Icons.menu),
+      label: const Text('Open menu'),
+      onPressed: () =>
+          controller.isOpen ? controller.close() : controller.open(),
+    ),
+    menuChildren: [
+      MenuItemButton(
+        leadingIcon: const Icon(Icons.refresh),
+        onPressed: () => _showSelected('Refresh'),
+        child: const Text('Refresh'),
+      ),
+      SubmenuButton(
+        leadingIcon: const Icon(Icons.download),
+        menuChildren: [
+          MenuItemButton(
+            onPressed: () => _showSelected('Export as PDF'),
+            child: const Text('PDF'),
+          ),
+          MenuItemButton(
+            onPressed: () => _showSelected('Export as PNG'),
+            child: const Text('PNG'),
+          ),
+        ],
+        child: const Text('Export'),
+      ),
+    ],
+  );
+
+  // contextMenuBuilder: keep the platform default items and add a custom one.
+  Widget get _contextMenuDemo => TextField(
+    maxLines: 3,
+    decoration: const InputDecoration(
+      border: OutlineInputBorder(),
+      helperText: 'Select text to see the custom "Uppercase" action',
+    ),
+    controller: _contextController,
+    contextMenuBuilder: (context, editableTextState) {
+      final buttonItems = editableTextState.contextMenuButtonItems;
+      final value = editableTextState.textEditingValue;
+      final selectedText = value.selection.textInside(value.text);
+
+      if (selectedText.isNotEmpty) {
+        buttonItems.insert(
+          0,
+          ContextMenuButtonItem(
+            label: 'Uppercase',
+            onPressed: () {
+              _showSelected(selectedText.toUpperCase());
+              ContextMenuController.removeAny();
+            },
+          ),
+        );
+      }
+
+      return AdaptiveTextSelectionToolbar.buttonItems(
+        anchors: editableTextState.contextMenuAnchors,
+        buttonItems: buttonItems,
+      );
+    },
+  );
+
+  // contextMenuBuilder on non-editable text: SelectionArea wraps static
+  // widgets and still exposes a customizable selection toolbar.
+  Widget get _selectionAreaMenuDemo => SelectionArea(
+    contextMenuBuilder: (context, selectableRegionState) {
+      final buttonItems = selectableRegionState.contextMenuButtonItems;
+      buttonItems.insert(
+        0,
+        ContextMenuButtonItem(
+          label: 'Say hi',
+          onPressed: () {
+            _showSelected('Hi from selected text');
+            ContextMenuController.removeAny();
+          },
+        ),
+      );
+      return AdaptiveTextSelectionToolbar.buttonItems(
+        anchors: selectableRegionState.contextMenuAnchors,
+        buttonItems: buttonItems,
+      );
+    },
+    child: const Text(
+      'This is plain static text. Select it and the toolbar shows a '
+      'custom "Say hi" action next to the defaults.',
+    ),
+  );
+
+  // Custom context menu on an arbitrary widget via ContextMenuController,
+  // triggered by long-press (mobile) or secondary tap / right-click (desktop).
+  Widget get _customContextMenuDemo {
+    final controller = ContextMenuController();
+
+    void showAt(Offset position) {
+      controller.show(
+        context: context,
+        contextMenuBuilder: (context) => AdaptiveTextSelectionToolbar.buttonItems(
+          anchors: TextSelectionToolbarAnchors(primaryAnchor: position),
+          buttonItems: [
+            ContextMenuButtonItem(
+              label: 'Open',
+              onPressed: () {
+                _showSelected('Open');
+                ContextMenuController.removeAny();
+              },
+            ),
+            ContextMenuButtonItem(
+              label: 'Delete',
+              onPressed: () {
+                _showSelected('Delete');
+                ContextMenuController.removeAny();
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onLongPressStart: (details) => showAt(details.globalPosition),
+      onSecondaryTapDown: (details) => showAt(details.globalPosition),
+      child: Card(
+        color: context.colorScheme.primaryContainer,
+        child: const SizedBox(
+          height: 80,
+          width: double.infinity,
+          child: Center(
+            child: Text('Long-press or right-click me'),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _menuSectionTitle(String text) => Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Text(text, style: Theme.of(context).textTheme.titleMedium),
+  );
+
+  void _showSelected(String value) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text('Selected: $value'), duration: const Duration(seconds: 1)),
+      );
+  }
 }

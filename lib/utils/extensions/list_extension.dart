@@ -106,3 +106,25 @@ extension ListExtension<T> on List<T> {
     });
   }
 }
+
+extension ListEqualityExtension<T extends Comparable> on List<T> {
+  bool isEqualTo(List<T> other) {
+    if (other.length != length) {
+      return false;
+    }
+    for (var i = 0; i < length; i++) {
+      if (other[i] != this[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<T> sorted({bool descending = false}) => descending
+      ? ([...this]..sort(descendingComparator))
+      : ([...this]..sort(ascendingComparator));
+
+  int ascendingComparator(T lhs, T rhs) => lhs.compareTo(rhs);
+
+  int descendingComparator(T lhs, T rhs) => rhs.compareTo(lhs);
+}
