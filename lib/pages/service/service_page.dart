@@ -1085,11 +1085,11 @@ class _ThirdTabState extends State<_ThirdTab> with TickerProviderStateMixin {
       onSecondaryTapDown: (details) => showAt(details.globalPosition),
       child: Card(
         color: context.colorScheme.primaryContainer,
-        child: const SizedBox(
+        child: SizedBox(
           height: 80,
           width: double.infinity,
           child: Center(
-            child: Text('Long-press or right-click me'),
+            child: Text('Long-press or right-click me', style: TextStyle(color: context.colorScheme.onPrimaryContainer)),
           ),
         ),
       ),

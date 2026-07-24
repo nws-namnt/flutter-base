@@ -185,11 +185,13 @@ class ArrayResponse<T> extends Equatable with Iterable<T> {
 }
 
 // Usage — iterate / filter / map straight on the response, no null-checks
-final res = await repo.getUsers();            // ArrayResponse<User>
-final names = res.where((u) => u.isActive).map((u) => u.name).toList();
-final count = res.length;                     // instead of res.data?.length ?? 0
-final first = res.firstOrNull;
-ListView(children: [for (final u in res) UserTile(u)]);
+Future<void> loadUsers() async {
+  final res = await repo.getUsers();          // ArrayResponse<User>
+  final names = res.where((u) => u.isActive).map((u) => u.name).toList();
+  final count = res.length;                   // instead of res.data?.length ?? 0
+  final first = res.firstOrNull;
+  final tiles = [for (final u in res) UserTile(u)];
+}
 ```
 
 Only apply this when there is exactly one unambiguous list to iterate. For a class holding several lists (e.g. `HomeSuccess` with both `data` and `archived`), the mixin iterates only `data` — keep the named fields for anything else so intent stays clear.
