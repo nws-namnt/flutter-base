@@ -173,6 +173,27 @@ pkgs/                          # Local packages (path deps)
 
 **Logger** — use `simpleLog()` for quick debug prints, `info()` / `warn()` / `err()` for structured logs.
 
+**Iterable wrappers** — when a class wraps a single primary `List<T>` (e.g. response wrappers, list-backed states), mix in `Iterable<T>` and override `iterator` so the object itself is iterable — no need to reach into the inner list. This exposes the full lazy `Iterable` API (`map`, `where`, `length`, `isEmpty`, `first`, spread `...`) directly on the object. `with Iterable<T>` needs no extra import and coexists with `Equatable` (which only overrides `==`/`hashCode`). Keep it null-safe with `data ?? const []`.
+
+```dart
+// Declaration — ArrayResponse<T> exposes its `data` list as an Iterable
+class ArrayResponse<T> extends Equatable with Iterable<T> {
+  final List<T>? data;
+  // ...
+  @override
+  Iterator<T> get iterator => (data ?? const []).iterator;
+}
+
+// Usage — iterate / filter / map straight on the response, no null-checks
+final res = await repo.getUsers();            // ArrayResponse<User>
+final names = res.where((u) => u.isActive).map((u) => u.name).toList();
+final count = res.length;                     // instead of res.data?.length ?? 0
+final first = res.firstOrNull;
+ListView(children: [for (final u in res) UserTile(u)]);
+```
+
+Only apply this when there is exactly one unambiguous list to iterate. For a class holding several lists (e.g. `HomeSuccess` with both `data` and `archived`), the mixin iterates only `data` — keep the named fields for anything else so intent stays clear.
+
 **Comments & style** — all code comments in **English**. Section headers use `// TITLE` only (no bordered `// ---` style). Don't force unrelated classes into a shared base just for consistency. Lint: `flutter_lints` with `prefer_const_constructors` enabled; `no_leading_underscores_for_local_identifiers` and `slash_for_doc_comments` disabled.
 
 **Local packages** — new local packages go in `pkgs/`; prefer pure Dart and strip unused plugin/native boilerplate and deps. When vendoring external code, remove owner info and keep the original license as `Copyright (c) <year> Fox`.

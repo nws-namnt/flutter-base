@@ -16,7 +16,7 @@ import 'package:equatable/equatable.dart';
 ///   "totalPages": 10
 /// }
 /// ```
-class ArrayResponse<T> extends Equatable {
+class ArrayResponse<T> extends Equatable with Iterable<T> {
   /// Human-readable message returned by the server.
   final String? message;
 
@@ -117,4 +117,15 @@ class ArrayResponse<T> extends Equatable {
     totalPages,
     totalRecords,
   ];
+
+  // Iterable<T> mixin: makes the response itself iterable over [data], so
+  // callers can skip the inner list and its null-checks. Enables the full
+  // lazy Iterable API directly on the response:
+  //   final names = res.where((u) => u.isActive).map((u) => u.name).toList();
+  //   final count = res.length;        // instead of res.data?.length ?? 0
+  //   final first = res.firstOrNull;
+  //   for (final item in res) { ... }  // or spread: [...res]
+  // Falls back to an empty list when [data] is null.
+  @override
+  Iterator<T> get iterator => (data ?? const []).iterator;
 }
