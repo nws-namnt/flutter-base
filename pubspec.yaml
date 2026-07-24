@@ -15,6 +15,7 @@ dependencies:
 
   # Icons
   cupertino_icons: ^1.0.9
+  font_awesome_flutter: ^11.0.0
 
   # Localization
   intl: ^0.20.2

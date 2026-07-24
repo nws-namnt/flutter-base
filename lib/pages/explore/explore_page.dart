@@ -11,6 +11,7 @@ import 'package:gap/gap.dart';
 
 import '../../common/app_dimensions.dart';
 import '../../common/app_enums.dart';
+import '../widgets/share_widget.dart';
 import 'explore_cubit.dart';
 import 'explore_state.dart';
 
@@ -440,6 +441,7 @@ class _ExplorePageState extends State<ExplorePage>
                         ).equalExpand,
                       ],
                     ),
+                    const ShareWidget(),
                   ],
                 ),
               );
