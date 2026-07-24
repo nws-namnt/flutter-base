@@ -14,8 +14,10 @@ This project is a Flutter production boilerplate based on [itachi1611/flutter_te
 # Install dependencies
 flutter pub get
 
-# Run app (choose a flavor: dev | uat | prod)
-flutter run --flavor dev
+# Run app (choose a flavor: dev | uat | prod). Each flavor has its own entry file.
+flutter run --flavor dev -t lib/main_dev.dart
+flutter run --flavor uat -t lib/main_uat.dart
+flutter run --flavor prod -t lib/main_prod.dart
 
 # Analyze
 flutter analyze
@@ -26,14 +28,14 @@ flutter test
 # Run a single test file
 flutter test test/widget_test.dart
 
-# Code generation (Retrofit, JSON serializable, Hive adapters)
+# Code generation (Retrofit clients + JSON serializable models)
 flutter pub run build_runner build --delete-conflicting-outputs
 
 # Watch mode for code generation
 flutter pub run build_runner watch --delete-conflicting-outputs
 
-# Build APK
-flutter build apk --flavor dev --release
+# Build APK (per flavor + entry file)
+flutter build apk --flavor dev -t lib/main_dev.dart --release
 
 # Generate localization files
 flutter pub run intl_utils:generate
@@ -42,15 +44,12 @@ flutter pub run intl_utils:generate
 npm install -g firebase-tools   # install once
 firebase login
 
-# FlutterFire CLI (dùng fvm dart khi dùng FVM)
+# FlutterFire CLI (use `fvm dart` when using FVM)
 fvm dart pub global activate flutterfire_cli
 fvm dart pub global run flutterfire_cli:flutterfire configure \
   --project=<firebase-project-id> \
   --out=lib/firebase/<flavor>/firebase_options.dart \
   --platforms=android,ios
-
-# Change package name (uncomment change_app_package_name in pubspec first)
-flutter pub run change_app_package_name:main com.new.package.name
 ```
 
 ---
@@ -59,114 +58,156 @@ flutter pub run change_app_package_name:main com.new.package.name
 
 ```
 lib/
-├── main.dart                  # Entry point: Firebase init per flavor, orientation lock, runZonedGuarded
+├── base.dart                  # Root barrel — exports app / common / pages / routing / utils
+├── main.dart                  # Shared entry: flavor detect, env load, Firebase, FCM, storage,
+│                              #   network monitoring, Crashlytics, runZonedGuarded → AppPage
+├── main_dev.dart              # Flavor entry points — each delegates to main.dart
+├── main_uat.dart
+├── main_prod.dart
 ├── app/
+│   ├── app.dart               # Barrel for the app module
 │   ├── app_page.dart          # Root widget — MultiBlocProvider + MaterialApp.router
 │   ├── app_cubit.dart         # Global cubit: theme mode & locale
-│   ├── app_state.dart         # AppState (themeMode, locale, lists)
-│   └── common_widgets/        # Shared widgets used across pages
-├── common/
-│   ├── app_constants.dart     # SharedPreference keys, timeouts
-│   ├── app_themes.dart        # lightTheme / darkTheme (TailwindCSS palette + Lato)
-│   └── app_shadows.dart       # Reusable BoxShadow definitions
-├── router/
+│   └── app_state.dart         # AppState (themeMode, locale, ...)
+├── common/                    # app_colors, app_themes, app_dimensions, app_text_style,
+│   │                          #   app_shadows, app_gradients, app_animations, app_constants,
+│   │                          #   app_config, app_env, app_enums, app_extension
+│   └── common.dart            # Barrel
+├── routing/
 │   ├── routers.dart           # Routers enum — routerPath + routerName per route
-│   ├── router_config.dart     # Route tree: routes list, GoRoute/StatefulShellRoute builders
+│   ├── router_config.dart     # Route tree: routes list, GoRoute / StatefulShellRoute builders
 │   ├── app_router.dart        # GoRouter instance wired to RouterNotifier
 │   ├── router_notifier.dart   # ChangeNotifier for auth state (triggers redirect)
-│   └── router_observer.dart   # NavigatorObserver — logs push/pop/replace
-├── page/
-│   ├── index.dart             # Barrel export of all pages
-│   ├── home_shell/            # StatefulShellRoute wrapper with bottom nav
-│   │   ├── home_shell_page.dart
-│   │   ├── home_shell_cubit.dart   # Tracks active shellIndex
-│   │   └── home_shell_state.dart
-│   ├── splash/                # SplashPage + SplashCubit (animated logo, navigates to /home)
-│   ├── home/                  # HomePage
-│   ├── setting/               # SettingPage
-│   ├── test/                  # TestPage (developer sandbox)
-│   ├── commons/               # NotFoundPage
-│   └── widgets/               # Shared page-level widgets (TransitionPage, SplashWidget)
-├── services/
-│   ├── network_service.dart         # Singleton: connectivity + DNS lookup, broadcast Stream<bool>
-│   └── firebase_notification_service.dart  # Singleton: FCM token, foreground/background messages, local notifications
-├── database/
-│   └── app_shared_preference.dart   # Typed wrapper around SharedPreferences
+│   ├── router_observer.dart   # NavigatorObserver — logs push/pop/replace
+│   ├── router_extension.dart  # Navigation helper extensions on BuildContext
+│   └── routing.dart           # Barrel
+├── pages/                     # One folder per screen: <page>_page.dart + _cubit.dart + _state.dart
+│   ├── shell/                 # ShellPage — StatefulShellRoute.indexedStack with bottom nav
+│   ├── splash/ intro/         # Entry + onboarding carousel
+│   ├── home/ home_detail/     # Home tab + detail (OpenContainer transition)
+│   ├── service/ explore/ setting/ profile/
+│   ├── auth/                  # login, register, forgot_password, phone_input,
+│   │                          #   sms_code, email_verification (firebase_ui_auth)
+│   ├── ai_support/            # AI chat page (genkit)
+│   ├── privacy/ terms/        # Markdown-rendered legal pages
+│   ├── image_preview/         # Full-screen Hero image viewer
+│   ├── widgets/               # Shared page-level widgets (TransitionPage, wrappers, error widget)
+│   └── pages.dart             # Barrel
+├── models/                    # Entities (carousel, intro, picked_file, flow_fab_menu)
+│   └── responses/             # array_response, object_response, error_response
+├── repositories/              # Data layer
 ├── network/
-│   └── app_api.dart                 # Retrofit API interface (Dio client)
-├── firebase/
-│   ├── dev/firebase_options.dart    # Auto-generated by flutterfire configure
-│   ├── uat/firebase_options.dart
-│   └── prod/firebase_options.dart
+│   ├── api_client.dart        # Retrofit API interface (Dio) + api_client.g.dart
+│   ├── api_interceptors.dart  # Auth / header interceptor
+│   ├── api_retry_interceptor.dart
+│   ├── curl_logger_interceptor.dart / dio_logger_interceptor.dart
+│   └── api_utils.dart
+├── services/                  # Singletons: network, firebase_notification, notification,
+│                              #   permission, ai
+├── storage/
+│   ├── app_storage.dart       # get_storage wrapper
+│   └── app_preference.dart    # Typed SharedPreferences wrapper
+├── firebase/{dev,uat,prod}/firebase_options.dart   # Auto-generated by flutterfire configure
 ├── utils/
-│   └── app_logger.dart              # Logger wrapper: trace/debug/info/warn/err/fatal/simpleLog
-├── extensions/
-│   └── widget_ext.dart              # Widget helpers: .symPad(v, h), etc.
-└── generated/
-    └── l10n.dart                    # Auto-generated by intl_utils (do not edit)
+│   ├── app_logger.dart        # Logger wrapper: trace/debug/info/warn/err/fatal/simpleLog
+│   ├── app_utils.dart / app_validator.dart / completer_util.dart / data_generator_util.dart
+│   ├── extensions/            # context, device, string, num, list, map, iterable, enum,
+│   │                          #   file, widget extensions (each behind extensions.dart barrel)
+│   └── utils.dart             # Barrel
+├── l10n/                      # ARB source files
+└── generated/                 # Auto-generated by intl_utils (do not edit)
+
+pkgs/                          # Local packages (path deps)
+├── animation_kit/  animation_text/  setting_ui_builder/  dart_cli/
 ```
 
 ---
 
 ## Package map
 
-| Concern            | Package(s)                                                                                                                        |
-|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| State management   | `bloc`, `flutter_bloc`, `equatable`                                                                                               |
-| Navigation         | `go_router`                                                                                                                       |
-| Localization       | `intl`, `intl_utils`                                                                                                              |
-| HTTP client        | `dio`, `retrofit`, `pretty_dio_logger`                                                                                            |
-| Local storage      | `hive`, `shared_preferences`, `get_storage`                                                                                       |
-| Network status     | `connectivity_plus`                                                                                                               |
-| Fonts              | `google_fonts` (Lato)                                                                                                             |
-| Animations         | `animations` (page transitions), `lottie`                                                                                         |
-| UI helpers         | `another_flushbar`, `gap`                                                                                                         |
-| Device/app info    | `device_info_plus`, `package_info_plus`                                                                                           |
-| Image              | `cached_network_image`, `flutter_cache_manager`, `cached_network_image_platform_interface` — see `CachedImageWidget`              |
-| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` at startup                                                                    |
-| Permissions        | `permission_handler`                                                                                                              |
-| Logging            | `logger`                                                                                                                          |
-| Code generation    | `build_runner`, `retrofit_generator`, `json_serializable` (hive_generator removed — abandoned; use `hive_ce_generator` if needed) |
-| Firebase           | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `flutter_local_notifications`                                    |
+| Concern            | Package(s)                                                                                      |
+|--------------------|-------------------------------------------------------------------------------------------------|
+| State management   | `bloc`, `flutter_bloc`, `equatable`                                                             |
+| Navigation         | `go_router`                                                                                     |
+| Localization       | `intl`, `intl_utils`, `flutter_localizations`                                                   |
+| HTTP client        | `dio`, `retrofit`, `pretty_dio_logger`                                                          |
+| Local storage      | `shared_preferences`, `get_storage`                                                             |
+| Network status     | `connectivity_plus`                                                                             |
+| Fonts              | `google_fonts`                                                                                  |
+| Animations         | `animations` (Material motion), `flutter_animate`, `lottie`                                     |
+| Markdown           | `flutter_markdown_plus` (privacy / terms pages)                                                 |
+| UI helpers         | `another_flushbar`, `gap`, `fluttertoast`                                                       |
+| Device/app info    | `device_info_plus`, `package_info_plus`                                                         |
+| Image / files      | `cached_network_image`, `flutter_cache_manager`, `image_picker`, `file_picker`                  |
+| Path & permissions | `path_provider`, `external_path`, `path`, `permission_handler`                                  |
+| Browser            | `url_launcher`                                                                                  |
+| Environment config | `flutter_dotenv` — loads `assets/env/.env.<flavor>` via `AppEnv.load`                           |
+| AI                 | `genkit`, `genkit_google_genai`                                                                 |
+| Native channel     | `pigeon`                                                                                        |
+| Logging            | `logger`                                                                                        |
+| Code generation    | `build_runner`, `retrofit_generator`, `json_serializable`, `json_annotation`                   |
+| Firebase           | `firebase_core`, `firebase_messaging`, `firebase_remote_config`, `firebase_crashlytics`, `firebase_auth`, `firebase_ui_auth` (+ `firebase_ui_oauth_google`, `firebase_ui_localizations`), `flutter_local_notifications` |
+| Local packages     | `setting_ui_builder`, `animation_kit`, `animation_text` (path deps in `pkgs/`)                 |
+
+> Note: `email_validator` is pinned to `^3.0.0` in `dependency_overrides` to reconcile `firebase_ui_auth` (needs 2.x) with `genkit` (needs 3.x).
 
 ---
 
 ## Key conventions
 
-**State management** — use Cubit (not full Bloc) for all state. Each page owns its own Cubit, instantiated inside `initState` and closed in `dispose`. Global cubits (`AppCubit`, `HomeShellCubit`) are provided at `AppPage` level via `MultiBlocProvider`.
+**State management** — use Cubit (not full Bloc) for all state. Each page owns its own Cubit, instantiated inside `initState` and closed in `dispose`. The global `AppCubit` is provided at `AppPage` level via `MultiBlocProvider`.
 
-**Navigation** — GoRouter with `StatefulShellRoute.indexedStack`. Always navigate using `context.go(Routers.x.routerPath)` or `context.goNamed(Routers.x.routerName)`. Never use `Navigator.push` directly. Add new routes to `Routers` enum first, then wire in `router_config.dart`.
+**Navigation** — GoRouter with `StatefulShellRoute.indexedStack` (shell tabs: home, service, explore, setting). Always navigate using `context.go(Routers.x.routerPath)` or `context.goNamed(Routers.x.routerName)`, or the helpers in `router_extension.dart`. Never use `Navigator.push` directly. Add new routes to the `Routers` enum first, then wire them in `router_config.dart` (order matters — GoRouter matches top-to-bottom).
 
-**Flavors** — the app supports three flavors: `dev`, `uat`, `prod`. Firebase options are selected at runtime via `appFlavor` constant. Always pass `--flavor <env>` when running or building.
+**Flavors** — three flavors: `dev`, `uat`, `prod`, each with its own entry file (`main_<flavor>.dart`) that delegates to `main.dart`. The active flavor is detected at runtime from the bundle-ID suffix (`PackageInfo.flavor`) and drives `AppEnv.load` and the native Firebase config. Always pass `--flavor <env> -t lib/main_<env>.dart` when running or building.
 
-**Theming** — colors come from the TailwindCSS v3 palette defined in `app_themes.dart` (`primarySwatch` = indigo, `textSwatch` = slate). Never hardcode colors in widgets; reference `Theme.of(context).colorScheme` or the swatch constants.
+**Firebase init** — Firebase is auto-initialized by the native layer (Android `google-services.json` per flavor under `src/<flavor>/`; iOS `GoogleService-Info.plist`). Dart calls `Firebase.initializeApp()` with **no options** to attach to the already-running native instance. The background FCM handler is a top-level `@pragma('vm:entry-point')` function.
 
-**Code generation** — Retrofit API clients, JSON models, and Hive adapters all require `build_runner`. Run after any change to files annotated with `@RestApi`, `@JsonSerializable`, or `@HiveType`.
+**Theming** — colors come from the palette in `common/app_colors.dart` / `app_themes.dart`. Never hardcode colors in widgets; reference `Theme.of(context).colorScheme` or the palette constants. Dimensions, text styles, shadows, gradients and animations also live in `common/`.
 
-**Localization** — ARB files live in `l10n/`. After editing them run `intl_utils:generate` to regenerate `lib/generated/`. Use `S.of(context).keyName` in widgets.
+**Barrel exports** — each Dart module/package has exactly one barrel file `lib/<module>.dart` declaring `library <module>;` and exporting its public API (`base.dart`, `common.dart`, `pages.dart`, `routing.dart`, `utils.dart`, `extensions.dart`). Register with `include: [<pkg>]` in `dartdoc_options.yaml`.
 
-**Logger** — use `simpleLog()` for quick debug prints, `info()` / `warn()` / `err()` for structured logs. `AppFilter` can be toggled to allow only error/warning logs in production builds.
+**Code generation** — Retrofit API clients and JSON models require `build_runner`. Run it after any change to files annotated with `@RestApi` or `@JsonSerializable`.
+
+**Localization** — ARB files live in `lib/l10n/`. After editing them run `intl_utils:generate` to regenerate `lib/generated/`. Use `S.of(context).keyName` in widgets.
+
+**Logger** — use `simpleLog()` for quick debug prints, `info()` / `warn()` / `err()` for structured logs.
+
+**Comments & style** — all code comments in **English**. Section headers use `// TITLE` only (no bordered `// ---` style). Don't force unrelated classes into a shared base just for consistency. Lint: `flutter_lints` with `prefer_const_constructors` enabled; `no_leading_underscores_for_local_identifiers` and `slash_for_doc_comments` disabled.
+
+**Local packages** — new local packages go in `pkgs/`; prefer pure Dart and strip unused plugin/native boilerplate and deps. When vendoring external code, remove owner info and keep the original license as `Copyright (c) <year> Fox`.
 
 ---
 
 ## App entry point flow
 
 ```
-main()
-  → Firebase.initializeApp(options: per appFlavor)
-  → FirebaseMessaging.onBackgroundMessage(handler)
-  → GetStorage.init()
-  → AppSharedPreference.init()
+main_<flavor>.dart → main.dart :: main()   (inside runZonedGuarded)
+  → WidgetsFlutterBinding.ensureInitialized()
+  → ErrorWidget.builder = RenderErrorWidget           # replace red error screen
+  → SystemChrome.setPreferredOrientations(portrait)
+  → flavor = PackageInfo.flavor  →  AppEnv.load(flavor)
+  → Firebase.initializeApp()                          # no options; native auto-init
+  → FirebaseUIAuth.configureProviders([Email, Google])
+  → FirebaseMessaging.onBackgroundMessage(_onBackgroundMessage)
+  → FirebaseNotificationService.instance.initialize()
+  → AppStorage.init()  →  AppPreference.init()
+  → clearExpiredTmpFiles()  (fire-and-forget)
+  → networkService.initialize()
+  → FirebaseCrashlytics collection + FlutterError.onError + PlatformDispatcher.onError
   → runApp(AppPage)
 
 AppPage (StatefulWidget)
-  → initState: creates AppRouter, NetworkService, listens to FCM streams
-  → build: MultiBlocProvider[AppCubit, HomeShellCubit]
+  → build: MultiBlocProvider[AppCubit]
          → BlocBuilder<AppCubit> → MaterialApp.router(theme, locale, routerConfig)
 
 Router
-  / (root)  → SplashPage  → context.go('/home')
-  /home     → HomeShellPage (StatefulShellRoute)
-              ├── branch 0: HomePage
-              └── branch 1: TestPage
+  / (root)   → SplashPage → context.go('/intro' | '/home')
+  /intro     → IntroPage (onboarding)
+  /home ...  → ShellPage (StatefulShellRoute.indexedStack)
+               ├── branch 0: HomePage
+               ├── branch 1: ServicePage
+               ├── branch 2: ExplorePage
+               └── branch 3: SettingPage
+  + standalone routes: profile, auth/*, terms, privacy, imagePreview, aiSupport, notFound
 ```
