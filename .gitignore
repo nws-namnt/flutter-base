@@ -92,3 +92,6 @@ android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 ios/Podfile
 ios/Podfile.lock
 ios/Pods/
+
+# FVM Version Cache
+.fvm/
